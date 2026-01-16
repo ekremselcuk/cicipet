@@ -13,7 +13,7 @@ export default function SmartFeed() {
             </h3>
 
             {posts.map((post) => (
-                <div key={post.id} className="bg-white rounded-[24px] overflow-hidden shadow-soft border border-white relative group transition-all hover:-translate-y-1">
+                <div key={post.id} className="bg-white rounded-[24px] overflow-hidden shadow-lg relative group transition-all hover:-translate-y-1">
 
                     {/* Header */}
                     <div className="p-4 flex justify-between items-center">
@@ -23,8 +23,8 @@ export default function SmartFeed() {
                                 <div className="w-full h-full rounded-full bg-gradient-to-tr from-orange-300 to-yellow-200"></div>
                             </div>
                             <div className="flex flex-col">
-                                <span className="text-base font-bold text-gray-800">{post.name}</span>
-                                <span className="text-[10px] text-orange-500 font-bold bg-orange-50 px-2 py-0.5 rounded-full w-max">{post.rank}</span>
+                                <span className="text-base font-bold text-gray-800 leading-snug">{post.name}</span>
+                                <span className="text-[10px] text-paw-orange font-bold bg-orange-50 px-2 py-0.5 rounded-full w-max">{post.rank}</span>
                             </div>
                         </div>
                         <button className="text-gray-400 hover:text-gray-600 text-xl">
@@ -33,7 +33,7 @@ export default function SmartFeed() {
                     </div>
 
                     {/* Image */}
-                    <div className="relative aspect-[4/5] bg-gray-100 mx-4 rounded-2xl overflow-hidden shadow-inner">
+                    <div className="relative aspect-square bg-gray-100 mx-4 rounded-2xl overflow-hidden shadow-inner">
                         <img src={post.image} alt={post.name} className="w-full h-full object-cover" loading="lazy" />
                     </div>
 
@@ -50,7 +50,7 @@ export default function SmartFeed() {
 
                         {/* Content */}
                         <div className="flex-1 px-4">
-                            <p className="text-sm text-gray-600 font-medium leading-snug">
+                            <p className="text-sm text-gray-600 font-medium leading-relaxed">
                                 Bugün parkta çok eğlendik! <span className="text-blue-400">#MutluPati</span>
                             </p>
                         </div>
