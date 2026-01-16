@@ -1,91 +1,82 @@
-/* Animations */
+/* Soft Animations */
 
-@keyframes pulse-gold {
-    0% {
-        box-shadow: 0 0 0 0 rgba(255, 215, 0, 0.4);
-    }
+@keyframes bounce-soft {
 
-    70% {
-        box-shadow: 0 0 0 10px rgba(255, 215, 0, 0);
-    }
-
+    0%,
     100% {
-        box-shadow: 0 0 0 0 rgba(255, 215, 0, 0);
-    }
-}
-
-@keyframes float {
-    0% {
-        transform: translateY(0px);
+        transform: translateY(0);
     }
 
     50% {
-        transform: translateY(-10px);
-    }
-
-    100% {
-        transform: translateY(0px);
+        transform: translateY(-8px);
     }
 }
 
-@keyframes slide-up {
-    from {
-        transform: translateY(20px);
+@keyframes pop-in {
+    0% {
+        transform: scale(0.8);
         opacity: 0;
     }
 
-    to {
-        transform: translateY(0);
+    70% {
+        transform: scale(1.05);
+    }
+
+    100% {
+        transform: scale(1);
         opacity: 1;
     }
 }
 
-@keyframes heart-beat {
+@keyframes sparkle {
+
+    0%,
+    100% {
+        opacity: 1;
+        transform: scale(1);
+    }
+
+    50% {
+        opacity: 0.5;
+        transform: scale(1.2);
+    }
+}
+
+@keyframes float-soft {
     0% {
-        transform: scale(1);
+        transform: translateY(0px) rotate(0deg);
     }
 
-    25% {
-        transform: scale(1.1);
-    }
-
-    40% {
-        transform: scale(1);
-    }
-
-    60% {
-        transform: scale(1.1);
+    50% {
+        transform: translateY(-6px) rotate(1deg);
     }
 
     100% {
-        transform: scale(1);
+        transform: translateY(0px) rotate(0deg);
     }
 }
 
-.animate-pulse {
-    animation: pulse-gold 2s infinite;
+.animate-bounce-soft {
+    animation: bounce-soft 2s ease-in-out infinite;
+}
+
+.animate-pop {
+    animation: pop-in 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards;
+}
+
+.animate-sparkle {
+    animation: sparkle 1.5s infinite;
 }
 
 .animate-float {
-    animation: float 3s ease-in-out infinite;
+    animation: float-soft 4s ease-in-out infinite;
 }
 
-.animate-slide-up {
-    animation: slide-up 0.5s ease-out forwards;
+/* Interaction Effects */
+.hover-lift {
+    transition: transform 0.2s cubic-bezier(0.34, 1.56, 0.64, 1);
 }
 
-.animate-heart {
-    animation: heart-beat 1.5s infinite;
-}
-
-/* Page Transitions */
-.page-enter {
-    opacity: 0;
-    transform: scale(0.98);
-}
-
-.page-enter-active {
-    opacity: 1;
-    transform: scale(1);
-    transition: opacity 300ms, transform 300ms;
+.hover-lift:hover {
+    transform: translateY(-4px);
 }

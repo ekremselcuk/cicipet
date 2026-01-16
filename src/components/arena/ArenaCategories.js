@@ -7,25 +7,33 @@ export default function ArenaCategories() {
     ];
 
     return (
-        <div className="space-y-4 mb-8">
-            <h3 className="text-white font-bold px-4">Aktif Arenalar 🏟️</h3>
+        <div className="space-y-6 mb-8">
+            <div className="flex justify-between items-end px-4">
+                <h3 className="text-gray-800 font-black text-xl">Aktif Arenalar 🏟️</h3>
+                <span className="text-xs text-orange-500 font-bold bg-orange-50 px-2 py-1 rounded-lg">4 Yarışma</span>
+            </div>
 
-            <div className="flex gap-4 overflow-x-auto px-4 pb-4 no-scrollbar">
+            <div className="flex gap-4 overflow-x-auto px-4 pb-6 pl-1 no-scrollbar">
                 {categories.map((cat) => (
-                    <div key={cat.id} className={`min-w-[160px] p-4 rounded-xl border flex flex-col justify-between h-40 relative overflow-hidden group hover:scale-105 transition-transform
-             ${cat.flash ? 'bg-red-900/40 border-red-500/50' : 'bg-dark-card border-white/5'}
+                    <div key={cat.id} className={`min-w-[160px] p-5 rounded-[24px] flex flex-col justify-between h-44 relative group transition-all duration-300 hover:-translate-y-2 hover:shadow-floating
+             ${cat.flash
+                            ? 'bg-gradient-to-br from-red-500 to-orange-500 text-white shadow-lg shadow-red-200'
+                            : 'bg-white text-gray-800 shadow-soft border border-white'
+                        }
            `}>
-                        {cat.flash && <span className="absolute top-2 right-2 text-red-500 animate-pulse text-[10px] font-black uppercase">LIVE</span>}
+                        {cat.flash && <span className="absolute top-3 right-3 bg-white text-red-500 text-[9px] font-black px-2 py-0.5 rounded-full animate-bounce-soft">LIVE</span>}
 
                         <div>
-                            <span className="text-3xl mb-2 block">{cat.icon}</span>
-                            <span className="text-xs text-gray-400 uppercase tracking-wider">{cat.type}</span>
-                            <h4 className="font-bold text-white text-sm leading-tight mt-1">{cat.title}</h4>
+                            <span className="text-4xl mb-2 block filter drop-shadow-sm">{cat.icon}</span>
+                            <span className={`text-[10px] font-bold uppercase tracking-wider ${cat.flash ? 'text-white/80' : 'text-gray-400'}`}>{cat.type}</span>
+                            <h4 className="font-bold text-lg leading-tight mt-1">{cat.title}</h4>
                         </div>
 
                         <div className="flex justify-between items-end mt-4">
-                            <span className="text-[10px] text-gray-500">{cat.entries} Katılımcı</span>
-                            <button className="w-8 h-8 rounded-full bg-white/10 flex items-center justify-center hover:bg-gold-primary hover:text-black transition-colors">
+                            <span className={`text-[10px] font-medium ${cat.flash ? 'text-white/80' : 'text-gray-400'}`}>{cat.entries} Katılımcı</span>
+                            <button className={`w-8 h-8 rounded-full flex items-center justify-center transition-colors shadow-sm
+                 ${cat.flash ? 'bg-white text-red-500' : 'bg-gray-100 group-hover:bg-orange-500 group-hover:text-white'}
+               `}>
                                 ➜
                             </button>
                         </div>

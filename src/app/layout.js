@@ -2,8 +2,8 @@ import '../styles/globals.css';
 import '../styles/animations.css';
 
 export const metadata = {
-  title: 'Pet-Sovereign Economy',
-  description: 'Gamified Pet Care & Charity Platform',
+  title: 'CiciPet - Mutlu Patiler Dünyası',
+  description: 'Sevgi dolu, ödüllü evcil hayvan platformu.',
 };
 
 export default function RootLayout({ children }) {

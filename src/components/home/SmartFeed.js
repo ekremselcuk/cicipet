@@ -7,62 +7,60 @@ export default function SmartFeed() {
     ];
 
     return (
-        <section className="px-4 pb-24 space-y-6">
-            <h3 className="text-xl font-bold text-white mb-4">Günün Yıldızları ✨</h3>
+        <section className="px-4 pb-24 space-y-8">
+            <h3 className="text-xl font-bold text-gray-700 px-2 flex items-center gap-2">
+                Günün Yıldızları <span className="text-2xl animate-sparkle">✨</span>
+            </h3>
 
             {posts.map((post) => (
-                <div key={post.id} className="bg-dark-card rounded-2xl overflow-hidden shadow-lg border border-white/5 relative group">
+                <div key={post.id} className="bg-white rounded-[24px] overflow-hidden shadow-soft border border-white relative group transition-all hover:-translate-y-1">
 
                     {/* Header */}
-                    <div className="p-3 flex justify-between items-center bg-gradient-to-b from-black/60 to-transparent absolute top-0 w-full z-10">
-                        <div className="flex items-center gap-2">
-                            <div className="w-8 h-8 rounded-full bg-gray-700 border border-gold-primary">
-                                {/* Avatar */}
+                    <div className="p-4 flex justify-between items-center">
+                        <div className="flex items-center gap-3">
+                            <div className="w-10 h-10 rounded-full bg-orange-100 p-0.5 shadow-sm">
+                                {/* Avatar Placeholder */}
+                                <div className="w-full h-full rounded-full bg-gradient-to-tr from-orange-300 to-yellow-200"></div>
                             </div>
                             <div className="flex flex-col">
-                                <span className="text-sm font-bold text-white shadow-black drop-shadow-md">{post.name}</span>
-                                <span className="text-[10px] text-gold-primary uppercase tracking-wider">{post.rank}</span>
+                                <span className="text-base font-bold text-gray-800">{post.name}</span>
+                                <span className="text-[10px] text-orange-500 font-bold bg-orange-50 px-2 py-0.5 rounded-full w-max">{post.rank}</span>
                             </div>
                         </div>
-                        <button className="bg-black/50 backdrop-blur-sm p-1.5 rounded-full text-white/80 hover:bg-white/20 transition">
+                        <button className="text-gray-400 hover:text-gray-600 text-xl">
                             ⋮
                         </button>
                     </div>
 
                     {/* Image */}
-                    <div className="relative aspect-[4/5] bg-gray-800">
+                    <div className="relative aspect-[4/5] bg-gray-100 mx-4 rounded-2xl overflow-hidden shadow-inner">
                         <img src={post.image} alt={post.name} className="w-full h-full object-cover" loading="lazy" />
-
-                        {/* Double Tap Heart Animation (Placeholder) */}
-                        <div className="absolute inset-0 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity duration-300 pointer-events-none">
-                            <span className="text-6xl animate-heart">❤️</span>
-                        </div>
                     </div>
 
                     {/* Actions Bar */}
-                    <div className="p-3 bg-dark-card flex justify-between items-center">
+                    <div className="p-4 flex justify-between items-center">
 
-                        {/* Smart Like Button */}
-                        <div className="flex flex-col items-center">
-                            <button className="text-3xl transition-transform active:scale-125 hover:text-red-500">
-                                🐾
+                        {/* Soft Like Button */}
+                        <div className="flex flex-col items-center gap-1">
+                            <button className="w-12 h-12 rounded-full bg-red-50 text-red-500 shadow-sm flex items-center justify-center text-2xl transition-transform active:scale-90 hover:bg-red-100">
+                                ❤️
                             </button>
-                            <span className="text-xs text-secondary mt-1">{post.score}</span>
+                            <span className="text-xs font-bold text-gray-500">{post.score}</span>
                         </div>
 
-                        {/* Center Info */}
+                        {/* Content */}
                         <div className="flex-1 px-4">
-                            <p className="text-sm text-gray-300 line-clamp-2">
-                                Bugün parkta çok koştuk! 🌿 #GoldenHour #ParkKeyfi
+                            <p className="text-sm text-gray-600 font-medium leading-snug">
+                                Bugün parkta çok eğlendik! <span className="text-blue-400">#MutluPati</span>
                             </p>
                         </div>
 
-                        {/* Duel Button */}
-                        <Link href="/arena" className="flex flex-col items-center">
-                            <div className="w-10 h-10 rounded-full bg-dark-surface border border-gray-600 flex items-center justify-center hover:bg-red-500/20 hover:border-red-500 transition-colors">
-                                <span className="text-lg">⚔️</span>
+                        {/* Duel Button - Soft */}
+                        <Link href="/arena" className="flex flex-col items-center gap-1">
+                            <div className="w-12 h-12 rounded-full bg-blue-50 text-blue-500 shadow-sm flex items-center justify-center text-xl transition-transform active:scale-90 hover:bg-blue-100">
+                                ⚔️
                             </div>
-                            <span className="text-[10px] text-muted mt-1 uppercase">Düello</span>
+                            <span className="text-[10px] font-bold text-gray-400 uppercase">Düello</span>
                         </Link>
                     </div>
                 </div>

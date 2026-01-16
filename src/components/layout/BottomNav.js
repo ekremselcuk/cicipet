@@ -2,31 +2,31 @@ import Link from 'next/link';
 
 export default function BottomNav() {
     return (
-        <nav className="fixed bottom-0 left-0 right-0 max-w-[480px] mx-auto bg-dark-bg/90 backdrop-blur-md border-t border-white/10 p-4 flex justify-between items-center z-50">
-            <Link href="/" className="flex flex-col items-center text-gold">
-                <span className="text-2xl">🏠</span>
-                <span className="text-xs mt-1">Ev</span>
+        <nav className="fixed bottom-6 left-4 right-4 max-w-[448px] mx-auto bg-white/90 backdrop-blur-xl border border-white p-3 rounded-[30px] shadow-[0_8px_30px_rgba(0,0,0,0.12)] flex justify-between items-center z-50">
+            <Link href="/" className="flex flex-col items-center text-gray-400 hover:text-orange-500 w-16 transition-colors">
+                <span className="text-2xl mb-0.5">🏠</span>
+                <span className="text-[10px] font-bold">Ev</span>
             </Link>
 
-            <Link href="/arena" className="flex flex-col items-center text-secondary hover:text-white transition-colors">
-                <span className="text-2xl">⚔️</span>
-                <span className="text-xs mt-1">Arena</span>
+            <Link href="/arena" className="flex flex-col items-center text-gray-400 hover:text-orange-500 w-16 transition-colors">
+                <span className="text-2xl mb-0.5">⚔️</span>
+                <span className="text-[10px] font-bold">Arena</span>
             </Link>
 
-            <div className="relative -top-6">
-                <button className="w-14 h-14 rounded-full bg-gold-primary flex items-center justify-center shadow-lg shadow-gold-primary/30 animate-pulse">
-                    <span className="text-2xl text-black">📸</span>
+            <div className="relative -top-8">
+                <button className="w-16 h-16 rounded-full bg-gradient-to-tr from-orange-400 to-yellow-400 flex items-center justify-center shadow-floating border-4 border-white transition-transform hover:-translate-y-1 active:scale-95">
+                    <span className="text-3xl text-white drop-shadow-md">📸</span>
                 </button>
             </div>
 
-            <Link href="/market" className="flex flex-col items-center text-secondary hover:text-white transition-colors">
-                <span className="text-2xl">🛍️</span>
-                <span className="text-xs mt-1">Market</span>
+            <Link href="/market" className="flex flex-col items-center text-gray-400 hover:text-orange-500 w-16 transition-colors">
+                <span className="text-2xl mb-0.5">🛍️</span>
+                <span className="text-[10px] font-bold">Market</span>
             </Link>
 
-            <Link href="/profile" className="flex flex-col items-center text-secondary hover:text-white transition-colors">
-                <span className="text-2xl">👤</span>
-                <span className="text-xs mt-1">Profil</span>
+            <Link href="/profile" className="flex flex-col items-center text-gray-400 hover:text-orange-500 w-16 transition-colors">
+                <span className="text-2xl mb-0.5">👤</span>
+                <span className="text-[10px] font-bold">Profil</span>
             </Link>
         </nav>
     );
