@@ -1,0 +1,107 @@
+:root {
+  /* Brand Colors */
+  --color-gold-primary: #FFD700;
+  --color-gold-hover: #E6C200;
+  --color-gold-light: #FFF5CC;
+  
+  --color-dark-bg: #0F0F12;
+  --color-dark-card: #1A1A1F;
+  --color-dark-surface: #25252B;
+  
+  --color-accent-red: #FF4D4D; /* For duels/alerts */
+  --color-accent-green: #00E096; /* For success/nature */
+  --color-accent-blue: #4D96FF; /* For info/trust */
+  
+  --text-primary: #FFFFFF;
+  --text-secondary: #A0A0B0;
+  --text-muted: #606070;
+  
+  /* Glassmorphism */
+  --glass-bg: rgba(26, 26, 31, 0.7);
+  --glass-border: 1px solid rgba(255, 255, 255, 0.1);
+  --glass-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.37);
+  
+  /* Spacing & Layout */
+  --radius-sm: 8px;
+  --radius-md: 16px;
+  --radius-lg: 24px;
+  --radius-full: 9999px;
+  
+  --font-main: 'Inter', sans-serif;
+}
+
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+body {
+  background-color: var(--color-dark-bg);
+  color: var(--text-primary);
+  font-family: var(--font-main);
+  overflow-x: hidden;
+  line-height: 1.5;
+}
+
+a {
+  color: inherit;
+  text-decoration: none;
+}
+
+button {
+  cursor: pointer;
+  border: none;
+  font-family: inherit;
+}
+
+/* Utilities */
+.container {
+  max-width: 480px; /* Mobile-first limit for PWA feel */
+  margin: 0 auto;
+  min-height: 100vh;
+  background-color: var(--color-dark-bg);
+  position: relative;
+  box-shadow: 0 0 50px rgba(0,0,0,0.5);
+}
+
+.glass-panel {
+  background: var(--glass-bg);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border: var(--glass-border);
+  border-radius: var(--radius-md);
+}
+
+.text-gold { color: var(--color-gold-primary); }
+.text-xs { font-size: 0.75rem; }
+.text-sm { font-size: 0.875rem; }
+.text-lg { font-size: 1.125rem; }
+.text-xl { font-size: 1.25rem; font-weight: 700; }
+.text-2xl { font-size: 1.5rem; font-weight: 800; }
+
+.flex { display: flex; }
+.flex-col { flex-direction: column; }
+.items-center { align-items: center; }
+.justify-between { justify-content: space-between; }
+.justify-center { justify-content: center; }
+.gap-2 { gap: 0.5rem; }
+.gap-4 { gap: 1rem; }
+
+.absolute { position: absolute; }
+.relative { position: relative; }
+.w-full { width: 100%; }
+.h-full { height: 100%; }
+
+.btn-primary {
+  background: linear-gradient(135deg, var(--color-gold-primary), var(--color-gold-hover));
+  color: #000;
+  font-weight: 700;
+  padding: 12px 24px;
+  border-radius: var(--radius-full);
+  transition: transform 0.2s, box-shadow 0.2s;
+}
+
+.btn-primary:active {
+  transform: scale(0.95);
+}
