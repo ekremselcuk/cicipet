@@ -19,8 +19,6 @@
   --shadow-soft: 6px 6px 12px #E6E2DE, -6px -6px 12px #FFFFFF;
   --shadow-inset: inset 6px 6px 12px #D9D7D5, inset -6px -6px 12px #FFFFFF;
   --shadow-floating: 0 12px 24px rgba(255, 146, 43, 0.2);
-  ,
-  inset -6px -6px 12px #FFFFFF;
 
   --radius-soft: 20px;
   --radius-pill: 50px;
