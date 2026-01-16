@@ -1,4 +1,10 @@
 @import url('https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800&display=swap');
+@import "tailwindcss";
+
+@theme {
+  --color-bone-white: #FAF9F6;
+  --color-paw-orange: #FF8C00;
+}
 
 :root {
   /* Redesigned Palette: Warm & Energetic */
