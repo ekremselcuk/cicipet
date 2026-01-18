@@ -6,8 +6,21 @@ export default function CategoryBar({ title }) {
     const [isScrolled, setIsScrolled] = useState(false);
 
     useEffect(() => {
+        let ticking = false;
+
         const handleScroll = () => {
-            setIsScrolled(window.scrollY > 50);
+            if (!ticking) {
+                window.requestAnimationFrame(() => {
+                    const scrollY = window.scrollY;
+                    if (scrollY > 50) {
+                        setIsScrolled(true);
+                    } else if (scrollY < 20) {
+                        setIsScrolled(false);
+                    }
+                    ticking = false;
+                });
+                ticking = true;
+            }
         };
 
         window.addEventListener('scroll', handleScroll);
