@@ -8,7 +8,7 @@ export default function HomeBottomBar() {
     // const pathname = usePathname(); 
 
     return (
-        <div className="fixed bottom-6 left-1/2 -translate-x-1/2 w-[90%] max-w-[448px] z-50 bg-white/90 backdrop-blur-2xl border border-white/40 shadow-floating rounded-[35px] px-2 py-2 flex justify-between items-center h-20">
+        <div className="fixed bottom-6 left-1/2 -translate-x-1/2 w-[90%] max-w-[448px] z-50 bg-white/90 backdrop-blur-2xl border border-white/40 shadow-floating rounded-[35px] px-2 py-2 flex justify-between items-center h-16">
 
             {/* 1. Home (Active) */}
             <Link href="/" className="flex-1 flex flex-col items-center gap-1 group">
@@ -29,7 +29,7 @@ export default function HomeBottomBar() {
             </Link>
 
             {/* 3. Camera (Center / Floating) */}
-            <div className="relative -top-8 flex-1 flex justify-center">
+            <div className="relative -top-5 flex-1 flex justify-center">
                 <button className="w-16 h-16 rounded-full bg-gradient-to-tr from-paw-orange to-red-500 flex items-center justify-center shadow-lg shadow-orange-200 border-[6px] border-[#f8f9fa] transform transition-transform hover:scale-105 active:scale-95 group">
                     <svg width="28" height="28" viewBox="0 0 24 24" fill="none" className="text-white drop-shadow-md group-hover:rotate-12 transition-transform duration-300">
                         <path d="M23 19C23 19.5304 22.7893 20.0391 22.4142 20.4142C22.0391 20.7893 21.5304 21 21 21H3C2.46957 21 1.96086 20.7893 1.58579 20.4142C1.21071 20.0391 1 19.5304 1 19V8C1 7.46957 1.21071 6.96086 1.58579 6.58579C1.96086 6.21071 2.46957 6 3 6H7L9 3H15L17 6H21C21.5304 6 22.0391 6.21071 22.4142 6.58579C22.7893 6.96086 23 7.46957 23 8V19Z" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
