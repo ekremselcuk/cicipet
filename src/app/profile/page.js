@@ -1,11 +1,10 @@
 import ProfileHeader from '@/components/profile/ProfileHeader';
 import TrophyRoom from '@/components/profile/TrophyRoom';
 import ProofOfCare from '@/components/care/ProofOfCare';
-import BottomNav from '@/components/layout/BottomNav';
 
 export default function Profile() {
     return (
-        <main className="pb-24 bg-dark-bg min-h-screen">
+        <main className="bg-dark-bg min-h-screen">
             <ProfileHeader />
             <ProofOfCare />
             <TrophyRoom />
@@ -22,8 +21,6 @@ export default function Profile() {
                     </button>
                 </div>
             </section>
-
-            <BottomNav />
         </main>
     );
 }
