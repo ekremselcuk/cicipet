@@ -11,11 +11,12 @@ export const metadata = {
 export default function RootLayout({ children }) {
   return (
     <html lang="tr">
-      <body className="bg-bone-white min-h-screen pb-32 pt-16">
+      <body className="bg-bone-white min-h-screen pt-16">
         <TopStickyNav />
         <div className="container mx-auto">
           {children}
         </div>
+        <div className="h-40 w-full"></div>
         <HomeBottomBar />
       </body>
     </html>
