@@ -39,7 +39,7 @@ export default function TopStickyNav() {
 
                 {/* Competitions Icon */}
                 <Link
-                    href="/arena"
+                    href="/podyum"
                     className="flex flex-col items-center justify-center transition-all hover:scale-110 active:scale-95"
                 >
                     <span className="text-2xl">🏆</span>

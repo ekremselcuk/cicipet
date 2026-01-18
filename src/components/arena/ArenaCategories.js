@@ -9,7 +9,7 @@ export default function ArenaCategories() {
     return (
         <div className="space-y-6 mb-8">
             <div className="flex justify-between items-end px-4">
-                <h3 className="text-gray-800 font-black text-xl">Aktif Arenalar 🏟️</h3>
+                <h3 className="text-gray-800 font-black text-xl">Aktif Podyumlar 🏟️</h3>
                 <span className="text-xs text-orange-500 font-bold bg-orange-50 px-2 py-1 rounded-lg">4 Yarışma</span>
             </div>
 

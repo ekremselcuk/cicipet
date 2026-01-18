@@ -20,12 +20,12 @@ export default function HomeBottomBar() {
                 <span className="text-[10px] font-bold text-orange-600 opacity-100 transition-opacity">Anasayfa</span>
             </Link>
 
-            {/* 2. Arena */}
-            <Link href="/arena" className="flex-1 flex flex-col items-center gap-1 group">
+            {/* 2. Podyum */}
+            <Link href="/podyum" className="flex-1 flex flex-col items-center gap-1 group">
                 <div className="p-2 rounded-xl text-gray-400 transition-all duration-300 group-hover:bg-gray-50 group-hover:text-gray-800">
-                    <span className="text-2xl filter grayscale group-hover:grayscale-0 transition-all">⚔️</span>
+                    <span className="text-2xl filter grayscale group-hover:grayscale-0 transition-all">🏆</span>
                 </div>
-                <span className="text-[10px] font-medium text-gray-400 group-hover:text-gray-800 transition-opacity">Arena</span>
+                <span className="text-[10px] font-medium text-gray-400 group-hover:text-gray-800 transition-opacity">Podyum</span>
             </Link>
 
             {/* 3. Camera (Center / Floating) */}
