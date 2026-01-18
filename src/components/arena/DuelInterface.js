@@ -28,7 +28,7 @@ export default function DuelInterface() {
                  ${voted === 'left' ? 'ring-4 ring-orange-400 scale-105 z-20 shadow-floating' : voted ? 'opacity-40 scale-95 grayscale' : ''}
                `}
                         >
-                            <img src="https://images.unsplash.com/photo-1541781777631-faafa1131b60?auto=format&fit=crop&q=80" className="w-full h-full object-cover" />
+                            <img src="https://images.unsplash.com/photo-1514888286974-6c03e2ca1dba?auto=format&fit=crop&q=80" className="w-full h-full object-cover" />
                             <div className="absolute bottom-0 inset-x-0 bg-gradient-to-t from-black/80 via-black/40 to-transparent p-4 text-left">
                                 <span className="text-white font-bold block text-lg shadow-black">Miya</span>
                                 {voted === 'left' && <span className="text-yellow-300 font-bold text-xs animate-bounce-soft block mt-1">+50 Puan!</span>}
