@@ -1,4 +1,4 @@
-export default function CategoryBar() {
+export default function CategoryBar({ title }) {
     const categories = [
         { id: 1, title: 'En Karizmatik', type: 'Güzellik', image: 'https://images.unsplash.com/photo-1543852786-1cf6624b9987?auto=format&fit=crop&q=80' },
         { id: 2, title: 'En Hızlı', type: 'Yetenek', image: 'https://images.unsplash.com/photo-1517849845537-4d257902454a?auto=format&fit=crop&q=80' },
@@ -10,7 +10,7 @@ export default function CategoryBar() {
     return (
         <div className="sticky top-16 z-40 bg-bone-white/95 backdrop-blur-sm py-2 pl-4 border-b border-gray-100/50 shadow-sm transition-all duration-300">
             <h4 className="text-gray-800 font-bold mb-3 text-sm px-1 flex items-center gap-2">
-                Popüler Kategoriler <span className="bg-orange-100 text-orange-600 text-[10px] px-2 py-0.5 rounded-full">Yeni</span>
+                {title || 'Popüler Kategoriler'} <span className="bg-orange-100 text-orange-600 text-[10px] px-2 py-0.5 rounded-full">Yeni</span>
             </h4>
             <div className="flex gap-3 overflow-x-auto pb-4 pr-4 no-scrollbar">
                 {categories.map((cat) => (

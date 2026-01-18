@@ -9,8 +9,8 @@ export default function DuelPreview() {
 
     return (
         <>
-            <div className="h-32 w-full"></div>
-            <section className="px-4 mb-8 mt-4 relative z-0">
+            <div className="h-16 w-full"></div>
+            <section className="px-4 mb-8 mt-2 relative z-0">
                 <div className="bg-white p-1 rounded-[30px] border border-gray-100 shadow-sm relative overflow-hidden">
 
                     {/* Header */}
@@ -31,7 +31,7 @@ export default function DuelPreview() {
                             onClick={() => window.location.href = '/podyum'} // Basınca podyuma gitsin
                         >
                             <img
-                                src="https://images.unsplash.com/photo-1541781777631-faafa1131b60?auto=format&fit=crop&q=80"
+                                src="https://images.unsplash.com/photo-1511044568932-338cba0ad803?auto=format&fit=crop&q=80"
                                 className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110"
                                 alt="Pet 1"
                             />
