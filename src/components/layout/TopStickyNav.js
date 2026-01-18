@@ -14,10 +14,10 @@ export default function TopStickyNav() {
                 className="flex flex-col hover:opacity-80 transition-opacity"
             >
                 <div className="flex items-center gap-1">
-                    <span className="text-2xl text-cyan-600">🐾</span>
+                    <span className="text-2xl text-turkuaz-blue">🐾</span>
                     <h1 className="font-black text-xl tracking-tight">
                         <span className="text-paw-orange">Cici</span>
-                        <span className="text-cyan-600">Pet</span>
+                        <span className="text-turkuaz-blue">Pet</span>
                     </h1>
                 </div>
                 <span className="text-[10px] font-bold text-gray-400 -mt-1 tracking-wide">En Tatlı Yarışma</span>
@@ -29,7 +29,7 @@ export default function TopStickyNav() {
                 {/* Pet Icon */}
                 <Link
                     href={isLoggedIn ? "/my-pet" : "/login"}
-                    className={`flex flex-col items-center justify-center transition-all hover:scale-110 active:scale-95 text-gray-500 hover:text-cyan-600
+                    className={`flex flex-col items-center justify-center transition-all hover:scale-110 active:scale-95 text-gray-500 hover:text-turkuaz-blue
             ${!isLoggedIn && 'opacity-50 grayscale'}
           `}
                 >
@@ -46,7 +46,7 @@ export default function TopStickyNav() {
                 {/* Competitions Icon */}
                 <Link
                     href="/podyum"
-                    className="flex flex-col items-center justify-center transition-all hover:scale-110 active:scale-95 text-gray-500 hover:text-cyan-600"
+                    className="flex flex-col items-center justify-center transition-all hover:scale-110 active:scale-95 text-gray-500 hover:text-turkuaz-blue"
                 >
                     <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
                         <path d="M6 9H4.5a2.5 2.5 0 0 1 0-5H6" />
@@ -61,7 +61,7 @@ export default function TopStickyNav() {
                 {/* User Icon */}
                 <Link
                     href={isLoggedIn ? "/profile" : "/login"}
-                    className="flex flex-col items-center justify-center transition-all hover:scale-110 active:scale-95 text-gray-500 hover:text-cyan-600"
+                    className="flex flex-col items-center justify-center transition-all hover:scale-110 active:scale-95 text-gray-500 hover:text-turkuaz-blue"
                 >
                     <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
                         <path d="M19 21v-2a4 4 0 0 0-4-4H9a4 4 0 0 0-4 4v2" />

@@ -8,6 +8,7 @@ module.exports = {
             colors: {
                 'bone-white': '#FAF9F6',
                 'paw-orange': '#FF8C00',
+                'turkuaz-blue': '#00bcd4',
             },
             fontFamily: {
                 sans: ['Arial', 'Helvetica', 'sans-serif'],
