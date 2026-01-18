@@ -2,9 +2,11 @@
 
 import Link from 'next/link';
 
+import { useSession } from 'next-auth/react';
+
 export default function TopStickyNav() {
-    // Mock Auth State
-    const isLoggedIn = true;
+    const { data: session } = useSession();
+    const isLoggedIn = !!session;
 
     return (
         <nav className="fixed top-0 left-0 w-full z-50 bg-white/95 backdrop-blur-md shadow-sm border-b border-gray-100 h-16 px-4 flex justify-between items-center transition-all">
@@ -63,10 +65,18 @@ export default function TopStickyNav() {
                     href={isLoggedIn ? "/profile" : "/login"}
                     className="flex flex-col items-center justify-center transition-all hover:scale-110 active:scale-95 text-gray-500 hover:text-turkuaz-blue"
                 >
-                    <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
-                        <path d="M19 21v-2a4 4 0 0 0-4-4H9a4 4 0 0 0-4 4v2" />
-                        <circle cx="12" cy="7" r="4" />
-                    </svg>
+                    {isLoggedIn && session?.user?.image ? (
+                        <img
+                            src={session.user.image}
+                            alt="Profile"
+                            className="w-[26px] h-[26px] rounded-full border border-gray-200"
+                        />
+                    ) : (
+                        <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
+                            <path d="M19 21v-2a4 4 0 0 0-4-4H9a4 4 0 0 0-4 4v2" />
+                            <circle cx="12" cy="7" r="4" />
+                        </svg>
+                    )}
                 </Link>
 
             </div>

@@ -8,16 +8,20 @@ export const metadata = {
   description: 'Sevgi dolu, ödüllü evcil hayvan platformu.',
 };
 
+import { AuthProvider } from '@/components/Providers';
+
 export default function RootLayout({ children }) {
   return (
     <html lang="tr">
       <body className="bg-bone-white min-h-screen pt-16">
-        <TopStickyNav />
-        <div className="container mx-auto">
-          {children}
-        </div>
-        <div className="h-40 w-full"></div>
-        <HomeBottomBar />
+        <AuthProvider>
+          <TopStickyNav />
+          <div className="container mx-auto">
+            {children}
+          </div>
+          <div className="h-40 w-full"></div>
+          <HomeBottomBar />
+        </AuthProvider>
       </body>
     </html>
   );
