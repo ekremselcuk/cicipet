@@ -14,7 +14,7 @@ export default function DuelInterface() {
 
                 <div className="rounded-[24px] p-2 text-center relative z-10">
                     <h3 className="font-black text-gray-800 mb-1 flex items-center justify-center gap-2 text-lg">
-                        <span className="text-2xl animate-sparkle">⚔️</span> ANLIK DÜELLO
+                        <span className="text-2xl animate-sparkle">🏆</span> ANLIK YARIŞMA
                     </h3>
                     <p className="text-xs text-gray-500 font-medium mb-6 bg-gray-50 inline-block px-3 py-1 rounded-full">
                         Hangisi daha <span className="text-orange-500 font-bold">"Uykucu"</span>?

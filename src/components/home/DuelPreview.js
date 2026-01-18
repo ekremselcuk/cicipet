@@ -8,7 +8,7 @@ export default function DuelPreview() {
     const [voted, setVoted] = useState(false);
 
     return (
-        <section className="px-4 mb-8 mt-6 relative z-0">
+        <section className="px-4 mb-8 mt-20 relative z-0">
             <div className="bg-white p-1 rounded-[30px] border border-gray-100 shadow-sm relative overflow-hidden">
 
                 {/* Header */}

@@ -1,10 +1,10 @@
 export default function CategoryBar() {
     const categories = [
-        { id: 1, title: 'En Karizmatik', type: 'Güzellik', icon: '😎', color: 'bg-blue-50 text-blue-500' },
-        { id: 2, title: 'En Hızlı', type: 'Yetenek', icon: '⚡', color: 'bg-yellow-50 text-yellow-500' },
-        { id: 3, title: 'Mahalle', type: 'Yerel', icon: '🏘️', color: 'bg-green-50 text-green-500' },
-        { id: 4, title: 'Komik Anlar', type: 'Eğlence', icon: '🤣', color: 'bg-pink-50 text-pink-500' },
-        { id: 5, title: 'Sponsorlu', type: 'Marka', icon: '⭐', color: 'bg-purple-50 text-purple-500' },
+        { id: 1, title: 'En Karizmatik', type: 'Güzellik', image: 'https://images.unsplash.com/photo-1543852786-1cf6624b9987?auto=format&fit=crop&q=80' },
+        { id: 2, title: 'En Hızlı', type: 'Yetenek', image: 'https://images.unsplash.com/photo-1517849845537-4d257902454a?auto=format&fit=crop&q=80' },
+        { id: 3, title: 'Mahalle', type: 'Yerel', image: 'https://images.unsplash.com/photo-1514888286974-6c03e2ca1dba?auto=format&fit=crop&q=80' },
+        { id: 4, title: 'Komik Anlar', type: 'Eğlence', image: 'https://images.unsplash.com/photo-1533738363-b7f9aef128ce?auto=format&fit=crop&q=80' },
+        { id: 5, title: 'Sponsorlu', type: 'Marka', image: 'https://images.unsplash.com/photo-1583337130417-3346a1be7dee?auto=format&fit=crop&q=80' },
     ];
 
     return (
@@ -16,15 +16,18 @@ export default function CategoryBar() {
                 {categories.map((cat) => (
                     <div
                         key={cat.id}
-                        className="min-w-[110px] bg-white p-3 rounded-[20px] shadow-sm border border-gray-100 flex flex-col justify-between h-32 relative group transition-all duration-300 hover:shadow-md cursor-pointer hover:-translate-y-1"
+                        className="min-w-[110px] h-32 relative rounded-[20px] overflow-hidden shadow-sm group cursor-pointer hover:shadow-md hover:-translate-y-1 transition-all duration-300"
                     >
-                        <div className={`w-8 h-8 rounded-full flex items-center justify-center text-lg mb-2 ${cat.color}`}>
-                            {cat.icon}
-                        </div>
+                        {/* Background Image */}
+                        <img src={cat.image} className="absolute inset-0 w-full h-full object-cover group-hover:scale-110 transition-transform duration-500" alt={cat.title} />
 
-                        <div>
-                            <span className="text-[9px] font-bold text-gray-400 uppercase tracking-wider block mb-0.5">{cat.type}</span>
-                            <span className="text-xs font-black text-gray-800 leading-tight block">{cat.title}</span>
+                        {/* Overlay */}
+                        <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent"></div>
+
+                        {/* Content */}
+                        <div className="absolute bottom-3 left-3 right-3 text-white">
+                            <span className="text-[9px] font-bold opacity-80 uppercase tracking-wider block mb-0.5">{cat.type}</span>
+                            <span className="text-xs font-black leading-tight block">{cat.title}</span>
                         </div>
                     </div>
                 ))}

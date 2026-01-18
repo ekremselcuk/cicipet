@@ -9,7 +9,7 @@ export default function BottomNav() {
             </Link>
 
             <Link href="/arena" className="flex flex-col items-center text-gray-400 hover:text-orange-500 w-16 transition-colors">
-                <span className="text-2xl mb-0.5">⚔️</span>
+                <span className="text-2xl mb-0.5">🏆</span>
                 <span className="text-[10px] font-bold">Arena</span>
             </Link>
 
