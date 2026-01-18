@@ -7,7 +7,7 @@ import HomeBottomBar from '@/components/layout/HomeBottomBar';
 
 export default function Home() {
   return (
-    <main className="pt-16 pb-32 bg-bone-white min-h-screen">
+    <main className="pt-16 pb-32 bg-bone-white min-h-screen"> {/* Main Layout */}
       {/* 1. Sticky Top Bar */}
       <TopStickyNav />
 
