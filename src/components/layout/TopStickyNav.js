@@ -6,23 +6,22 @@ export default function TopStickyNav() {
     // Mock Auth State
     const isLoggedIn = true;
 
-    const handleRefresh = () => {
-        window.location.reload();
-    }
-
     return (
         <nav className="fixed top-0 left-0 w-full z-50 bg-white/95 backdrop-blur-md shadow-sm border-b border-gray-100 h-16 px-4 flex justify-between items-center transition-all">
             {/* Left: Logo & Slogan */}
-            <div
-                onClick={handleRefresh}
-                className="flex flex-col cursor-pointer hover:opacity-80 transition-opacity"
+            <Link
+                href="/"
+                className="flex flex-col hover:opacity-80 transition-opacity"
             >
                 <div className="flex items-center gap-1">
-                    <span className="text-2xl">🐾</span>
-                    <span className="font-black text-xl text-paw-orange tracking-tight">CiciPet</span>
+                    <span className="text-2xl text-teal-400">🐾</span>
+                    <h1 className="font-black text-xl tracking-tight">
+                        <span className="text-paw-orange">Cici</span>
+                        <span className="text-teal-400">Pet</span>
+                    </h1>
                 </div>
                 <span className="text-[10px] font-bold text-gray-400 -mt-1 tracking-wide">En Tatlı Yarışma</span>
-            </div>
+            </Link>
 
             {/* Right: Icon Group */}
             <div className="flex items-center gap-4">
