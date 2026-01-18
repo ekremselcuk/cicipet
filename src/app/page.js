@@ -1,6 +1,6 @@
 import TopStickyNav from '@/components/layout/TopStickyNav';
 import CategoryBar from '@/components/home/CategoryBar';
-import ChampionHero from '@/components/home/ChampionHero';
+import DuelPreview from '@/components/home/DuelPreview';
 import CharityHub from '@/components/home/CharityHub';
 import SmartFeed from '@/components/home/SmartFeed';
 import HomeBottomBar from '@/components/layout/HomeBottomBar';
@@ -14,8 +14,8 @@ export default function Home() {
       {/* 2. Sub-Header: Category Bar */}
       <CategoryBar />
 
-      {/* 3. Hero: Champion Showcase */}
-      <ChampionHero />
+      {/* 3. Hero: Duel Preview (Instead of Champion Hero) */}
+      <DuelPreview />
 
       {/* Charity Section (Kept for Social Impact) */}
       <CharityHub />
