@@ -50,7 +50,7 @@ export default function SmartFeed() {
 
                         {/* Soft Like Button */}
                         <div className="flex flex-col items-center gap-1">
-                            <button className="w-12 h-12 rounded-full bg-red-50 text-red-500 shadow-sm flex items-center justify-center text-2xl transition-transform active:scale-90 hover:bg-red-100 animate-heartbeat">
+                            <button className="w-12 h-12 rounded-full bg-red-50 text-red-600 shadow-sm flex items-center justify-center text-2xl hover:bg-red-100 animate-heartbeat">
                                 ❤️
                             </button>
                             <span className="text-xs font-bold text-gray-500">{post.score}</span>

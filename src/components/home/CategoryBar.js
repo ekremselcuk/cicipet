@@ -4,28 +4,23 @@
 
 'use client';
 
-import { useState, useEffect, useRef } from 'react';
+import { useState, useEffect } from 'react';
 import Link from 'next/link';
 
 export default function CategoryBar({ title }) {
     const [isScrolled, setIsScrolled] = useState(false);
-    const sentinelRef = useRef(null);
-
     useEffect(() => {
-        const observer = new IntersectionObserver(([entry]) => {
-            // Sentinel tepeye değdiğinde (görüşten çıktığında) shrink et
-            setIsScrolled(!entry.isIntersecting);
-        }, {
-            root: null,
-            threshold: 0,
-            // top-16 (64px) + biraz pay. Sentinel'in pozisyonuna göre ayar.
-            // Sentinel absolute ve yukarıda (-top-12 gibi).
-            // -100px margin ile sentinel viewport üst sınırından 100px önce tetikler.
-            rootMargin: '-70px 0px 0px 0px'
-        });
+        const handleScroll = () => {
+            if (window.scrollY > 50) {
+                setIsScrolled(true);
+            } else {
+                setIsScrolled(false);
+            }
+        };
 
-        if (sentinelRef.current) observer.observe(sentinelRef.current);
-        return () => observer.disconnect();
+        window.addEventListener('scroll', handleScroll, { passive: true });
+        handleScroll();
+        return () => window.removeEventListener('scroll', handleScroll);
     }, []);
 
     const categories = [
@@ -38,8 +33,7 @@ export default function CategoryBar({ title }) {
 
     return (
         <>
-            {/* Sentinel: Scroll tespiti için görünmez element */}
-            <div ref={sentinelRef} className="absolute w-full h-px -translate-y-16 pointer-events-none opacity-0" />
+
 
             <div className={`sticky top-16 z-40 bg-bone-white/95 backdrop-blur-md border-b border-gray-100/50 shadow-sm transition-all duration-500 ease-out pl-4 py-2 flex flex-col justify-center
                 ${isScrolled ? 'h-20' : 'h-28'}
