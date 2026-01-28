@@ -9,7 +9,9 @@ export default function AdminLayout({
     return (
         <AdminMenuProvider>
             <AdminSidebar />
-            {children}
+            <div className="md:pl-72 transition-all duration-300">
+                {children}
+            </div>
         </AdminMenuProvider>
     );
 }
