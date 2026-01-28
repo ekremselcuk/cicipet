@@ -1,18 +1,7 @@
 import type { NextConfig } from "next";
-const withPWA = require("@ducanh2912/next-pwa").default({
-  dest: "public",
-  cacheOnFrontEndNav: true,
-  aggressiveFrontEndNavCaching: true,
-  reloadOnOnline: true,
-  swcMinify: true,
-  disable: true, // Temporarily disabled to debug Vercel 404
-  workboxOptions: {
-    disableDevLogs: true,
-  },
-});
 
 const nextConfig: NextConfig = {
   /* config options here */
 };
 
-export default withPWA(nextConfig);
+export default nextConfig;
