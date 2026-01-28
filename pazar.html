@@ -1,0 +1,509 @@
+<!DOCTYPE html>
+<html class="light" lang="tr">
+
+<head>
+    <meta charset="utf-8" />
+    <meta content="width=device-width, initial-scale=1.0" name="viewport" />
+    <title>CiciPazar - Alışveriş</title>
+    <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&amp;display=swap"
+        rel="stylesheet" />
+    <link
+        href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap"
+        rel="stylesheet" />
+    <script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    colors: {
+                        "primary": "#f4ab25", // CiciPet Orange
+                        "primary-dark": "#d98e0d",
+                        "secondary": "#0d9488", // CiciPet Teal
+                        "secondary-light": "#ccfbf1",
+                        "background-light": "#fcfaf8",
+                        "background-dark": "#1c170d",
+                        "surface-light": "#ffffff",
+                        "surface-dark": "#2a241b",
+                        "text-main": "#1c170d",
+                        "text-sub": "#9c7f49",
+                    },
+                    fontFamily: {
+                        "display": ["Plus Jakarta Sans", "sans-serif"]
+                    },
+                    borderRadius: { "DEFAULT": "1rem", "lg": "1.5rem", "xl": "2rem", "full": "9999px" },
+                },
+            },
+        }
+    </script>
+    <style>
+        .no-scrollbar::-webkit-scrollbar {
+            display: none;
+        }
+
+        .no-scrollbar {
+            -ms-overflow-style: none;
+            scrollbar-width: none;
+        }
+    </style>
+    <style>
+        body {
+            min-height: max(884px, 100dvh);
+        }
+    </style>
+    <style>
+        body {
+            min-height: max(884px, 100dvh);
+        }
+    </style>
+</head>
+
+<body class="bg-background-light dark:bg-background-dark font-display text-text-main dark:text-white pb-24">
+    <header
+        class="sticky top-0 z-50 bg-background-light/95 dark:bg-background-dark/95 backdrop-blur-md transition-colors duration-300 border-b border-black/5 dark:border-white/5">
+        <div class="flex items-center px-4 py-3 justify-between">
+            <a href="index.html" class="flex items-center gap-2 group">
+                <div
+                    class="size-8 rounded-full bg-primary flex items-center justify-center text-white font-bold text-lg shadow-sm group-hover:scale-110 transition-transform">
+                    <span class="material-symbols-outlined filled text-[20px]">pets</span>
+                </div>
+                <div class="flex flex-col">
+                    <h1 class="text-xl font-extrabold tracking-tight text-neutral-900 dark:text-white leading-none">
+                        CiciPet</h1>
+                    <span class="text-[10px] font-bold text-secondary tracking-wide leading-none">Sevgiyi Hisset</span>
+                </div>
+            </a>
+            <div class="flex items-center gap-3">
+                <button
+                    class="flex items-center justify-center rounded-full size-10 hover:bg-black/5 dark:hover:bg-white/10 transition-colors relative">
+                    <span class="material-symbols-outlined text-[#1c170d] dark:text-white"
+                        style="font-size: 26px;">notifications</span>
+                    <span
+                        class="absolute top-2.5 right-2.5 h-2 w-2 rounded-full bg-primary border border-background-light dark:border-background-dark"></span>
+                </button>
+                <div
+                    class="flex size-9 shrink-0 items-center justify-center rounded-full bg-secondary/10 overflow-hidden ring-2 ring-transparent hover:ring-secondary/20 transition-all cursor-pointer">
+                    <span class="material-symbols-outlined text-secondary filled">person</span>
+                </div>
+            </div>
+        </div>
+    </header>
+    <main>
+        <div class="px-4 py-3">
+            <div
+                class="relative flex items-center w-full h-11 rounded-xl bg-white dark:bg-surface-dark shadow-sm border border-gray-100 dark:border-gray-700 overflow-hidden group focus-within:ring-2 focus-within:ring-primary/50 transition-all">
+                <div class="grid place-items-center h-full w-10 text-text-sub pl-1">
+                    <span class="material-symbols-outlined text-[20px]">search</span>
+                </div>
+                <input
+                    class="peer h-full w-full outline-none text-sm text-text-main dark:text-white pr-2 bg-transparent placeholder:text-text-sub/70"
+                    id="search" placeholder="Mama, oyuncak veya bakım ürünleri..." type="text" />
+            </div>
+        </div>
+        <div class="px-4 pb-2">
+            <div class="flex items-center gap-3 overflow-x-auto no-scrollbar">
+                <span class="text-[10px] font-bold text-text-sub whitespace-nowrap mr-1">Partnerler:</span>
+                <div
+                    class="h-8 w-8 rounded-full border border-gray-200 bg-white flex items-center justify-center overflow-hidden shrink-0 shadow-sm">
+                    <div class="w-full h-full bg-contain bg-center bg-no-repeat"
+                        style="background-image: url('https://lh3.googleusercontent.com/aida-public/AB6AXuAwjG6SqdG07d-RliXz4ManFg6-iAWeSdoo3rZRBfSlQq3PNmSeAA7YRzhVQioKiDPdbybszBlXMheWg5ufiTUze3GlffNtDubFsLBpnHhyjGD0M7Tj7YWu_HEDl0SAfzr88g9HWbuaX944cWgSh6vt4FPMPZOXJW1JHy5_FnxmZMr4yCUSEwtkv20OKrzeZqTIQpdI23DCJmqDVMiMkJcu_TxAg_R71ag8Ue19Akxr29UbivTmO1q4iWZLWg-AJ9s2DblEfBWK6Jk');">
+                    </div>
+                </div>
+                <div
+                    class="h-8 w-8 rounded-full border border-gray-200 bg-white flex items-center justify-center overflow-hidden shrink-0 shadow-sm">
+                    <div class="w-[80%] h-[80%] bg-contain bg-center bg-no-repeat"
+                        style="background-image: url('https://lh3.googleusercontent.com/aida-public/AB6AXuAyFEGSp4ZENQtqKI9oXcECNPJFNSeBXcybMCu769US4fx5y5mgR6a5Q6ugwn1Zm2_10WqQ3v-qs8QNuBpf4PDQL4SEnyx7GTqUNromUmJsiv_gShO9e5YQ0d86kqoGbM2IP8YvNoPlskEHL3gk0SF4B_kuogTCGjIxwZ2M378tCFeATqMIijVlcAMjK3CdG3X4OXFvNKUrbQaxIHjdsqz6UB6G-lzFRbJpAv2iZtuKaEfY7RetvyVlf8JqyeTYueTfu8_2roSPvLQ');">
+                    </div>
+                </div>
+                <div
+                    class="h-8 w-8 rounded-full border border-gray-200 bg-white flex items-center justify-center overflow-hidden shrink-0 shadow-sm">
+                    <div class="w-[70%] h-[70%] bg-contain bg-center bg-no-repeat"
+                        style="background-image: url('https://lh3.googleusercontent.com/aida-public/AB6AXuBaHjXrOpqKIbiBhsbDpOUDsez-3GFHmwzVSr-DB8zvwMhkWEGxatkcDTb3FdBjLrQXMRwF6Zw8utXngUlXGWds_4q8iqaVpNN0ITll9kvmk1dM_Z5209JA7NV6XZmmi3x-8KedbdZt7VMht9P5_bVFDQ2x3-hSvSwy5uhZR1w8DrvN2JoaOFjjYu8PjQxoX15wecOzXomc448zIuDKIgnPImSgeWer24eWXu-9JDO9AX-uZ53VwzGjeT_JJxloSxlkFjIcMj3g0Zo');">
+                    </div>
+                </div>
+                <div class="h-8 px-3 rounded-full bg-primary/10 flex items-center justify-center shrink-0">
+                    <span class="text-[10px] font-bold text-primary">+5 Mağaza</span>
+                </div>
+            </div>
+        </div>
+        <section class="py-4 border-b border-gray-100/50 dark:border-gray-800/50">
+            <div class="flex gap-2 px-4 overflow-x-auto no-scrollbar">
+                <button
+                    class="flex h-9 shrink-0 items-center justify-center px-4 rounded-full bg-primary text-white text-sm font-semibold shadow-md shadow-primary/20">
+                    Yiyecek
+                </button>
+                <button
+                    class="flex h-9 shrink-0 items-center justify-center px-4 rounded-full bg-surface-light dark:bg-surface-dark border border-gray-200 dark:border-gray-700 text-text-main dark:text-white text-sm font-medium hover:bg-gray-50 dark:hover:bg-gray-800">
+                    Barınma
+                </button>
+                <button
+                    class="flex h-9 shrink-0 items-center justify-center px-4 rounded-full bg-surface-light dark:bg-surface-dark border border-gray-200 dark:border-gray-700 text-text-main dark:text-white text-sm font-medium hover:bg-gray-50 dark:hover:bg-gray-800">
+                    Aksesuar
+                </button>
+                <button
+                    class="flex h-9 shrink-0 items-center justify-center px-4 rounded-full bg-surface-light dark:bg-surface-dark border border-gray-200 dark:border-gray-700 text-text-main dark:text-white text-sm font-medium hover:bg-gray-50 dark:hover:bg-gray-800">
+                    Bakım
+                </button>
+                <button
+                    class="flex h-9 shrink-0 items-center justify-center px-4 rounded-full bg-surface-light dark:bg-surface-dark border border-gray-200 dark:border-gray-700 text-text-main dark:text-white text-sm font-medium hover:bg-gray-50 dark:hover:bg-gray-800">
+                    Sağlık
+                </button>
+            </div>
+        </section>
+        <section class="py-6">
+            <div class="px-4 mb-3 flex items-center justify-between">
+                <div>
+                    <h3 class="text-lg font-bold text-text-main dark:text-white flex items-center gap-2">
+                        Patinize Özel
+                        <span class="material-symbols-outlined text-secondary text-xl"
+                            style="font-variation-settings: 'FILL' 1;">pets</span>
+                    </h3>
+                    <p class="text-xs text-text-sub mt-0.5">Boncuk (3 aylık Golden) için seçtik</p>
+                </div>
+                <button class="text-xs font-bold text-secondary hover:text-secondary/80">Tümü</button>
+            </div>
+            <div class="flex gap-4 overflow-x-auto no-scrollbar px-4 pb-2 snap-x snap-mandatory">
+                <div class="snap-start shrink-0 w-[160px] flex flex-col gap-2">
+                    <div
+                        class="relative aspect-square rounded-2xl overflow-hidden bg-gray-100 border border-gray-100 dark:border-gray-800">
+                        <img alt="Puppy Toy" class="w-full h-full object-cover"
+                            src="https://lh3.googleusercontent.com/aida-public/AB6AXuA9HQsJt2bpMwKNBqssdTUu3kNrVZD8D1j1S_8aJQz333V_W2VCjHwAaCax9ntqN82zjZ1OXYji7ld0ZlpJo4wP7n7u6uMWkug1cw7ETLWQ8p7kfAE-RO10wjk1vjIjfbkElHS5i4LhijcurX5ewn71xo-1AeVH27wCzGTXuc8YtISFNzwzx3C9IULa_UGtIIVCvDcDMcibB-zye3RMDy9R4_-5cu3mETwofnBR7xL8MUAX4zHAmjlstYHbdXvoue68UkTtxbjvrh0" />
+                        <div
+                            class="absolute top-2 left-2 bg-secondary/90 backdrop-blur-sm px-2 py-0.5 rounded-full flex items-center gap-1 shadow-sm">
+                            <span class="material-symbols-outlined text-white text-[10px]">stars</span>
+                            <span class="text-[9px] font-bold text-white">+50 Puan</span>
+                        </div>
+                    </div>
+                    <div>
+                        <h4
+                            class="text-sm font-semibold text-text-main dark:text-white line-clamp-2 h-10 leading-tight">
+                            Yavru Köpek Diş Kaşıma Oyuncağı</h4>
+                        <div class="flex items-center justify-between mt-1">
+                            <span class="font-bold text-primary">129 TL</span>
+                        </div>
+                        <button
+                            class="w-full mt-2 bg-surface-light dark:bg-surface-dark border border-primary/20 text-primary hover:bg-primary hover:text-white text-[10px] font-bold py-1.5 rounded-lg transition-colors flex items-center justify-center gap-1">
+                            <span>Amazon'da Gör</span>
+                            <span class="material-symbols-outlined text-[12px]">open_in_new</span>
+                        </button>
+                    </div>
+                </div>
+                <div class="snap-start shrink-0 w-[160px] flex flex-col gap-2">
+                    <div
+                        class="relative aspect-square rounded-2xl overflow-hidden bg-gray-100 border border-gray-100 dark:border-gray-800">
+                        <img alt="Puppy Food" class="w-full h-full object-cover"
+                            src="https://lh3.googleusercontent.com/aida-public/AB6AXuDeKabjMNCgA043Na8n0sLGuV9D2ty6g1FvAys61JW-y1VfGl5P8qH2rsBCLpnDf0KKWxYtGA6h5rKxHG0QUrkWZ6foDavFn-rQb02nk_16nL2gL3z4KwmF5xPTA60y1_nywVEJAN1lENN1FnoM6z0GFJmTqNAj976sb3JpZ1mfzNGN4ELM1EFBPZ2MiqhJThOIa2rRD9TFGU3O2QAJtBGIh8OSBVrrSDPfP6g6wz-bgJxtQsaH_cqbG-45jNQ29Tbez_pOGsBVE-I" />
+                        <div
+                            class="absolute top-2 left-2 bg-secondary/90 backdrop-blur-sm px-2 py-0.5 rounded-full flex items-center gap-1 shadow-sm">
+                            <span class="material-symbols-outlined text-white text-[10px]">stars</span>
+                            <span class="text-[9px] font-bold text-white">+100 Puan</span>
+                        </div>
+                    </div>
+                    <div>
+                        <h4
+                            class="text-sm font-semibold text-text-main dark:text-white line-clamp-2 h-10 leading-tight">
+                            Pro Plan Medium Puppy Tavuklu 3kg</h4>
+                        <div class="flex items-center justify-between mt-1">
+                            <span class="font-bold text-primary">420 TL</span>
+                        </div>
+                        <button
+                            class="w-full mt-2 bg-surface-light dark:bg-surface-dark border border-primary/20 text-primary hover:bg-primary hover:text-white text-[10px] font-bold py-1.5 rounded-lg transition-colors flex items-center justify-center gap-1">
+                            <span>Trendyol'da Gör</span>
+                            <span class="material-symbols-outlined text-[12px]">open_in_new</span>
+                        </button>
+                    </div>
+                </div>
+                <div class="snap-start shrink-0 w-[160px] flex flex-col gap-2">
+                    <div
+                        class="relative aspect-square rounded-2xl overflow-hidden bg-gray-100 border border-gray-100 dark:border-gray-800">
+                        <img alt="Bed" class="w-full h-full object-cover"
+                            src="https://lh3.googleusercontent.com/aida-public/AB6AXuBANMbdVnwHzX-3UPHBnC7ED_7WtAOp8QpcKqrRs1QPb9kLw1bmshjUNfS0N9_jmxK1HPbiwB2LA--eAJugL3cR9imJxpMLS9O0DND4LcEGjvBLSBoL6Bl2eQuLrC2m1AEGVsLYisLHFpxrchsFi1Aw1AAtMJVtLxAD3Eo7zpSyaf2BVg2qXrbXXgWj3ZrVBlqKkbhBT4Guh9TB6jOl63EctH00BbMoqb-ucVYV8dNaVDBL9AqsCOzHKHtW8DFWseEJpnlnda2rGq4" />
+                        <div
+                            class="absolute top-2 left-2 bg-secondary/90 backdrop-blur-sm px-2 py-0.5 rounded-full flex items-center gap-1 shadow-sm">
+                            <span class="material-symbols-outlined text-white text-[10px]">stars</span>
+                            <span class="text-[9px] font-bold text-white">+200 Puan</span>
+                        </div>
+                    </div>
+                    <div>
+                        <h4
+                            class="text-sm font-semibold text-text-main dark:text-white line-clamp-2 h-10 leading-tight">
+                            Ortopedik Sünger Yatak - Gri XL</h4>
+                        <div class="flex items-center justify-between mt-1">
+                            <span class="font-bold text-primary">850 TL</span>
+                        </div>
+                        <button
+                            class="w-full mt-2 bg-surface-light dark:bg-surface-dark border border-primary/20 text-primary hover:bg-primary hover:text-white text-[10px] font-bold py-1.5 rounded-lg transition-colors flex items-center justify-center gap-1">
+                            <span>Hepsiburada'da Gör</span>
+                            <span class="material-symbols-outlined text-[12px]">open_in_new</span>
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </section>
+        <section
+            class="py-6 bg-gradient-to-r from-orange-50 to-amber-50 dark:from-surface-dark dark:to-surface-dark border-y border-orange-100 dark:border-gray-800">
+            <div class="px-4 mb-4 flex items-center justify-between">
+                <div class="flex items-center gap-2">
+                    <span class="material-symbols-outlined text-primary animate-pulse"
+                        style="font-variation-settings: 'FILL' 1;">bolt</span>
+                    <h3 class="text-lg font-bold text-text-main dark:text-white">Flaş Mama Fırsatları</h3>
+                </div>
+                <div
+                    class="bg-red-500 text-white text-xs font-bold px-2 py-1 rounded-md flex items-center gap-1 shadow-sm">
+                    <span class="material-symbols-outlined text-[14px]">timer</span>
+                    02:14:50
+                </div>
+            </div>
+            <div class="flex gap-4 overflow-x-auto no-scrollbar px-4 pb-2 snap-x snap-mandatory">
+                <div
+                    class="snap-center shrink-0 w-[260px] bg-white dark:bg-surface-dark rounded-xl p-3 shadow-sm border border-orange-100 dark:border-gray-700 relative">
+                    <div
+                        class="absolute top-0 right-0 bg-red-500 text-white text-[10px] font-bold px-2 py-1 rounded-bl-xl rounded-tr-xl z-10">
+                        %30 İndirim
+                    </div>
+                    <div class="flex gap-3">
+                        <div class="w-24 h-24 rounded-lg bg-gray-50 shrink-0 overflow-hidden relative">
+                            <img class="w-full h-full object-cover"
+                                src="https://lh3.googleusercontent.com/aida-public/AB6AXuCcnAWYs9BhTNJqOIuXUjh7lH3gimqzrooJvTJL084qMiSzezCvV8EY5AAMskZbngzfPFX0J1nC6V2j1Qw1nyafOmWzqoqCg5YXsN9TvQblPLZc9AGHecu9mfRCfbrwqiuTUK0zfqDRNVrmqs6ei0lswuScKzwiW8LRMXDcjRauQgJ_KkXLxGBOEt1etR3shNFL0RIVayFUYvjGl1LE8glz4P3HiA-wpK2tS6LZbQK6PNXF1CvqkYpP6Sm0zgcwqfQZ0bQHXjVNXCk" />
+                            <div class="absolute bottom-1 right-1 w-5 h-5 rounded-full bg-white p-0.5 shadow-sm">
+                                <img class="w-full h-full object-contain"
+                                    src="https://lh3.googleusercontent.com/aida-public/AB6AXuBSOObUho4G_h5kq_qXmTcULJHABYHMXIn4_N6XEXsqQBzpSFdI8_LF_A_iiDdGfLdBfPkCv4HqeYhDCrWrdoqkZBCUV7YOU-wk-WHZyRfMCQF4oH-Ki_SEuBLM43oOB34xhZHKEji1xdvwQJeEtm_kqKlQZVZ6qNeaOELtz_pU1g6WsgDwD5RI2OuUR555naSi21BtBw0JLNbFwkdwmRgLtyMC9Gghcz9RvHCSGjySkG4ZYQ-Z7s2ykCCqwZf1934P0r1OJxTt4OI" />
+                            </div>
+                        </div>
+                        <div class="flex flex-col justify-between py-1 w-full">
+                            <h4 class="text-sm font-semibold line-clamp-2 text-text-main dark:text-white leading-tight">
+                                Royal Canin Maxi Adult 15 Kg</h4>
+                            <div>
+                                <div class="flex items-baseline gap-2">
+                                    <span class="text-xs text-gray-400 line-through">1.250 TL</span>
+                                    <span class="text-base font-bold text-primary">875 TL</span>
+                                </div>
+                                <div
+                                    class="mt-2 flex items-center gap-1 text-[10px] text-secondary font-bold bg-secondary-light dark:bg-secondary/20 w-fit px-2 py-0.5 rounded-full">
+                                    <span class="material-symbols-outlined text-[12px]">stars</span> CiciPuan Kazan
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <button
+                        class="w-full mt-3 bg-primary text-white font-bold py-2 rounded-lg text-xs hover:bg-primary-dark transition-colors flex items-center justify-center gap-1">
+                        Trendyol'da Fırsatı Yakala <span
+                            class="material-symbols-outlined text-[14px]">arrow_forward</span>
+                    </button>
+                </div>
+                <div
+                    class="snap-center shrink-0 w-[260px] bg-white dark:bg-surface-dark rounded-xl p-3 shadow-sm border border-orange-100 dark:border-gray-700 relative">
+                    <div
+                        class="absolute top-0 right-0 bg-red-500 text-white text-[10px] font-bold px-2 py-1 rounded-bl-xl rounded-tr-xl z-10">
+                        %15 İndirim
+                    </div>
+                    <div class="flex gap-3">
+                        <div class="w-24 h-24 rounded-lg bg-gray-50 shrink-0 overflow-hidden relative">
+                            <img class="w-full h-full object-cover"
+                                src="https://lh3.googleusercontent.com/aida-public/AB6AXuDeKabjMNCgA043Na8n0sLGuV9D2ty6g1FvAys61JW-y1VfGl5P8qH2rsBCLpnDf0KKWxYtGA6h5rKxHG0QUrkWZ6foDavFn-rQb02nk_16nL2gL3z4KwmF5xPTA60y1_nywVEJAN1lENN1FnoM6z0GFJmTqNAj976sb3JpZ1mfzNGN4ELM1EFBPZ2MiqhJThOIa2rRD9TFGU3O2QAJtBGIh8OSBVrrSDPfP6g6wz-bgJxtQsaH_cqbG-45jNQ29Tbez_pOGsBVE-I" />
+                            <div class="absolute bottom-1 right-1 w-5 h-5 rounded-full bg-white p-0.5 shadow-sm">
+                                <img class="w-full h-full object-contain"
+                                    src="https://lh3.googleusercontent.com/aida-public/AB6AXuC5-wO4ACDjzaKAySei0kKQs2fbE5962ihIxzG7AiETqJPON7yz5KkPBfJVKBJeXDdCJABYbbM0FbxUryWLp6UBO6Yt6jhQkrOthrqRiSO_wyyY4eY0PLQsNFW2GqNEn5CDSqSUREcNioI1RdfaP2U9at3vZM_KcC9-rhS140sHmjPSga8Eat11UcZc7iscvgSkpdSN2lj4PawNtGUXrxkETI5qsom597VGY8G68sLQ4nclNQ5Lzz_I2ZhEP2l7a04SRmH6-ahOpAg" />
+                            </div>
+                        </div>
+                        <div class="flex flex-col justify-between py-1 w-full">
+                            <h4 class="text-sm font-semibold line-clamp-2 text-text-main dark:text-white leading-tight">
+                                Hills Science Plan Kitten 1.5kg</h4>
+                            <div>
+                                <div class="flex items-baseline gap-2">
+                                    <span class="text-xs text-gray-400 line-through">450 TL</span>
+                                    <span class="text-base font-bold text-primary">382 TL</span>
+                                </div>
+                                <div
+                                    class="mt-2 flex items-center gap-1 text-[10px] text-secondary font-bold bg-secondary-light dark:bg-secondary/20 w-fit px-2 py-0.5 rounded-full">
+                                    <span class="material-symbols-outlined text-[12px]">stars</span> CiciPuan Kazan
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <button
+                        class="w-full mt-3 bg-primary text-white font-bold py-2 rounded-lg text-xs hover:bg-primary-dark transition-colors flex items-center justify-center gap-1">
+                        Hepsiburada'da Fırsatı Yakala <span
+                            class="material-symbols-outlined text-[14px]">arrow_forward</span>
+                    </button>
+                </div>
+            </div>
+        </section>
+        <section class="py-6 border-b border-gray-100 dark:border-gray-800">
+            <div class="px-4 mb-3 flex items-center justify-between">
+                <h3 class="text-lg font-bold text-text-main dark:text-white">Aksesuar &amp; Gereçler</h3>
+                <button class="text-xs font-bold text-gray-400 hover:text-primary">Tümünü Gör</button>
+            </div>
+            <div class="flex gap-3 overflow-x-auto no-scrollbar px-4 pb-2">
+                <div class="shrink-0 w-[140px]">
+                    <div class="aspect-[4/5] rounded-xl overflow-hidden mb-2 relative group">
+                        <img class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
+                            src="https://lh3.googleusercontent.com/aida-public/AB6AXuDLpXXIP2idRltVqnVLypiqDxnwj7SGWLjOgLqyB01W60cA4Sj-6TpVYhMVTyTHJKqqJdgf-mY85_IpTKDD81z3JSMquPIM1HtVqqGy38SQNPxQ0DX-7lXsSYFxnMov07GiboJYBiHwJ5U-dB_oap2-Q1FJL9HUcWWdYlRxRaM4W-x9lBQmW--qMWKgB9dbwu2fVf1WqDY5iRfixJlbzLHb_KfnynX2v3TerGsk6mlxvhGb4egJ_vyZ6-ZYEAysRQzH0XMLgPt8qzc" />
+                        <div
+                            class="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black/60 to-transparent p-2 pt-8">
+                            <span
+                                class="text-white text-[10px] font-bold bg-secondary px-2 py-0.5 rounded-full inline-block mb-1">CiciPuan
+                                Kazan</span>
+                        </div>
+                    </div>
+                    <h4 class="text-xs font-semibold text-text-main dark:text-white line-clamp-1">Kedi Tüneli Oyun Seti
+                    </h4>
+                    <div class="flex justify-between items-center mt-1">
+                        <span class="text-sm font-bold text-text-main dark:text-white">300 TL</span>
+                        <button
+                            class="text-[10px] font-bold text-primary border border-primary/30 px-2 py-1 rounded-md">Trendyol</button>
+                    </div>
+                </div>
+                <div class="shrink-0 w-[140px]">
+                    <div class="aspect-[4/5] rounded-xl overflow-hidden mb-2 relative group">
+                        <img class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
+                            src="https://lh3.googleusercontent.com/aida-public/AB6AXuBANMbdVnwHzX-3UPHBnC7ED_7WtAOp8QpcKqrRs1QPb9kLw1bmshjUNfS0N9_jmxK1HPbiwB2LA--eAJugL3cR9imJxpMLS9O0DND4LcEGjvBLSBoL6Bl2eQuLrC2m1AEGVsLYisLHFpxrchsFi1Aw1AAtMJVtLxAD3Eo7zpSyaf2BVg2qXrbXXgWj3ZrVBlqKkbhBT4Guh9TB6jOl63EctH00BbMoqb-ucVYV8dNaVDBL9AqsCOzHKHtW8DFWseEJpnlnda2rGq4" />
+                        <div
+                            class="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black/60 to-transparent p-2 pt-8">
+                            <span
+                                class="text-white text-[10px] font-bold bg-secondary px-2 py-0.5 rounded-full inline-block mb-1">CiciPuan
+                                Kazan</span>
+                        </div>
+                    </div>
+                    <h4 class="text-xs font-semibold text-text-main dark:text-white line-clamp-1">Konforlu Yatak Gri
+                    </h4>
+                    <div class="flex justify-between items-center mt-1">
+                        <span class="text-sm font-bold text-text-main dark:text-white">850 TL</span>
+                        <button
+                            class="text-[10px] font-bold text-primary border border-primary/30 px-2 py-1 rounded-md">Petlebi</button>
+                    </div>
+                </div>
+                <div class="shrink-0 w-[140px]">
+                    <div
+                        class="aspect-[4/5] rounded-xl overflow-hidden mb-2 relative group bg-gray-100 flex items-center justify-center">
+                        <span class="material-symbols-outlined text-4xl text-gray-300">pets</span>
+                        <div
+                            class="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black/60 to-transparent p-2 pt-8">
+                            <span
+                                class="text-white text-[10px] font-bold bg-secondary px-2 py-0.5 rounded-full inline-block mb-1">CiciPuan
+                                Kazan</span>
+                        </div>
+                    </div>
+                    <h4 class="text-xs font-semibold text-text-main dark:text-white line-clamp-1">Otomatik Kayış 5m</h4>
+                    <div class="flex justify-between items-center mt-1">
+                        <span class="text-sm font-bold text-text-main dark:text-white">210 TL</span>
+                        <button
+                            class="text-[10px] font-bold text-primary border border-primary/30 px-2 py-1 rounded-md">Amazon</button>
+                    </div>
+                </div>
+            </div>
+        </section>
+        <section class="py-6 bg-surface-light dark:bg-surface-dark">
+            <div class="px-4 mb-3 flex items-center gap-2">
+                <div class="h-8 w-8 rounded-full bg-secondary/10 flex items-center justify-center text-secondary">
+                    <span class="material-symbols-outlined text-lg">soap</span>
+                </div>
+                <h3 class="text-lg font-bold text-text-main dark:text-white">Pet Bakım Dünyası</h3>
+            </div>
+            <div class="grid grid-cols-2 gap-3 px-4">
+                <div
+                    class="flex gap-3 bg-background-light dark:bg-background-dark p-2 rounded-xl border border-gray-100 dark:border-gray-700">
+                    <div class="w-16 h-16 rounded-lg bg-white overflow-hidden shrink-0">
+                        <img class="w-full h-full object-cover opacity-80 mix-blend-multiply"
+                            src="https://lh3.googleusercontent.com/aida-public/AB6AXuA9HQsJt2bpMwKNBqssdTUu3kNrVZD8D1j1S_8aJQz333V_W2VCjHwAaCax9ntqN82zjZ1OXYji7ld0ZlpJo4wP7n7u6uMWkug1cw7ETLWQ8p7kfAE-RO10wjk1vjIjfbkElHS5i4LhijcurX5ewn71xo-1AeVH27wCzGTXuc8YtISFNzwzx3C9IULa_UGtIIVCvDcDMcibB-zye3RMDy9R4_-5cu3mETwofnBR7xL8MUAX4zHAmjlstYHbdXvoue68UkTtxbjvrh0" />
+                    </div>
+                    <div class="flex flex-col justify-center">
+                        <h4 class="text-xs font-bold text-text-main dark:text-white mb-1">Tüy Toplayıcı</h4>
+                        <div
+                            class="text-[10px] bg-secondary/10 text-secondary font-bold px-1.5 py-0.5 rounded w-fit mb-1">
+                            +15 Puan</div>
+                        <a class="text-[10px] font-bold text-gray-400 hover:text-primary flex items-center"
+                            href="#">Trendyol'da Gör <span
+                                class="material-symbols-outlined text-[10px]">chevron_right</span></a>
+                    </div>
+                </div>
+                <div
+                    class="flex gap-3 bg-background-light dark:bg-background-dark p-2 rounded-xl border border-gray-100 dark:border-gray-700">
+                    <div
+                        class="w-16 h-16 rounded-lg bg-white overflow-hidden shrink-0 flex items-center justify-center text-gray-300">
+                        <span class="material-symbols-outlined text-3xl">brush</span>
+                    </div>
+                    <div class="flex flex-col justify-center">
+                        <h4 class="text-xs font-bold text-text-main dark:text-white mb-1">Kedi Şampuanı</h4>
+                        <div
+                            class="text-[10px] bg-secondary/10 text-secondary font-bold px-1.5 py-0.5 rounded w-fit mb-1">
+                            +20 Puan</div>
+                        <a class="text-[10px] font-bold text-gray-400 hover:text-primary flex items-center"
+                            href="#">Amazon'da Gör <span
+                                class="material-symbols-outlined text-[10px]">chevron_right</span></a>
+                    </div>
+                </div>
+            </div>
+        </section>
+        <section class="py-6 px-4">
+            <h3 class="text-lg font-bold text-text-main dark:text-white mb-3">Özel Koleksiyonlar</h3>
+            <div class="space-y-4">
+                <div class="relative w-full h-40 rounded-2xl overflow-hidden group">
+                    <img class="w-full h-full object-cover"
+                        src="https://lh3.googleusercontent.com/aida-public/AB6AXuDLpXXIP2idRltVqnVLypiqDxnwj7SGWLjOgLqyB01W60cA4Sj-6TpVYhMVTyTHJKqqJdgf-mY85_IpTKDD81z3JSMquPIM1HtVqqGy38SQNPxQ0DX-7lXsSYFxnMov07GiboJYBiHwJ5U-dB_oap2-Q1FJL9HUcWWdYlRxRaM4W-x9lBQmW--qMWKgB9dbwu2fVf1WqDY5iRfixJlbzLHb_KfnynX2v3TerGsk6mlxvhGb4egJ_vyZ6-ZYEAysRQzH0XMLgPt8qzc" />
+                    <div
+                        class="absolute inset-0 bg-gradient-to-r from-black/70 via-black/30 to-transparent flex flex-col justify-center px-6">
+                        <span class="text-secondary font-bold text-xs uppercase tracking-wider mb-1">Yeni
+                            Başlayanlar</span>
+                        <h4 class="text-white font-extrabold text-xl w-2/3 leading-tight mb-2">Yavru Kedi Başlangıç Seti
+                        </h4>
+                        <button
+                            class="bg-white text-text-main text-xs font-bold py-2 px-4 rounded-full w-fit hover:bg-gray-100 transition-colors">
+                            İncele
+                        </button>
+                    </div>
+                </div>
+                <div class="relative w-full h-40 rounded-2xl overflow-hidden group">
+                    <img class="w-full h-full object-cover"
+                        src="https://lh3.googleusercontent.com/aida-public/AB6AXuBANMbdVnwHzX-3UPHBnC7ED_7WtAOp8QpcKqrRs1QPb9kLw1bmshjUNfS0N9_jmxK1HPbiwB2LA--eAJugL3cR9imJxpMLS9O0DND4LcEGjvBLSBoL6Bl2eQuLrC2m1AEGVsLYisLHFpxrchsFi1Aw1AAtMJVtLxAD3Eo7zpSyaf2BVg2qXrbXXgWj3ZrVBlqKkbhBT4Guh9TB6jOl63EctH00BbMoqb-ucVYV8dNaVDBL9AqsCOzHKHtW8DFWseEJpnlnda2rGq4" />
+                    <div
+                        class="absolute inset-0 bg-gradient-to-r from-primary-dark/80 via-primary/40 to-transparent flex flex-col justify-center px-6">
+                        <span class="text-white/80 font-bold text-xs uppercase tracking-wider mb-1">Tatil Zamanı</span>
+                        <h4 class="text-white font-extrabold text-xl w-2/3 leading-tight mb-2">Seyahat &amp; Taşıma
+                            Kitleri</h4>
+                        <button
+                            class="bg-white/20 backdrop-blur-md border border-white/40 text-white text-xs font-bold py-2 px-4 rounded-full w-fit hover:bg-white/30 transition-colors">
+                            Keşfet
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </main>
+    <nav
+        class="fixed bottom-0 z-50 w-full border-t border-slate-200 bg-white/95 dark:bg-background-dark/95 dark:border-slate-800 pb-safe backdrop-blur-lg">
+        <div class="flex h-16 items-center justify-around px-2">
+            <a class="flex flex-col items-center gap-1 p-2 text-slate-400 transition-colors hover:text-primary dark:text-slate-500"
+                href="index.html">
+                <span class="material-symbols-outlined text-2xl">home</span>
+                <span class="text-[10px] font-medium">Anasayfa</span>
+            </a>
+            <a class="flex flex-col items-center gap-1 p-2 text-slate-400 transition-colors hover:text-primary dark:text-slate-500"
+                href="#">
+                <span class="material-symbols-outlined text-2xl">storefront</span>
+                <span class="text-[10px] font-medium">Pazar</span>
+            </a>
+            <div class="relative -top-5">
+                <button
+                    class="flex h-14 w-14 flex-col items-center justify-center rounded-full bg-primary shadow-lg shadow-primary/40 ring-4 ring-white dark:ring-background-dark transition-transform active:scale-95">
+                    <span class="material-symbols-outlined text-3xl text-white fill-1">emoji_events</span>
+                </button>
+                <span
+                    class="absolute -bottom-4 left-1/2 -translate-x-1/2 text-[10px] font-bold text-primary whitespace-nowrap">Yarışmalar</span>
+            </div>
+            <a class="flex flex-col items-center gap-1 p-2 text-slate-400 transition-colors hover:text-primary dark:text-slate-500"
+                href="#">
+                <span class="material-symbols-outlined text-2xl">volunteer_activism</span>
+                <span class="text-[10px] font-medium">Barınaklar</span>
+            </a>
+            <a class="flex flex-col items-center gap-1 p-2 text-slate-400 transition-colors hover:text-primary dark:text-slate-500"
+                href="#">
+                <span class="material-symbols-outlined text-2xl">person</span>
+                <span class="text-[10px] font-medium">Profil</span>
+            </a>
+        </div>
+        <div class="h-4 w-full"></div>
+    </nav>
+</body>
+
+</html>
