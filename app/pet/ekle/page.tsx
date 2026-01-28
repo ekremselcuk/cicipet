@@ -62,7 +62,7 @@ export default function AddPetPage() {
                     name: formData.name,
                     type: formData.category,
                     breed: formData.breed || 'Diğer',
-                    age: formData.age ? parseInt(formData.age) : null,
+                    age: (formData.age && !isNaN(parseInt(formData.age))) ? parseInt(formData.age) : null,
                     image_url: photoUrl
                 });
 
@@ -76,6 +76,7 @@ export default function AddPetPage() {
             }
         } catch (error) {
             console.error('Unexpected error:', error);
+            alert('Bir hata oluştu. Lütfen tekrar deneyin.');
         } finally {
             setLoading(false);
         }
