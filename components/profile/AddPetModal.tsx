@@ -1,15 +1,53 @@
 'use client';
 
-import { useState } from "react";
+import { useState, useRef } from "react";
 
 export default function AddPetModal() {
     const [isOpen, setIsOpen] = useState(false);
 
+    // Refs for hidden inputs
+    const cameraInputRef = useRef<HTMLInputElement>(null);
+    const galleryInputRef = useRef<HTMLInputElement>(null);
+
     const openModal = () => setIsOpen(true);
     const closeModal = () => setIsOpen(false);
 
+    const handleCameraClick = () => {
+        cameraInputRef.current?.click();
+    };
+
+    const handleGalleryClick = () => {
+        galleryInputRef.current?.click();
+    };
+
+    const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+        const file = e.target.files?.[0];
+        if (file) {
+            // TODO: Handle file upload logic (e.g. redirect to preview page or upload directly)
+            alert(`Seçilen dosya: ${file.name}. (Yükleme işlevi sonraki adımda eklenecek)`);
+            closeModal();
+        }
+    };
+
     return (
         <>
+            {/* Hidden Inputs */}
+            <input
+                type="file"
+                accept="image/*"
+                capture="environment"
+                ref={cameraInputRef}
+                className="hidden"
+                onChange={handleFileChange}
+            />
+            <input
+                type="file"
+                accept="image/*"
+                ref={galleryInputRef}
+                className="hidden"
+                onChange={handleFileChange}
+            />
+
             {/* Trigger Button */}
             <button
                 onClick={openModal}
@@ -36,14 +74,20 @@ export default function AddPetModal() {
                         <p className="text-sm text-center text-gray-500 mb-6">Sevimli dostunun fotoğrafını nasıl yüklemek istersin?</p>
 
                         <div className="grid grid-cols-2 gap-4">
-                            <button className="flex flex-col items-center gap-3 p-4 rounded-2xl border-2 border-gray-100 dark:border-white/10 hover:border-primary hover:bg-primary/5 transition-all group">
+                            <button
+                                onClick={handleCameraClick}
+                                className="flex flex-col items-center gap-3 p-4 rounded-2xl border-2 border-gray-100 dark:border-white/10 hover:border-primary hover:bg-primary/5 transition-all group"
+                            >
                                 <div className="w-12 h-12 rounded-full bg-blue-100 dark:bg-blue-900/30 flex items-center justify-center text-blue-600 dark:text-blue-400 group-hover:scale-110 transition-transform">
                                     <span className="material-symbols-outlined text-2xl">photo_camera</span>
                                 </div>
                                 <span className="text-sm font-bold text-slate-700 dark:text-gray-200">Kamera</span>
                             </button>
 
-                            <button className="flex flex-col items-center gap-3 p-4 rounded-2xl border-2 border-gray-100 dark:border-white/10 hover:border-primary hover:bg-primary/5 transition-all group">
+                            <button
+                                onClick={handleGalleryClick}
+                                className="flex flex-col items-center gap-3 p-4 rounded-2xl border-2 border-gray-100 dark:border-white/10 hover:border-primary hover:bg-primary/5 transition-all group"
+                            >
                                 <div className="w-12 h-12 rounded-full bg-purple-100 dark:bg-purple-900/30 flex items-center justify-center text-purple-600 dark:text-purple-400 group-hover:scale-110 transition-transform">
                                     <span className="material-symbols-outlined text-2xl">image</span>
                                 </div>

@@ -79,13 +79,7 @@ export default async function SettingsPage() {
                         />
                     </div>
 
-                    <div className="space-y-1 mt-2">
-                        <label className="text-sm font-medium text-slate-700 dark:text-gray-300 ml-1">Şifre İşlemleri</label>
-                        <button type="button" className="w-full py-3 px-4 rounded-xl border border-gray-200 dark:border-white/10 bg-white dark:bg-surface-dark text-slate-700 dark:text-white font-medium hover:bg-gray-50 dark:hover:bg-white/5 transition-colors flex items-center justify-between group">
-                            <span>Şifre Değiştir</span>
-                            <span className="material-symbols-outlined text-gray-400 group-hover:text-primary transition-colors">chevron_right</span>
-                        </button>
-                    </div>
+
 
                     <div className="flex-1"></div>
 
