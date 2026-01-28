@@ -118,19 +118,23 @@ export default function ProfilPage() {
                     <div className="flex gap-4 overflow-x-auto pb-4 -mx-4 px-4 no-scrollbar">
                         {pets && pets.length > 0 ? (
                             pets.map((pet: any) => (
-                                <Link href={`/pet/${pet.id}`} key={pet.id} className="flex-shrink-0 flex flex-col items-center gap-2 group cursor-pointer">
-                                    <div className="w-20 h-20 rounded-2xl p-[2px] border-2 border-transparent group-hover:border-primary transition-colors">
+                                <Link href={pet.id ? `/pet/${pet.id}` : '#'} key={pet.id || Math.random()} className="flex-shrink-0 flex flex-col items-center gap-2 group cursor-pointer">
+                                    <div className="w-20 h-20 rounded-2xl p-[2px] border-2 border-transparent group-hover:border-primary transition-colors relative">
                                         <img
-                                            alt={pet.name}
+                                            alt={pet.name || 'Pet'}
                                             className="w-full h-full rounded-[14px] object-cover shadow-md"
                                             src={pet.image_url || "https://via.placeholder.com/150"}
                                             onError={(e) => {
-                                                // Fallback if image fails
                                                 (e.target as HTMLImageElement).src = "https://via.placeholder.com/150";
                                             }}
                                         />
+                                        {pet.status === 'pending' && (
+                                            <div className="absolute -top-1 -right-1 w-4 h-4 bg-orange-500 rounded-full border border-white flex items-center justify-center">
+                                                <span className="material-symbols-outlined text-[10px] text-white">hourglass_empty</span>
+                                            </div>
+                                        )}
                                     </div>
-                                    <span className="text-xs font-bold text-gray-700 dark:text-gray-300">{pet.name}</span>
+                                    <span className="text-xs font-bold text-gray-700 dark:text-gray-300">{pet.name || 'İsimsiz'}</span>
                                 </Link>
                             ))
                         ) : null}

@@ -1,9 +1,22 @@
 
 import MenuTrigger from "@/components/admin/MenuTrigger";
 import { requireAdmin } from "@/utils/supabase/check-auth"; // Server-side check
+import { createClient } from "@/utils/supabase/server";
+import Link from 'next/link';
 
 export default async function AdminPetsPage() {
     await requireAdmin();
+    const supabase = await createClient();
+
+    const { data: pets } = await supabase
+        .from('pets')
+        .select('*')
+        .order('id', { ascending: false });
+
+    // Calculate stats
+    const catCount = pets?.filter((p: any) => p.type === 'kedi').length || 0;
+    const dogCount = pets?.filter((p: any) => p.type === 'kopek').length || 0;
+    const otherCount = pets?.filter((p: any) => p.type !== 'kedi' && p.type !== 'kopek').length || 0;
 
     return (
         <div className="relative flex flex-col h-full min-h-screen pb-24">
@@ -92,183 +105,55 @@ export default async function AdminPetsPage() {
                 {/* Data List */}
                 <section className="flex flex-col gap-4">
                     <h2 className="text-sm font-bold text-gray-500 uppercase tracking-widest pl-1">Pet Listesi</h2>
-                    {/* Card 1 */}
-                    <div className="bg-white dark:bg-surface-dark rounded-xl p-4 shadow-sm border border-gray-200 dark:border-white/5 flex flex-col gap-4">
-                        <div className="flex items-start gap-4">
-                            <div className="relative shrink-0">
-                                <div className="w-16 h-16 rounded-lg bg-cover bg-center shadow-inner" data-alt="Close up portrait of a tabby cat looking at the camera" style={{ backgroundImage: "url('https://lh3.googleusercontent.com/aida-public/AB6AXuDbs0BQ-wqBMgoef2fcOgGY3Pb987Ad8xr9vgBysyTTbwl_C58UeEhSeW1DXYa7uVT3AwSoK8qqZUvu4GV2fAvj6ad-XGEiJYwNVYmLyriWiLaND2Bbcr2BA9lqOrC9xfSL-Lwo3Y4HHYxDCaKAjdh4xC0zBmL70Sg8g48hfSjGLmrONrJDEZajKqhIQ6upVJGZUY0v21Avi8NeYR1GQciZ5hgafYnFltfKMyopMFSXNArD-4I5PCj3WurlyH31Rub5_MjxJlkD2IE')" }}></div>
-                                <div className="absolute -bottom-1.5 -right-1.5 bg-background-light dark:bg-surface-dark p-0.5 rounded-full">
-                                    <div className="bg-emerald-500 w-3 h-3 rounded-full border-2 border-white dark:border-surface-dark"></div>
-                                </div>
-                            </div>
-                            <div className="flex-1 min-w-0">
-                                <div className="flex justify-between items-start">
-                                    <div>
-                                        <h3 className="text-lg font-bold text-slate-900 dark:text-white leading-tight">Boncuk</h3>
-                                        <div className="flex items-center gap-1 text-xs text-gray-500 mt-1">
-                                            <span className="bg-orange-100 dark:bg-orange-900/30 text-orange-700 dark:text-orange-300 px-1.5 py-0.5 rounded text-[10px] font-bold uppercase">Kedi</span>
-                                            <span>•</span>
-                                            <span>Tekir</span>
-                                            <span>•</span>
-                                            <span>2 Yaşında</span>
+                    {pets && pets.length > 0 ? (
+                        pets.map((pet: any) => (
+                            <div key={pet.id} className={`bg-white dark:bg-surface-dark rounded-xl p-4 shadow-sm border ${pet.status === 'pending' ? 'border-orange-200 dark:border-orange-500/20' : 'border-gray-200 dark:border-white/5'} flex flex-col gap-4`}>
+                                <div className="flex items-start gap-4">
+                                    <div className="relative shrink-0">
+                                        <div className="w-16 h-16 rounded-lg bg-cover bg-center shadow-inner" style={{ backgroundImage: `url('${pet.image_url || "https://via.placeholder.com/150"}')` }}></div>
+                                        <div className="absolute -bottom-1.5 -right-1.5 bg-background-light dark:bg-surface-dark p-0.5 rounded-full">
+                                            <div className={`w-3 h-3 rounded-full border-2 border-white dark:border-surface-dark ${pet.status === 'approved' ? 'bg-emerald-500' : 'bg-orange-500'}`}></div>
                                         </div>
                                     </div>
-                                    <div className="flex items-center gap-1 bg-primary/10 px-2 py-1 rounded-full">
-                                        <span className="material-symbols-outlined text-[16px] text-primary" style={{ fontVariationSettings: "'FILL' 1" }}>emoji_events</span>
-                                        <span className="text-xs font-bold text-primary">3</span>
-                                    </div>
-                                </div>
-                                <a className="mt-2 flex items-center gap-1 text-sm text-primary hover:underline w-fit" href="#">
-                                    <span className="material-symbols-outlined text-[16px]">person</span>
-                                    Ahmet Yılmaz
-                                </a>
-                            </div>
-                        </div>
-                        <div className="border-t border-gray-100 dark:border-white/5 pt-3 flex items-center justify-between gap-2">
-                            <button className="flex-1 h-9 flex items-center justify-center gap-2 rounded-lg bg-gray-50 dark:bg-white/5 hover:bg-gray-100 dark:hover:bg-white/10 text-xs font-semibold text-slate-600 dark:text-gray-300 transition-colors">
-                                <span className="material-symbols-outlined text-[18px]">visibility</span>
-                                Profili Gör
-                            </button>
-                            <button className="h-9 w-9 flex items-center justify-center rounded-lg bg-gray-50 dark:bg-white/5 hover:bg-primary/20 hover:text-primary text-slate-600 dark:text-gray-300 transition-colors">
-                                <span className="material-symbols-outlined text-[18px]">edit</span>
-                            </button>
-                            <button className="h-9 w-9 flex items-center justify-center rounded-lg bg-gray-50 dark:bg-white/5 hover:bg-red-500/20 hover:text-red-500 text-slate-600 dark:text-gray-300 transition-colors">
-                                <span className="material-symbols-outlined text-[18px]">delete</span>
-                            </button>
-                        </div>
-                    </div>
-                    {/* Card 2 */}
-                    <div className="bg-white dark:bg-surface-dark rounded-xl p-4 shadow-sm border border-gray-200 dark:border-white/5 flex flex-col gap-4">
-                        <div className="flex items-start gap-4">
-                            <div className="relative shrink-0">
-                                <div className="w-16 h-16 rounded-lg bg-cover bg-center shadow-inner" data-alt="Portrait of a golden retriever dog outdoors" style={{ backgroundImage: "url('https://lh3.googleusercontent.com/aida-public/AB6AXuBU8tmkN3ZFqrwNkJWwYSW3hBKZuhpoLL9qBE47ja11syohue22ei9o7QSsU_oZ78nnP3Mx05ffnKLsCxhgeEwG_JOQatDGZUkEfK3TWolTIgX7N6Ho3uniHHV_FWyH4Z3c-n4AubBM080XAshSJhGuF1KttowlZt8xcW97RH5JSMhCElQabZz-XTSAibQfcjmchuTgbmD2m8mNtDVR1c44gtRuC-sAv_Ne5hGeRQuG5QeIx1ZGb_0TOGerX1Y1UzXE50BecMBe4_s')" }}></div>
-                            </div>
-                            <div className="flex-1 min-w-0">
-                                <div className="flex justify-between items-start">
-                                    <div>
-                                        <h3 className="text-lg font-bold text-slate-900 dark:text-white leading-tight">Pasha</h3>
-                                        <div className="flex items-center gap-1 text-xs text-gray-500 mt-1">
-                                            <span className="bg-blue-100 dark:bg-blue-900/30 text-blue-700 dark:text-blue-300 px-1.5 py-0.5 rounded text-[10px] font-bold uppercase">Köpek</span>
-                                            <span>•</span>
-                                            <span>Golden</span>
-                                            <span>•</span>
-                                            <span>3 Yaşında</span>
+                                    <div className="flex-1 min-w-0">
+                                        <div className="flex justify-between items-start">
+                                            <div>
+                                                <h3 className="text-lg font-bold text-slate-900 dark:text-white leading-tight">{pet.name || 'İsimsiz'}</h3>
+                                                <div className="flex items-center gap-1 text-xs text-gray-500 mt-1">
+                                                    <span className="bg-orange-100 dark:bg-orange-900/30 text-orange-700 dark:text-orange-300 px-1.5 py-0.5 rounded text-[10px] font-bold uppercase">{pet.type || 'Bilinmiyor'}</span>
+                                                    <span>•</span>
+                                                    <span>{pet.breed || 'Melez'}</span>
+                                                    <span>•</span>
+                                                    <span>{pet.age || '?'} Yaşında</span>
+                                                </div>
+                                            </div>
+                                            <div className="flex items-center gap-1 bg-primary/10 px-2 py-1 rounded-full">
+                                                <span className="material-symbols-outlined text-[16px] text-primary" style={{ fontVariationSettings: "'FILL' 1" }}>emoji_events</span>
+                                                <span className="text-xs font-bold text-primary">0</span>
+                                            </div>
                                         </div>
-                                    </div>
-                                    <div className="flex items-center gap-1 bg-primary/10 px-2 py-1 rounded-full">
-                                        <span className="material-symbols-outlined text-[16px] text-primary" style={{ fontVariationSettings: "'FILL' 1" }}>emoji_events</span>
-                                        <span className="text-xs font-bold text-primary">5</span>
-                                    </div>
-                                </div>
-                                <a className="mt-2 flex items-center gap-1 text-sm text-primary hover:underline w-fit" href="#">
-                                    <span className="material-symbols-outlined text-[16px]">person</span>
-                                    Selin Kara
-                                </a>
-                            </div>
-                        </div>
-                        <div className="border-t border-gray-100 dark:border-white/5 pt-3 flex items-center justify-between gap-2">
-                            <button className="flex-1 h-9 flex items-center justify-center gap-2 rounded-lg bg-gray-50 dark:bg-white/5 hover:bg-gray-100 dark:hover:bg-white/10 text-xs font-semibold text-slate-600 dark:text-gray-300 transition-colors">
-                                <span className="material-symbols-outlined text-[18px]">visibility</span>
-                                Profili Gör
-                            </button>
-                            <button className="h-9 w-9 flex items-center justify-center rounded-lg bg-gray-50 dark:bg-white/5 hover:bg-primary/20 hover:text-primary text-slate-600 dark:text-gray-300 transition-colors">
-                                <span className="material-symbols-outlined text-[18px]">edit</span>
-                            </button>
-                            <button className="h-9 w-9 flex items-center justify-center rounded-lg bg-gray-50 dark:bg-white/5 hover:bg-red-500/20 hover:text-red-500 text-slate-600 dark:text-gray-300 transition-colors">
-                                <span className="material-symbols-outlined text-[18px]">delete</span>
-                            </button>
-                        </div>
-                    </div>
-                    {/* Card 3 */}
-                    <div className="bg-white dark:bg-surface-dark rounded-xl p-4 shadow-sm border border-gray-200 dark:border-white/5 flex flex-col gap-4 opacity-75">
-                        <div className="flex items-start gap-4">
-                            <div className="relative shrink-0">
-                                <div className="w-16 h-16 rounded-lg bg-cover bg-center shadow-inner grayscale" data-alt="Siamese cat sitting on a wooden floor" style={{ backgroundImage: "url('https://lh3.googleusercontent.com/aida-public/AB6AXuAy3HHYI4VpwzFlwaQfGCEMEa_pbsEMTfVdGFZS8ikShbk8pD3W9-X69i7ACExi4mXpCHMiVjvm_5LCCxx3K8p4HsxbKlyYwazeY1W6TFOFVx-EByyHHeCDxgzxUqXxVIfN1zENx7BXhf3jEYwfFcg7QYjWm7A9thU4bsPGShu-f4YvOWFDvxEvUu0bI6dBS2pAc4QBbdXOKsOZOJZVWFbJ0APPu6Wl4Ttdm47RYKP-DzGqa0hUupVNdpyahVeW5MClU0WsyMYEVUg')" }}></div>
-                                <div className="absolute inset-0 bg-black/40 rounded-lg flex items-center justify-center">
-                                    <span className="text-[10px] font-bold text-white bg-black/60 px-1.5 py-0.5 rounded backdrop-blur-sm">Pasif</span>
-                                </div>
-                            </div>
-                            <div className="flex-1 min-w-0">
-                                <div className="flex justify-between items-start">
-                                    <div>
-                                        <h3 className="text-lg font-bold text-slate-900 dark:text-white leading-tight">Luna</h3>
-                                        <div className="flex items-center gap-1 text-xs text-gray-500 mt-1">
-                                            <span className="bg-orange-100 dark:bg-orange-900/30 text-orange-700 dark:text-orange-300 px-1.5 py-0.5 rounded text-[10px] font-bold uppercase">Kedi</span>
-                                            <span>•</span>
-                                            <span>Siyam</span>
-                                            <span>•</span>
-                                            <span>1 Yaşında</span>
-                                        </div>
-                                    </div>
-                                    <div className="flex items-center gap-1 bg-gray-100 dark:bg-white/5 px-2 py-1 rounded-full">
-                                        <span className="material-symbols-outlined text-[16px] text-gray-400" style={{ fontVariationSettings: "'FILL' 1" }}>emoji_events</span>
-                                        <span className="text-xs font-bold text-gray-500 dark:text-gray-400">1</span>
+                                        <a className="mt-2 flex items-center gap-1 text-sm text-primary hover:underline w-fit" href={`/profil/${pet.owner_id}`}>
+                                            <span className="material-symbols-outlined text-[16px]">person</span>
+                                            ID: {pet.owner_id ? pet.owner_id.slice(0, 8) : 'Yok'}
+                                        </a>
                                     </div>
                                 </div>
-                                <a className="mt-2 flex items-center gap-1 text-sm text-primary hover:underline w-fit" href="#">
-                                    <span className="material-symbols-outlined text-[16px]">person</span>
-                                    Can Bulut
-                                </a>
-                            </div>
-                        </div>
-                        <div className="border-t border-gray-100 dark:border-white/5 pt-3 flex items-center justify-between gap-2">
-                            <button className="flex-1 h-9 flex items-center justify-center gap-2 rounded-lg bg-gray-50 dark:bg-white/5 hover:bg-gray-100 dark:hover:bg-white/10 text-xs font-semibold text-slate-600 dark:text-gray-300 transition-colors">
-                                <span className="material-symbols-outlined text-[18px]">visibility</span>
-                                Profili Gör
-                            </button>
-                            <button className="h-9 w-9 flex items-center justify-center rounded-lg bg-gray-50 dark:bg-white/5 hover:bg-primary/20 hover:text-primary text-slate-600 dark:text-gray-300 transition-colors">
-                                <span className="material-symbols-outlined text-[18px]">edit</span>
-                            </button>
-                            <button className="h-9 w-9 flex items-center justify-center rounded-lg bg-gray-50 dark:bg-white/5 hover:bg-red-500/20 hover:text-red-500 text-slate-600 dark:text-gray-300 transition-colors">
-                                <span className="material-symbols-outlined text-[18px]">delete</span>
-                            </button>
-                        </div>
-                    </div>
-                    {/* Card 4 */}
-                    <div className="bg-white dark:bg-surface-dark rounded-xl p-4 shadow-sm border border-gray-200 dark:border-white/5 flex flex-col gap-4">
-                        <div className="flex items-start gap-4">
-                            <div className="relative shrink-0">
-                                <div className="w-16 h-16 rounded-lg bg-cover bg-center shadow-inner" data-alt="Portrait of a funny looking bulldog" style={{ backgroundImage: "url('https://lh3.googleusercontent.com/aida-public/AB6AXuC-R8XQptDBY6LYdoCjbJ6KNNkzrjAvGQ4lDykKVx_Xt235MmqlYjnTIpRZ0EAvbjRIp1sF_EGYi3QxYlOJXnbxjBEqfLGToUxaZm-i3P7D-_Dl156krbFMyZKcCjNAgCB7hmLaZ7tUOEOUgiEZ2rmF1RS5l_rc40kFF2YI0oldkQ3XZy8hN-VU_W7Vs6WUIBxTc8hNuTHtBqBupyKUPNTc1GDe66CTcPgZEj7EbQ5AFO9LZwpB7K1DYN-1-cVeJy8ef8sxhoM7gdE')" }}></div>
-                                <div className="absolute -bottom-1.5 -right-1.5 bg-background-light dark:bg-surface-dark p-0.5 rounded-full">
-                                    <div className="bg-emerald-500 w-3 h-3 rounded-full border-2 border-white dark:border-surface-dark"></div>
+                                <div className="border-t border-gray-100 dark:border-white/5 pt-3 flex items-center justify-between gap-2">
+                                    <Link href={`/pet/${pet.id}`} className="flex-1 h-9 flex items-center justify-center gap-2 rounded-lg bg-gray-50 dark:bg-white/5 hover:bg-gray-100 dark:hover:bg-white/10 text-xs font-semibold text-slate-600 dark:text-gray-300 transition-colors">
+                                        <span className="material-symbols-outlined text-[18px]">visibility</span>
+                                        Profili Gör
+                                    </Link>
+                                    <button className="h-9 w-9 flex items-center justify-center rounded-lg bg-gray-50 dark:bg-white/5 hover:bg-red-500/20 hover:text-red-500 text-slate-600 dark:text-gray-300 transition-colors">
+                                        <span className="material-symbols-outlined text-[18px]">delete</span>
+                                    </button>
                                 </div>
                             </div>
-                            <div className="flex-1 min-w-0">
-                                <div className="flex justify-between items-start">
-                                    <div>
-                                        <h3 className="text-lg font-bold text-slate-900 dark:text-white leading-tight">Rocky</h3>
-                                        <div className="flex items-center gap-1 text-xs text-gray-500 mt-1">
-                                            <span className="bg-blue-100 dark:bg-blue-900/30 text-blue-700 dark:text-blue-300 px-1.5 py-0.5 rounded text-[10px] font-bold uppercase">Köpek</span>
-                                            <span>•</span>
-                                            <span>Bulldog</span>
-                                            <span>•</span>
-                                            <span>4 Yaşında</span>
-                                        </div>
-                                    </div>
-                                    <div className="flex items-center gap-1 bg-primary/10 px-2 py-1 rounded-full">
-                                        <span className="material-symbols-outlined text-[16px] text-primary" style={{ fontVariationSettings: "'FILL' 1" }}>emoji_events</span>
-                                        <span className="text-xs font-bold text-primary">12</span>
-                                    </div>
-                                </div>
-                                <a className="mt-2 flex items-center gap-1 text-sm text-primary hover:underline w-fit" href="#">
-                                    <span className="material-symbols-outlined text-[16px]">person</span>
-                                    Mert Demir
-                                </a>
-                            </div>
+                        ))
+                    ) : (
+                        <div className="text-center py-8 text-gray-400">
+                            Henüz kayıtlı pet yok.
                         </div>
-                        <div className="border-t border-gray-100 dark:border-white/5 pt-3 flex items-center justify-between gap-2">
-                            <button className="flex-1 h-9 flex items-center justify-center gap-2 rounded-lg bg-gray-50 dark:bg-white/5 hover:bg-gray-100 dark:hover:bg-white/10 text-xs font-semibold text-slate-600 dark:text-gray-300 transition-colors">
-                                <span className="material-symbols-outlined text-[18px]">visibility</span>
-                                Profili Gör
-                            </button>
-                            <button className="h-9 w-9 flex items-center justify-center rounded-lg bg-gray-50 dark:bg-white/5 hover:bg-primary/20 hover:text-primary text-slate-600 dark:text-gray-300 transition-colors">
-                                <span className="material-symbols-outlined text-[18px]">edit</span>
-                            </button>
-                            <button className="h-9 w-9 flex items-center justify-center rounded-lg bg-gray-50 dark:bg-white/5 hover:bg-red-500/20 hover:text-red-500 text-slate-600 dark:text-gray-300 transition-colors">
-                                <span className="material-symbols-outlined text-[18px]">delete</span>
-                            </button>
-                        </div>
-                    </div>
+                    )}
                 </section>
 
                 {/* Pagination / Load More */}

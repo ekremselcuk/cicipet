@@ -18,16 +18,29 @@ export default async function PetDetailPage({ params }: { params: { id: string }
         .eq('id', id)
         .single();
 
-    if (error) {
+    const { data: { user } } = await supabase.auth.getUser();
+
+    if (error || !pet) {
         return (
-            <div className="min-h-screen flex flex-col items-center justify-center p-4">
+            <div className="min-h-screen flex col items-center justify-center p-4">
+                {/* Error UI same as before */}
                 <h1 className="text-xl font-bold text-red-500 mb-2">Veri Çekme Hatası</h1>
                 <code className="bg-gray-100 p-4 rounded text-sm mb-4 block overflow-auto max-w-full">
                     {JSON.stringify(error, null, 2)}
                 </code>
-                <p className="text-gray-500">ID: {id}</p>
+                <div className="text-xs text-gray-500">ID: {id}</div>
             </div>
         );
+    }
+
+    // Check visibility
+    const isOwner = user?.id === pet.owner_id;
+    // For MVP, assuming Admin check via RLS or role if implemented separately.
+    // If pending and not owner, show 404 or specific message
+    if (pet.status === 'pending' && !isOwner) {
+        // Optionally check for admin role here if available
+        // const isAdmin = ...
+        return notFound();
     }
 
     if (!pet) {
@@ -79,7 +92,7 @@ export default async function PetDetailPage({ params }: { params: { id: string }
                         <span className="material-symbols-outlined">hourglass_empty</span>
                         <div className="text-sm">
                             <span className="font-bold block">Onay Bekliyor</span>
-                            <span>Bu pet henüz moderasyon onayından geçmedi.</span>
+                            <span>Bu pet moderasyon onayından geçmedi. Sadece siz görebilirsiniz.</span>
                         </div>
                     </div>
                 )}
@@ -94,20 +107,31 @@ export default async function PetDetailPage({ params }: { params: { id: string }
                         <span className="text-xs font-bold text-gray-400 uppercase tracking-wider">Cinsiyet</span>
                         <span className="text-lg font-bold text-slate-700 dark:text-white">{pet.gender || 'Belirtilmedi'}</span>
                     </div>
-                    {/* Add more fields here as schema expands */}
+                    {/* Owner Link - Only if NOT owner */}
+                    {!isOwner && pet.owner_id && (
+                        <Link href={`/profil/${pet.owner_id}`} className="col-span-2 bg-primary/10 p-4 rounded-2xl border border-primary/20 flex items-center justify-between group">
+                            <div className="flex flex-col">
+                                <span className="text-xs font-bold text-primary uppercase tracking-wider">Sahibi</span>
+                                <span className="text-sm font-bold text-slate-900 dark:text-white group-hover:underline">Profili Görüntüle</span>
+                            </div>
+                            <span className="material-symbols-outlined text-primary">arrow_forward</span>
+                        </Link>
+                    )}
                 </div>
 
-                {/* Actions */}
-                <div className="flex flex-col gap-3">
-                    <button className="w-full py-4 bg-white dark:bg-surface-dark border border-gray-200 dark:border-white/10 text-slate-700 dark:text-white font-bold rounded-2xl flex items-center justify-center gap-2 hover:bg-gray-50 dark:hover:bg-white/5 transition-colors">
-                        <span className="material-symbols-outlined text-red-500">qr_code</span>
-                        Künye Oluştur (QR)
-                    </button>
-                    <button className="w-full py-4 bg-red-50 dark:bg-red-900/10 border border-transparent text-red-500 font-bold rounded-2xl flex items-center justify-center gap-2 hover:bg-red-100 dark:hover:bg-red-900/20 transition-colors">
-                        <span className="material-symbols-outlined">delete</span>
-                        Peti Sil
-                    </button>
-                </div>
+                {/* Actions - Only Owner */}
+                {isOwner && (
+                    <div className="flex flex-col gap-3">
+                        <button className="w-full py-4 bg-white dark:bg-surface-dark border border-gray-200 dark:border-white/10 text-slate-700 dark:text-white font-bold rounded-2xl flex items-center justify-center gap-2 hover:bg-gray-50 dark:hover:bg-white/5 transition-colors">
+                            <span className="material-symbols-outlined text-red-500">qr_code</span>
+                            Künye Oluştur (QR)
+                        </button>
+                        <button className="w-full py-4 bg-red-50 dark:bg-red-900/10 border border-transparent text-red-500 font-bold rounded-2xl flex items-center justify-center gap-2 hover:bg-red-100 dark:hover:bg-red-900/20 transition-colors">
+                            <span className="material-symbols-outlined">delete</span>
+                            Peti Sil
+                        </button>
+                    </div>
+                )}
             </main>
         </div>
     );

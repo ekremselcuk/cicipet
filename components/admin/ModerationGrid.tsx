@@ -24,23 +24,31 @@ export default function ModerationGrid({ initialItems }: { initialItems: Moderat
         setItems(items.filter(i => i.id !== id));
 
         const table = type === 'pet' ? 'pets' : 'ads';
-        const status = action === 'approve' ? 'approved' : 'rejected';
 
         try {
-            const { error } = await supabase
-                .from(table)
-                .update({ status })
-                .eq('id', id);
+            if (action === 'reject') {
+                // DELETE logic requested by user
+                const { error } = await supabase
+                    .from(table)
+                    .delete()
+                    .eq('id', id);
 
-            if (error) {
-                console.error('Moderation error:', error);
-                // Revert on error (skipped for simplicity in MVP)
-                alert('İşlem başarısız oldu.');
+                if (error) throw error;
             } else {
-                router.refresh(); // Sync server state
+                // APPROVE logic
+                const { error } = await supabase
+                    .from(table)
+                    .update({ status: 'approved' })
+                    .eq('id', id);
+
+                if (error) throw error;
             }
+
+            router.refresh(); // Sync server state
         } catch (e) {
             console.error(e);
+            alert('İşlem sırasında bir hata oluştu.');
+            // Ideally revert optimistic update here, but acceptable for MVP
         }
     };
 

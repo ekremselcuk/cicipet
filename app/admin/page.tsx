@@ -1,20 +1,31 @@
 import { requireAdmin } from "@/utils/supabase/check-auth";
 import MenuTrigger from "@/components/admin/MenuTrigger";
 import Link from "next/link";
+import { createClient } from "@/utils/supabase/server";
 
 export default async function AdminPage() {
     await requireAdmin();
+    const supabase = await createClient();
+
+    // Fetch Stats
+    const { count: userCount } = await supabase.from('users').select('*', { count: 'exact', head: true });
+    const { count: petCount } = await supabase.from('pets').select('*', { count: 'exact', head: true });
+    const { count: adCount } = await supabase.from('ads').select('*', { count: 'exact', head: true });
+
+    const { count: pendingPetCount } = await supabase.from('pets').select('*', { count: 'exact', head: true }).eq('status', 'pending');
+    const { count: pendingAdCount } = await supabase.from('ads').select('*', { count: 'exact', head: true }).eq('status', 'pending');
+
 
     return (
         <div className="relative flex min-h-screen w-full flex-col pb-24 bg-background-light dark:bg-background-dark font-display text-slate-900 dark:text-white overflow-x-hidden antialiased">
             {/* Top App Bar - Admin */}
-            <header className="sticky top-0 z-50 flex items-center justify-between bg-background-dark/95 backdrop-blur-sm p-4 pb-2 border-b border-[#362b1b]">
+            <header className="sticky top-0 z-50 flex items-center justify-between bg-background-light/95 dark:bg-background-dark/95 backdrop-blur-sm p-4 pb-2 border-b border-black/5 dark:border-[#362b1b]">
                 <div className="flex items-center gap-4">
                     <MenuTrigger />
-                    <h1 className="text-white text-xl font-bold leading-tight tracking-tight">Admin Paneli</h1>
+                    <h1 className="text-slate-900 dark:text-white text-xl font-bold leading-tight tracking-tight">Admin Paneli</h1>
                 </div>
                 <div className="flex items-center gap-3">
-                    <button className="relative flex items-center justify-center rounded-full p-2 text-white hover:bg-white/10 transition-colors">
+                    <button className="relative flex items-center justify-center rounded-full p-2 text-slate-600 dark:text-white hover:bg-black/5 dark:hover:bg-white/10 transition-colors">
                         <span className="material-symbols-outlined text-2xl">notifications</span>
                         <span className="absolute top-2 right-2 h-2 w-2 rounded-full bg-red-500"></span>
                     </button>
@@ -46,62 +57,70 @@ export default async function AdminPage() {
             <div className="px-4 pb-2">
                 <h2 className="text-slate-900 dark:text-white text-lg font-bold leading-tight mb-4">Genel Bakış</h2>
                 <div className="grid grid-cols-2 gap-3">
-                    {/* Stat Card 1 */}
-                    <div className="flex flex-col gap-2 rounded-xl bg-[#362b1b] p-4 shadow-sm">
+                    {/* Stat Card 1 - Users */}
+                    <Link href="/admin/kullanicilar" className="flex flex-col gap-2 rounded-xl bg-white dark:bg-[#362b1b] p-4 shadow-sm border border-black/5 dark:border-transparent hover:border-primary/50 transition-colors">
                         <div className="flex items-center gap-2">
                             <div className="flex h-8 w-8 items-center justify-center rounded-full bg-primary/20 text-primary">
                                 <span className="material-symbols-outlined text-lg">group</span>
                             </div>
-                            <p className="text-[#cbb690] text-sm font-medium">Kullanıcılar</p>
+                            <p className="text-slate-500 dark:text-[#cbb690] text-sm font-medium">Kullanıcılar</p>
                         </div>
                         <div>
-                            <p className="text-white text-2xl font-bold">12,450</p>
+                            <p className="text-slate-900 dark:text-white text-2xl font-bold">{userCount || 0}</p>
                             <p className="text-[#0bda19] text-xs font-medium flex items-center gap-1">
-                                <span className="material-symbols-outlined text-sm">trending_up</span> +5%
+                                <span className="material-symbols-outlined text-sm">trending_up</span> Aktif
                             </p>
                         </div>
-                    </div>
-                    {/* Stat Card 2 */}
-                    <div className="flex flex-col gap-2 rounded-xl bg-[#362b1b] p-4 shadow-sm">
+                    </Link>
+                    {/* Stat Card 2 - Pets */}
+                    <Link href="/admin/petler" className="flex flex-col gap-2 rounded-xl bg-white dark:bg-[#362b1b] p-4 shadow-sm border border-black/5 dark:border-transparent hover:border-primary/50 transition-colors">
                         <div className="flex items-center gap-2">
                             <div className="flex h-8 w-8 items-center justify-center rounded-full bg-primary/20 text-primary">
                                 <span className="material-symbols-outlined text-lg">pets</span>
                             </div>
-                            <p className="text-[#cbb690] text-sm font-medium">Aktif Pet</p>
+                            <p className="text-slate-500 dark:text-[#cbb690] text-sm font-medium">Petler</p>
                         </div>
                         <div>
-                            <p className="text-white text-2xl font-bold">8,300</p>
-                            <p className="text-[#0bda19] text-xs font-medium flex items-center gap-1">
-                                <span className="material-symbols-outlined text-sm">trending_up</span> +12%
+                            <p className="text-slate-900 dark:text-white text-2xl font-bold">{petCount || 0}</p>
+                            <p className="text-slate-400 dark:text-gray-400 text-xs font-medium flex items-center gap-1">
+                                {(pendingPetCount || 0) > 0 ? (
+                                    <span className="text-orange-500 font-bold">{pendingPetCount} Onay Bekliyor</span>
+                                ) : (
+                                    <span>Tümü Onaylı</span>
+                                )}
                             </p>
                         </div>
-                    </div>
-                    {/* Stat Card 3 */}
-                    <div className="flex flex-col gap-2 rounded-xl bg-[#362b1b] p-4 shadow-sm">
+                    </Link>
+                    {/* Stat Card 3 - Ads */}
+                    <Link href="/admin/moderasyon" className="flex flex-col gap-2 rounded-xl bg-white dark:bg-[#362b1b] p-4 shadow-sm border border-black/5 dark:border-transparent hover:border-primary/50 transition-colors">
+                        <div className="flex items-center gap-2">
+                            <div className="flex h-8 w-8 items-center justify-center rounded-full bg-primary/20 text-primary">
+                                <span className="material-symbols-outlined text-lg">campaign</span>
+                            </div>
+                            <p className="text-slate-500 dark:text-[#cbb690] text-sm font-medium">İlanlar</p>
+                        </div>
+                        <div>
+                            <p className="text-slate-900 dark:text-white text-2xl font-bold">{adCount || 0}</p>
+                            <p className="text-slate-400 dark:text-gray-400 text-xs font-medium flex items-center gap-1">
+                                {(pendingAdCount || 0) > 0 ? (
+                                    <span className="text-orange-500 font-bold">{pendingAdCount} Onay Bekliyor</span>
+                                ) : (
+                                    <span>Tümü Onaylı</span>
+                                )}
+                            </p>
+                        </div>
+                    </Link>
+                    {/* Stat Card 4 - Contests (Static) */}
+                    <div className="flex flex-col gap-2 rounded-xl bg-white dark:bg-[#362b1b] p-4 shadow-sm border border-black/5 dark:border-transparent">
                         <div className="flex items-center gap-2">
                             <div className="flex h-8 w-8 items-center justify-center rounded-full bg-primary/20 text-primary">
                                 <span className="material-symbols-outlined text-lg">emoji_events</span>
                             </div>
-                            <p className="text-[#cbb690] text-sm font-medium">Yarışmalar</p>
+                            <p className="text-slate-500 dark:text-[#cbb690] text-sm font-medium">Yarışmalar</p>
                         </div>
                         <div>
-                            <p className="text-white text-2xl font-bold">5</p>
-                            <p className="text-[#cbb690] text-xs font-medium">Aktif</p>
-                        </div>
-                    </div>
-                    {/* Stat Card 4 */}
-                    <div className="flex flex-col gap-2 rounded-xl bg-[#362b1b] p-4 shadow-sm">
-                        <div className="flex items-center gap-2">
-                            <div className="flex h-8 w-8 items-center justify-center rounded-full bg-primary/20 text-primary">
-                                <span className="material-symbols-outlined text-lg">monetization_on</span>
-                            </div>
-                            <p className="text-[#cbb690] text-sm font-medium">CiciPuan</p>
-                        </div>
-                        <div>
-                            <p className="text-white text-2xl font-bold">1.2M</p>
-                            <p className="text-[#0bda19] text-xs font-medium flex items-center gap-1">
-                                <span className="material-symbols-outlined text-sm">trending_up</span> +8%
-                            </p>
+                            <p className="text-slate-900 dark:text-white text-2xl font-bold">0</p>
+                            <p className="text-[#cbb690] text-xs font-medium">Yakında</p>
                         </div>
                     </div>
                 </div>

@@ -1,9 +1,21 @@
 
-import MenuTrigger from "@/components/admin/MenuTrigger";
 import { requireAdmin } from "@/utils/supabase/check-auth"; // Server-side check
+import { createClient } from "@/utils/supabase/server";
+import MenuTrigger from "@/components/admin/MenuTrigger";
+import Link from 'next/link';
 
 export default async function AdminUsersPage() {
     await requireAdmin();
+    const supabase = await createClient();
+
+    const { data: users } = await supabase
+        .from('users')
+        .select('*')
+        .order('id', { ascending: false });
+
+    // Count stats dynamically
+    const totalUsers = users?.length || 0;
+
 
     return (
         <div className="relative flex flex-col h-full min-h-screen pb-20 overflow-x-hidden">
@@ -29,17 +41,17 @@ export default async function AdminUsersPage() {
                 <div className="bg-white dark:bg-surface-dark p-4 rounded-xl border border-black/5 dark:border-white/5 shadow-sm">
                     <p className="text-slate-500 dark:text-[#cbb690] text-xs font-medium mb-1 uppercase tracking-wider">Toplam Kullanıcı</p>
                     <div className="flex items-end gap-2">
-                        <span className="text-2xl font-bold text-slate-900 dark:text-white">12,450</span>
+                        <span className="text-2xl font-bold text-slate-900 dark:text-white">{totalUsers}</span>
                         <span className="text-xs text-green-500 font-medium mb-1.5 flex items-center">
-                            <span className="material-symbols-outlined text-sm">arrow_upward</span> 12%
+                            <span className="material-symbols-outlined text-sm">arrow_upward</span> %
                         </span>
                     </div>
                 </div>
                 <div className="bg-white dark:bg-surface-dark p-4 rounded-xl border border-black/5 dark:border-white/5 shadow-sm">
                     <p className="text-slate-500 dark:text-[#cbb690] text-xs font-medium mb-1 uppercase tracking-wider">Aktif Kullanıcı</p>
                     <div className="flex items-end gap-2">
-                        <span className="text-2xl font-bold text-slate-900 dark:text-white">11,200</span>
-                        <span className="text-xs text-slate-400 font-medium mb-1.5">Bu ay</span>
+                        <span className="text-2xl font-bold text-slate-900 dark:text-white">{totalUsers}</span>
+                        <span className="text-xs text-slate-400 font-medium mb-1.5">Kayıtlı</span>
                     </div>
                 </div>
             </div>
@@ -77,170 +89,57 @@ export default async function AdminUsersPage() {
                     <span>Kullanıcı Listesi</span>
                     <span>Sıralama: En Yeni</span>
                 </div>
-                {/* User Card 1 */}
-                <div className="group relative bg-white dark:bg-surface-dark rounded-xl p-3 shadow-sm border border-transparent hover:border-primary/30 transition-all">
-                    <div className="flex items-start gap-3">
-                        <div className="pt-1">
-                            <input className="w-5 h-5 rounded border-gray-300 dark:border-gray-600 text-primary focus:ring-primary dark:bg-[#221c10] cursor-pointer" type="checkbox" />
-                        </div>
-                        <div className="relative shrink-0">
-                            <div className="w-12 h-12 rounded-full bg-gray-200 dark:bg-[#3a3a3a] bg-cover bg-center" data-alt="Portrait of Ahmet Yilmaz" style={{ backgroundImage: "url('https://lh3.googleusercontent.com/aida-public/AB6AXuCInElRzoHAL7zvxCanfQBlHQj3Rs8ctTmOQ8NTGq-KYcVlwSC9gIor4xQ1LiyQq0aIqALjAGersdXQ_y9W0j-pm8tAnoV4r9SYDLnMRNRrXXHeJG4iuJJzyu3U5Q_6QO40yyoekA4NFTold1DCHIQDH4wBf4MjRg_zsk0IcUvw9qVW0xO2npUyRMUpVjefToSCAxHdd74FHTsz7WeYd4VZXLo-r32q50JwncgDHnAqx2cdWJx062d9w-xkWHn0yTjpcFDXFynurEo')" }}></div>
-                            <div className="absolute -bottom-1 -right-1 w-5 h-5 bg-background-light dark:bg-surface-dark rounded-full flex items-center justify-center">
-                                <span className="w-3 h-3 bg-green-500 rounded-full border border-white dark:border-surface-dark" title="Aktif"></span>
-                            </div>
-                        </div>
-                        <div className="flex-1 min-w-0">
-                            <div className="flex justify-between items-start">
-                                <div>
-                                    <h3 className="text-sm font-bold text-slate-900 dark:text-white truncate">Ahmet Yılmaz</h3>
-                                    <p className="text-xs text-slate-500 dark:text-white/60 truncate">ahmet.yilmaz@gmail.com</p>
+
+                {users && users.length > 0 ? (
+                    users.map((user: any) => (
+                        <div key={user.id} className="group relative bg-white dark:bg-surface-dark rounded-xl p-3 shadow-sm border border-transparent hover:border-primary/30 transition-all">
+                            <div className="flex items-start gap-3">
+                                <div className="relative shrink-0">
+                                    <div className="w-12 h-12 rounded-full bg-gray-200 dark:bg-[#3a3a3a] bg-cover bg-center" style={{ backgroundImage: `url('${user.avatar_url || "https://via.placeholder.com/150"}')` }}></div>
+                                    <div className="absolute -bottom-1 -right-1 w-5 h-5 bg-background-light dark:bg-surface-dark rounded-full flex items-center justify-center">
+                                        {user.is_admin ? (
+                                            <span className="material-symbols-outlined text-[12px] text-primary filled">verified</span>
+                                        ) : (
+                                            <span className="w-3 h-3 bg-green-500 rounded-full border border-white dark:border-surface-dark" title="Aktif"></span>
+                                        )}
+                                    </div>
                                 </div>
-                                <span className="inline-flex items-center px-2 py-0.5 rounded text-[10px] font-medium bg-green-100 dark:bg-green-900/30 text-green-700 dark:text-green-400 border border-green-200 dark:border-green-800">
-                                    Aktif
-                                </span>
-                            </div>
-                            <div className="mt-2 flex items-center gap-3 text-xs text-slate-600 dark:text-[#cbb690]">
-                                <span className="flex items-center gap-1">
-                                    <span className="material-symbols-outlined text-[14px]">pets</span> 2 Evcil
-                                </span>
-                                <span className="w-1 h-1 rounded-full bg-slate-300 dark:bg-white/20"></span>
-                                <span className="flex items-center gap-1">
-                                    <span className="material-symbols-outlined text-[14px] text-primary">savings</span> 450 Puan
-                                </span>
-                            </div>
-                            <div className="mt-1 text-[10px] text-slate-400 dark:text-white/40">
-                                Kayıt: 12 Ekim 2023
-                            </div>
-                        </div>
-                        <button className="shrink-0 text-slate-400 dark:text-white/50 hover:text-primary dark:hover:text-primary p-1 rounded-lg hover:bg-slate-100 dark:hover:bg-white/5 transition-colors">
-                            <span className="material-symbols-outlined">more_vert</span>
-                        </button>
-                    </div>
-                </div>
-                {/* User Card 2 */}
-                <div className="group relative bg-white dark:bg-surface-dark rounded-xl p-3 shadow-sm border border-transparent hover:border-primary/30 transition-all">
-                    <div className="flex items-start gap-3">
-                        <div className="pt-1">
-                            <input className="w-5 h-5 rounded border-gray-300 dark:border-gray-600 text-primary focus:ring-primary dark:bg-[#221c10] cursor-pointer" type="checkbox" />
-                        </div>
-                        <div className="relative shrink-0">
-                            <div className="w-12 h-12 rounded-full bg-gray-200 dark:bg-[#3a3a3a] bg-cover bg-center" data-alt="Portrait of Ayse Demir" style={{ backgroundImage: "url('https://lh3.googleusercontent.com/aida-public/AB6AXuAmhRWbjpNiIh2ZP_2zI9BUPsi5VWCLJV7lIDokRbDbHCujoWsQT7FKOkbnQuJBBL0zhSA2KsR2se9Rw3QejGOsJLLrhoPq4d5Yo3_mJ3Z8lbPabHGOME6VSmGzssM_ce626yrncRZbYKhfZLjmtOlsr012oAOlHHxG2foK6JjjhInGtE9-AEAxSy3AL3kxJGhOZpPflOQC8_SG8OmMpH9h1JLaY8U8zmt_PEtmHXLU0w_TJnQQUo9p-RuPPF31ofK7Z0Sv03ZqQEw')" }}></div>
-                            <div className="absolute -bottom-1 -right-1 w-5 h-5 bg-background-light dark:bg-surface-dark rounded-full flex items-center justify-center">
-                                <span className="w-3 h-3 bg-red-500 rounded-full border border-white dark:border-surface-dark" title="Engelli"></span>
-                            </div>
-                        </div>
-                        <div className="flex-1 min-w-0">
-                            <div className="flex justify-between items-start">
-                                <div>
-                                    <h3 className="text-sm font-bold text-slate-900 dark:text-white truncate">Ayşe Demir</h3>
-                                    <p className="text-xs text-slate-500 dark:text-white/60 truncate">ayse.d@example.com</p>
+                                <div className="flex-1 min-w-0">
+                                    <div className="flex justify-between items-start">
+                                        <div>
+                                            <h3 className="text-sm font-bold text-slate-900 dark:text-white truncate">{user.full_name || 'İsimsiz Kullanıcı'}</h3>
+                                            <p className="text-xs text-slate-500 dark:text-white/60 truncate">{user.email || 'Email Yok'}</p>
+                                        </div>
+                                        {user.is_admin && (
+                                            <span className="inline-flex items-center px-2 py-0.5 rounded text-[10px] font-medium bg-primary/10 text-primary border border-primary/20">
+                                                Admin
+                                            </span>
+                                        )}
+                                    </div>
+                                    <div className="mt-2 flex items-center gap-3 text-xs text-slate-600 dark:text-[#cbb690]">
+                                        <span className="flex items-center gap-1">
+                                            <span className="material-symbols-outlined text-[14px]">pets</span> ? Evcil
+                                        </span>
+                                        <span className="w-1 h-1 rounded-full bg-slate-300 dark:bg-white/20"></span>
+                                        <span className="flex items-center gap-1">
+                                            <span className="material-symbols-outlined text-[14px] text-primary">savings</span> {user.cicipoints || 0} Puan
+                                        </span>
+                                    </div>
+                                    <div className="mt-1 text-[10px] text-slate-400 dark:text-white/40">
+                                        ID: {user.id.slice(0, 8)}...
+                                    </div>
                                 </div>
-                                <span className="inline-flex items-center px-2 py-0.5 rounded text-[10px] font-medium bg-red-100 dark:bg-red-900/30 text-red-700 dark:text-red-400 border border-red-200 dark:border-red-800">
-                                    Engelli
-                                </span>
-                            </div>
-                            <div className="mt-2 flex items-center gap-3 text-xs text-slate-600 dark:text-[#cbb690]">
-                                <span className="flex items-center gap-1">
-                                    <span className="material-symbols-outlined text-[14px]">pets</span> 1 Evcil
-                                </span>
-                                <span className="w-1 h-1 rounded-full bg-slate-300 dark:bg-white/20"></span>
-                                <span className="flex items-center gap-1">
-                                    <span className="material-symbols-outlined text-[14px] text-primary">savings</span> 120 Puan
-                                </span>
-                            </div>
-                            <div className="mt-1 text-[10px] text-slate-400 dark:text-white/40">
-                                Kayıt: 05 Kasım 2023
+                                <Link href={`/profil/${user.id}`} className="shrink-0 text-slate-400 dark:text-white/50 hover:text-primary dark:hover:text-primary p-1 rounded-lg hover:bg-slate-100 dark:hover:bg-white/5 transition-colors">
+                                    <span className="material-symbols-outlined">visibility</span>
+                                </Link>
                             </div>
                         </div>
-                        <button className="shrink-0 text-slate-400 dark:text-white/50 hover:text-primary dark:hover:text-primary p-1 rounded-lg hover:bg-slate-100 dark:hover:bg-white/5 transition-colors">
-                            <span className="material-symbols-outlined">more_vert</span>
-                        </button>
+                    ))
+                ) : (
+                    <div className="text-center py-8 text-gray-400">
+                        Henüz kullanıcı yok.
                     </div>
-                </div>
-                {/* User Card 3 */}
-                <div className="group relative bg-white dark:bg-surface-dark rounded-xl p-3 shadow-sm border border-transparent hover:border-primary/30 transition-all">
-                    <div className="flex items-start gap-3">
-                        <div className="pt-1">
-                            <input className="w-5 h-5 rounded border-gray-300 dark:border-gray-600 text-primary focus:ring-primary dark:bg-[#221c10] cursor-pointer" type="checkbox" />
-                        </div>
-                        <div className="relative shrink-0">
-                            <div className="w-12 h-12 rounded-full bg-gray-200 dark:bg-[#3a3a3a] bg-cover bg-center" data-alt="Portrait of Mehmet Kaya" style={{ backgroundImage: "url('https://lh3.googleusercontent.com/aida-public/AB6AXuBGrlImsyoWglegvoPPP5VGZ45f8CGG1Zd7m4KXa_FXKxmL0C_A6W6I4YeD5HekQDUGcVkpVphridoVBT1KvjsP6MK-uyG1a6Z_qTTsy78DJmFs-cEjXxYVhGl8gOOBFNLGx4HJ42gMDHQumEG2RtFqCO3-GdoH0x3pYiGFrYNjVpQxI7eJrvaTLznUR5vcoWuyC4HFXEhlkwrVOmFYzY1w6VT0YXDwQjNsmQEjpb4DYn3n3yNxBDCr4-aCuf8OazHIElRVZaCSBP8')" }}></div>
-                            <div className="absolute -bottom-1 -right-1 w-5 h-5 bg-background-light dark:bg-surface-dark rounded-full flex items-center justify-center">
-                                <span className="w-3 h-3 bg-amber-500 rounded-full border border-white dark:border-surface-dark" title="Beklemede"></span>
-                            </div>
-                        </div>
-                        <div className="flex-1 min-w-0">
-                            <div className="flex justify-between items-start">
-                                <div>
-                                    <h3 className="text-sm font-bold text-slate-900 dark:text-white truncate">Mehmet Kaya</h3>
-                                    <p className="text-xs text-slate-500 dark:text-white/60 truncate">mehmet.k@corp.com</p>
-                                </div>
-                                <span className="inline-flex items-center px-2 py-0.5 rounded text-[10px] font-medium bg-amber-100 dark:bg-amber-900/30 text-amber-700 dark:text-amber-400 border border-amber-200 dark:border-amber-800">
-                                    Onay Bekliyor
-                                </span>
-                            </div>
-                            <div className="mt-2 flex items-center gap-3 text-xs text-slate-600 dark:text-[#cbb690]">
-                                <span className="flex items-center gap-1">
-                                    <span className="material-symbols-outlined text-[14px]">pets</span> 0 Evcil
-                                </span>
-                                <span className="w-1 h-1 rounded-full bg-slate-300 dark:bg-white/20"></span>
-                                <span className="flex items-center gap-1">
-                                    <span className="material-symbols-outlined text-[14px] text-primary">savings</span> 0 Puan
-                                </span>
-                            </div>
-                            <div className="mt-1 text-[10px] text-slate-400 dark:text-white/40">
-                                Kayıt: Bugün, 14:30
-                            </div>
-                        </div>
-                        <button className="shrink-0 text-slate-400 dark:text-white/50 hover:text-primary dark:hover:text-primary p-1 rounded-lg hover:bg-slate-100 dark:hover:bg-white/5 transition-colors">
-                            <span className="material-symbols-outlined">more_vert</span>
-                        </button>
-                    </div>
-                </div>
-                {/* User Card 4 */}
-                <div className="group relative bg-white dark:bg-surface-dark rounded-xl p-3 shadow-sm border border-transparent hover:border-primary/30 transition-all">
-                    <div className="flex items-start gap-3">
-                        <div className="pt-1">
-                            <input className="w-5 h-5 rounded border-gray-300 dark:border-gray-600 text-primary focus:ring-primary dark:bg-[#221c10] cursor-pointer" type="checkbox" />
-                        </div>
-                        <div className="relative shrink-0">
-                            <div className="w-12 h-12 rounded-full bg-gray-200 dark:bg-[#3a3a3a] bg-cover bg-center" data-alt="Portrait of Zeynep Yildiz" style={{ backgroundImage: "url('https://lh3.googleusercontent.com/aida-public/AB6AXuAc-oNxgH6xD7tAG6S4YNZ_Bi68bQWxiXD4Or3ktBDe_CQGgKAuyW0qxTIJW1VbRQB8CuRAcav-GkQt6EOqa8WIUQDWC443sgwxufD-ONxhKdUwZsLQbl6ZCyJFS3JbbytkTszBb2AC350wOceMARhEeqZvw_9EE27iKMcBduzCHrkCbA7hsis1ahe0p0sT110ZN1iIVMSGO7XteqK1kITA9qtZxgRwhE0Hq0mtlFB6rkm5u0j4jMEoSh_TUltShuLTjHiRsjUH2N4')" }}></div>
-                            <div className="absolute -bottom-1 -right-1 w-5 h-5 bg-background-light dark:bg-surface-dark rounded-full flex items-center justify-center">
-                                <span className="w-3 h-3 bg-green-500 rounded-full border border-white dark:border-surface-dark" title="Aktif"></span>
-                            </div>
-                        </div>
-                        <div className="flex-1 min-w-0">
-                            <div className="flex justify-between items-start">
-                                <div>
-                                    <h3 className="text-sm font-bold text-slate-900 dark:text-white truncate">Zeynep Yıldız</h3>
-                                    <p className="text-xs text-slate-500 dark:text-white/60 truncate">zeynep.star@email.com</p>
-                                </div>
-                                <span className="inline-flex items-center px-2 py-0.5 rounded text-[10px] font-medium bg-green-100 dark:bg-green-900/30 text-green-700 dark:text-green-400 border border-green-200 dark:border-green-800">
-                                    Aktif
-                                </span>
-                            </div>
-                            <div className="mt-2 flex items-center gap-3 text-xs text-slate-600 dark:text-[#cbb690]">
-                                <span className="flex items-center gap-1">
-                                    <span className="material-symbols-outlined text-[14px]">pets</span> 3 Evcil
-                                </span>
-                                <span className="w-1 h-1 rounded-full bg-slate-300 dark:bg-white/20"></span>
-                                <span className="flex items-center gap-1">
-                                    <span className="material-symbols-outlined text-[14px] text-primary">savings</span> 890 Puan
-                                </span>
-                            </div>
-                            <div className="mt-1 text-[10px] text-slate-400 dark:text-white/40">
-                                Kayıt: 20 Eylül 2023
-                            </div>
-                        </div>
-                        <button className="shrink-0 text-slate-400 dark:text-white/50 hover:text-primary dark:hover:text-primary p-1 rounded-lg hover:bg-slate-100 dark:hover:bg-white/5 transition-colors">
-                            <span className="material-symbols-outlined">more_vert</span>
-                        </button>
-                    </div>
-                </div>
-                {/* Loader / Pagination */}
-                <div className="flex justify-center py-4 text-slate-400 dark:text-white/40">
-                    <span className="material-symbols-outlined animate-spin">progress_activity</span>
-                </div>
+                )}
             </div>
 
             {/* Floating Action Button */}
