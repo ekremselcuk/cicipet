@@ -51,9 +51,9 @@ export default async function AdminPetsPage() {
                             <span className="material-symbols-outlined text-[20px] text-primary">pets</span>
                             <span className="text-xs font-semibold uppercase tracking-wider">Kedi</span>
                         </div>
-                        <p className="text-2xl font-bold text-slate-900 dark:text-white">1,204</p>
+                        <p className="text-2xl font-bold text-slate-900 dark:text-white">{catCount}</p>
                         <p className="text-xs text-green-500 font-medium flex items-center mt-1">
-                            <span className="material-symbols-outlined text-[16px] mr-0.5">trending_up</span> +12%
+                            <span className="material-symbols-outlined text-[16px] mr-0.5">trending_up</span> %
                         </p>
                     </div>
                     <div className="snap-center shrink-0 min-w-[140px] flex-1 bg-white dark:bg-surface-dark p-4 rounded-xl shadow-sm border border-gray-100 dark:border-white/5 flex flex-col gap-1">
@@ -61,9 +61,9 @@ export default async function AdminPetsPage() {
                             <span className="material-symbols-outlined text-[20px] text-blue-400">pet_supplies</span>
                             <span className="text-xs font-semibold uppercase tracking-wider">Köpek</span>
                         </div>
-                        <p className="text-2xl font-bold text-slate-900 dark:text-white">850</p>
+                        <p className="text-2xl font-bold text-slate-900 dark:text-white">{dogCount}</p>
                         <p className="text-xs text-green-500 font-medium flex items-center mt-1">
-                            <span className="material-symbols-outlined text-[16px] mr-0.5">trending_up</span> +5%
+                            <span className="material-symbols-outlined text-[16px] mr-0.5">trending_up</span> %
                         </p>
                     </div>
                     <div className="snap-center shrink-0 min-w-[140px] flex-1 bg-white dark:bg-surface-dark p-4 rounded-xl shadow-sm border border-gray-100 dark:border-white/5 flex flex-col gap-1">
@@ -71,9 +71,9 @@ export default async function AdminPetsPage() {
                             <span className="material-symbols-outlined text-[20px] text-purple-400">cruelty_free</span>
                             <span className="text-xs font-semibold uppercase tracking-wider">Diğer</span>
                         </div>
-                        <p className="text-2xl font-bold text-slate-900 dark:text-white">120</p>
+                        <p className="text-2xl font-bold text-slate-900 dark:text-white">{otherCount}</p>
                         <p className="text-xs text-gray-500 font-medium flex items-center mt-1">
-                            <span className="material-symbols-outlined text-[16px] mr-0.5">remove</span> 0%
+                            <span className="material-symbols-outlined text-[16px] mr-0.5">remove</span> %
                         </p>
                     </div>
                 </section>
@@ -132,14 +132,21 @@ export default async function AdminPetsPage() {
                                                 <span className="text-xs font-bold text-primary">0</span>
                                             </div>
                                         </div>
-                                        <a className="mt-2 flex items-center gap-1 text-sm text-primary hover:underline w-fit" href={`/profil/${pet.owner_id}`}>
-                                            <span className="material-symbols-outlined text-[16px]">person</span>
-                                            ID: {pet.owner_id ? pet.owner_id.slice(0, 8) : 'Yok'}
-                                        </a>
+                                        {pet.owner_id ? (
+                                            <Link className="mt-2 flex items-center gap-1 text-sm text-primary hover:underline w-fit" href={`/profil/${pet.owner_id}`}>
+                                                <span className="material-symbols-outlined text-[16px]">person</span>
+                                                ID: {pet.owner_id.slice(0, 8)}
+                                            </Link>
+                                        ) : (
+                                            <span className="mt-2 flex items-center gap-1 text-sm text-gray-400 w-fit">
+                                                <span className="material-symbols-outlined text-[16px]">person_off</span>
+                                                Sahipsiz
+                                            </span>
+                                        )}
                                     </div>
                                 </div>
                                 <div className="border-t border-gray-100 dark:border-white/5 pt-3 flex items-center justify-between gap-2">
-                                    <Link href={`/pet/${pet.id}`} className="flex-1 h-9 flex items-center justify-center gap-2 rounded-lg bg-gray-50 dark:bg-white/5 hover:bg-gray-100 dark:hover:bg-white/10 text-xs font-semibold text-slate-600 dark:text-gray-300 transition-colors">
+                                    <Link href={pet.id ? `/pet/${pet.id}` : '#'} className="flex-1 h-9 flex items-center justify-center gap-2 rounded-lg bg-gray-50 dark:bg-white/5 hover:bg-gray-100 dark:hover:bg-white/10 text-xs font-semibold text-slate-600 dark:text-gray-300 transition-colors">
                                         <span className="material-symbols-outlined text-[18px]">visibility</span>
                                         Profili Gör
                                     </Link>

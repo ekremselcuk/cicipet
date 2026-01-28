@@ -1,8 +1,9 @@
-
 import MenuTrigger from "@/components/admin/MenuTrigger";
 import ModerationGrid from "@/components/admin/ModerationGrid";
 import { requireAdmin } from "@/utils/supabase/check-auth";
 import { createClient } from "@/utils/supabase/server";
+
+export const dynamic = 'force-dynamic';
 
 export default async function AdminModerationPage() {
     await requireAdmin();
