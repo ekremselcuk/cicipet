@@ -8,14 +8,13 @@ import { redirect } from "next/navigation";
 export default async function ProfilPage() {
     const supabase = await createClient();
 
-    let user = null;
+    // 1. Auth Check (Must be outside try/catch because redirect throws an error)
+    const user = await requireAuth();
+
     let pets = [];
     let userProfile = null;
 
     try {
-        const authData = await requireAuth();
-        user = authData;
-
         // Fetch User Profile
         const { data: profile } = await supabase
             .from('users')
@@ -33,11 +32,7 @@ export default async function ProfilPage() {
 
     } catch (error) {
         console.error("Profile load error:", error);
-        // If critical auth error, likely redirected already by requireAuth
-        // If just db error, we show default empty states
     }
-
-    if (!user) return null; // Should not trigger due to requireAuth, but safety.
 
 
     // Fallback data if DB fetch fails or is empty (for demo continuity if migrations aren't perfect)
