@@ -44,6 +44,8 @@ export default function ModerationGrid({ initialItems }: { initialItems: Moderat
                 if (error) throw error;
             }
 
+            // Small delay to ensure DB propagation before re-fetching
+            await new Promise(resolve => setTimeout(resolve, 500));
             router.refresh(); // Sync server state
         } catch (e) {
             console.error(e);

@@ -146,10 +146,17 @@ export default async function AdminPetsPage() {
                                     </div>
                                 </div>
                                 <div className="border-t border-gray-100 dark:border-white/5 pt-3 flex items-center justify-between gap-2">
-                                    <Link href={pet.id ? `/pet/${pet.id}` : '#'} className="flex-1 h-9 flex items-center justify-center gap-2 rounded-lg bg-gray-50 dark:bg-white/5 hover:bg-gray-100 dark:hover:bg-white/10 text-xs font-semibold text-slate-600 dark:text-gray-300 transition-colors">
-                                        <span className="material-symbols-outlined text-[18px]">visibility</span>
-                                        Profili Gör
-                                    </Link>
+                                    {pet.id ? (
+                                        <Link href={`/pet/${pet.id}`} className="flex-1 h-9 flex items-center justify-center gap-2 rounded-lg bg-gray-50 dark:bg-white/5 hover:bg-gray-100 dark:hover:bg-white/10 text-xs font-semibold text-slate-600 dark:text-gray-300 transition-colors">
+                                            <span className="material-symbols-outlined text-[18px]">visibility</span>
+                                            Profili Gör
+                                        </Link>
+                                    ) : (
+                                        <button disabled className="flex-1 h-9 flex items-center justify-center gap-2 rounded-lg bg-gray-50 dark:bg-white/5 text-xs font-semibold text-gray-400 cursor-not-allowed">
+                                            <span className="material-symbols-outlined text-[18px]">visibility_off</span>
+                                            Hatalı Kayıt
+                                        </button>
+                                    )}
                                     <button className="h-9 w-9 flex items-center justify-center rounded-lg bg-gray-50 dark:bg-white/5 hover:bg-red-500/20 hover:text-red-500 text-slate-600 dark:text-gray-300 transition-colors">
                                         <span className="material-symbols-outlined text-[18px]">delete</span>
                                     </button>
