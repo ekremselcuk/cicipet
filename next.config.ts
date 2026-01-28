@@ -17,6 +17,11 @@ const nextConfig: NextConfig = {
     if (nextRuntime === 'edge') {
       config.resolve.alias['ws'] = false;
       config.resolve.alias['buffer'] = false;
+      config.externals = config.externals || [];
+      config.externals.push({
+        'bufferutil': 'bufferutil',
+        'utf-8-validate': 'utf-8-validate',
+      });
     }
     return config;
   },
