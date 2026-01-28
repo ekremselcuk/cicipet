@@ -3,6 +3,8 @@ import { createClient } from "@/utils/supabase/server";
 import { getActiveContests, getContestDetails } from "@/utils/supabase/queries";
 import Link from "next/link";
 
+export const dynamic = "force-dynamic";
+
 export default async function Home() {
   const supabase = await createClient();
   const { data: contests } = await getActiveContests(supabase);
