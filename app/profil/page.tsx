@@ -111,6 +111,24 @@ export default function ProfilPage() {
                         <span className="text-[10px] text-gray-500 dark:text-gray-400 font-bold uppercase text-center leading-tight">Yarışmalarım</span>
                     </div>
                 </section>
+                {/* Admin Access Link - Only for specific user */}
+                {user.email === 'ekremselcuk@gmail.com' && (
+                    <div className="mb-6">
+                        <Link href="/admin" className="w-full flex items-center justify-between p-4 bg-gradient-to-r from-gray-900 to-gray-800 text-white rounded-2xl shadow-lg border border-gray-700 hover:scale-[1.02] transition-transform">
+                            <div className="flex items-center gap-4">
+                                <div className="w-10 h-10 rounded-full bg-white/10 flex items-center justify-center text-white">
+                                    <span className="material-symbols-outlined">admin_panel_settings</span>
+                                </div>
+                                <div className="flex flex-col">
+                                    <span className="font-bold text-sm">Admin Paneli</span>
+                                    <span className="text-xs text-gray-400">Yönetim sayfasına git</span>
+                                </div>
+                            </div>
+                            <span className="material-symbols-outlined text-gray-400">chevron_right</span>
+                        </Link>
+                    </div>
+                )}
+
                 <section>
                     <div className="flex items-center justify-between mb-3 px-1">
                         <h3 className="text-lg font-bold text-text-main dark:text-white">Petlerim</h3>
