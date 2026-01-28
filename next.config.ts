@@ -5,13 +5,14 @@ const withPWA = require("@ducanh2912/next-pwa").default({
   aggressiveFrontEndNavCaching: true,
   reloadOnOnline: true,
   swcMinify: true,
-  disable: process.env.NODE_ENV === "development",
+  disable: true, // Temporarily disabled to debug Vercel 404
   workboxOptions: {
     disableDevLogs: true,
   },
 });
 
 const nextConfig: NextConfig = {
+  output: "standalone",
   /* config options here */
 };
 
