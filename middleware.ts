@@ -75,14 +75,6 @@ export async function middleware(request: NextRequest) {
     }
 }
 
-// Protect Wallet and Profile
-if (request.nextUrl.pathname.startsWith('/cuzdan') || request.nextUrl.pathname.startsWith('/profil')) {
-    // Optional: strict auth check
-    // if (!user) return NextResponse.redirect(new URL('/login', request.url))
-}
-
-return response
-}
 
 export const config = {
     matcher: [
