@@ -6,57 +6,24 @@ import Link from "next/link";
 import { redirect } from "next/navigation";
 
 export default async function ProfilPage() {
-    // Verify Env Vars (Client-side mainly, but good for server logs)
-    if (!process.env.NEXT_PUBLIC_SUPABASE_URL || !process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY) {
-        console.error("Missing Supabase Environment Variables!");
-        // We can throw here or let createClient fail, but logging helps diagnosis.
-    }
-
     const supabase = await createClient();
+    const user = await requireAuth();
 
-    let user = null;
-    try {
-        // Use requireAuth but handle known redirect error if it wasn't automatically handled
-        // Actually, Next.js handles redirects by throwing an error. 
-        // We want to let that error pass through, but catch others.
-        user = await requireAuth();
-    } catch (e: any) {
-        if (e?.message === 'NEXT_REDIRECT' || e?.digest?.startsWith('NEXT_REDIRECT')) {
-            throw e; // Forward the redirect
-        }
-        console.error("Auth check failed:", e);
-        // If auth fails unexpectedly (not redirect), force login or return null
-        redirect("/auth/login");
-    }
+    // Fetch User Profile
+    let { data: userProfile } = await supabase
+        .from('users')
+        .select('*')
+        .eq('id', user.id)
+        .single();
 
-    let pets = [];
-    let userProfile = null;
+    // Fetch Pets
+    let { data: pets } = await supabase
+        .from('pets')
+        .select('*')
+        .eq('owner_id', user.id);
 
-    if (user) {
-        try {
-            // Fetch User Profile
-            const { data: profile } = await supabase
-                .from('users')
-                .select('*')
-                .eq('id', user.id)
-                .single();
-            userProfile = profile;
-
-            // Fetch Pets
-            const { data: userPets } = await supabase
-                .from('pets')
-                .select('*')
-                .eq('owner_id', user.id);
-            pets = userPets || [];
-
-        } catch (error) {
-            console.error("Profile load error:", error);
-            // Continue with defaults
-        }
-    }
-
-
-    // Fallback data if DB fetch fails or is empty (for demo continuity if migrations aren't perfect)
+    // Ensure arrays are initialized if null
+    pets = pets || [];
     const displayName = userProfile?.full_name || user.user_metadata?.full_name || user.email?.split('@')[0] || "Kullanıcı";
     const avatarUrl = userProfile?.avatar_url || user.user_metadata?.avatar_url || "https://lh3.googleusercontent.com/aida-public/AB6AXuACdszP9Owo_giuD_cOFvDCsciUgRRjCl0ttEGK3iHXjRAhptbmyrguHv_21pMgTgv_Xodgo5ttPM5uce6UG2OXLM1Af-B7w3hzhZWDAlzu_DtLvxvUVsqJdBk01qAExuoaIDNx-zYh7UsvHr9QiiXKjXtn2RE6uKGGDLiCR387D6wmRHWR46SCtAlSm2scpx9_ShOKTMsrBvfT-HlFN3RofYqmBYTQD_6oHBzkn_z5W-Z2EQo82YaqmbmLDc66RiqsVPVpVrS6-u4";
     const ciciPoints = userProfile?.cicipoints || 0;
