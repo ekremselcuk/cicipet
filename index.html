@@ -1,265 +1,474 @@
 <!DOCTYPE html>
+<html class="light" lang="tr">
 
-<html class="light" lang="tr"><head>
-<meta charset="utf-8"/>
-<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
-<title>CiciYarışma</title>
-<!-- Google Fonts -->
-<link href="https://fonts.googleapis.com" rel="preconnect"/>
-<link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/>
-<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&amp;display=swap" rel="stylesheet"/>
-<!-- Material Symbols -->
-<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
-<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
-<!-- Tailwind CSS with Config -->
-<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
-<script id="tailwind-config">
+<head>
+    <meta charset="utf-8" />
+    <meta content="width=device-width, initial-scale=1.0" name="viewport" />
+    <title>CiciPet Anasayfa Akışı</title>
+    <link href="https://fonts.googleapis.com" rel="preconnect" />
+    <link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect" />
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&amp;display=swap"
+        rel="stylesheet" />
+    <link
+        href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap"
+        rel="stylesheet" />
+    <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+    <script id="tailwind-config">
         tailwind.config = {
             darkMode: "class",
             theme: {
                 extend: {
                     colors: {
-                        "primary": "#f4ab25",
+                        "primary": "#f4ab25", // Orange
+                        "secondary": "#0d9488", // Teal
                         "background-light": "#f8f7f5",
                         "background-dark": "#221c10",
                     },
                     fontFamily: {
                         "display": ["Plus Jakarta Sans", "sans-serif"]
                     },
-                    borderRadius: {"DEFAULT": "1rem", "lg": "2rem", "xl": "3rem", "full": "9999px"},
+                    borderRadius: { "DEFAULT": "1rem", "lg": "1.5rem", "xl": "2rem", "2xl": "2.5rem", "full": "9999px" },
                 },
             },
         }
     </script>
-<style>
-        /* Custom scrollbar hiding */
-        .scrollbar-hide::-webkit-scrollbar {
+    <style>
+        .hide-scrollbar::-webkit-scrollbar {
             display: none;
         }
-        .scrollbar-hide {
+
+        .hide-scrollbar {
             -ms-overflow-style: none;
             scrollbar-width: none;
         }
+
+        body {
+            min-height: max(884px, 100dvh);
+        }
+
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+
+        .material-symbols-outlined.filled {
+            font-variation-settings: 'FILL' 1, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
     </style>
-<style>
-    body {
-      min-height: max(884px, 100dvh);
-    }
-  </style>
-  </head>
-<body class="bg-background-light dark:bg-background-dark text-slate-900 dark:text-slate-100 font-display antialiased overflow-x-hidden selection:bg-primary/30">
-<div class="relative flex min-h-screen w-full flex-col pb-24">
-<!-- Header -->
-<header class="sticky top-0 z-40 flex w-full items-center justify-between bg-background-light/90 dark:bg-background-dark/90 px-5 py-4 backdrop-blur-md transition-colors">
-<h1 class="text-2xl font-extrabold tracking-tight text-slate-900 dark:text-white">CiciYarışma</h1>
-<div class="flex items-center gap-1.5 rounded-full bg-primary/10 pl-3 pr-4 py-1.5 border border-primary/20 shadow-sm">
-<span class="material-symbols-outlined text-primary text-[20px] fill-1">monetization_on</span>
-<span class="text-sm font-bold text-slate-800 dark:text-slate-200">450 CP</span>
-</div>
-</header>
-<!-- Main Content -->
-<main class="flex flex-col gap-6 w-full">
-<!-- Hero Section: Featured Contest -->
-<section class="px-4">
-<div class="group relative w-full overflow-hidden rounded-[2rem] bg-white dark:bg-slate-800 shadow-xl shadow-primary/5 ring-1 ring-slate-900/5 dark:ring-white/10 transition-all hover:shadow-2xl hover:shadow-primary/10">
-<!-- Background Image with Overlay -->
-<div class="absolute inset-0 z-0">
-<div class="h-full w-full bg-cover bg-center transition-transform duration-700 group-hover:scale-105" data-alt="Close up of a cute cat looking charismatic" style="background-image: url('https://lh3.googleusercontent.com/aida-public/AB6AXuDVIQt70H6tXH2Dyj4ZlE9JXTEy1-0KxS-nyNnUqgdtVRRyaH4U5nZvjF74tAVrwmmxBwZiOjOM6_JF3_G6ihCWxny-i84qFTmekXK5e6yc_MyC0o5AxCyWViC1bA3HlHUDFpZt7w53aOlUd8JySa47Jty9zbR9n7z0uWHeO_tQIvDZjyQNe3RNZcqXiVFwYoz03XX55ZXobnIItxg1wtrKcO_u1RXG02Rci6hrNLo2Xl6uDJGXyijNIaurf_VEEAcOi4IhfZ7uzKg');"></div>
-<div class="absolute inset-0 bg-gradient-to-t from-black/90 via-black/40 to-transparent"></div>
-</div>
-<!-- Content -->
-<div class="relative z-10 flex flex-col justify-end p-6 pt-32 h-full">
-<div class="mb-1 flex items-center gap-2">
-<span class="rounded-full bg-primary px-3 py-1 text-xs font-bold text-white shadow-sm">Günün Yarışması</span>
-<span class="flex items-center gap-1 rounded-full bg-black/40 px-3 py-1 text-xs font-semibold text-white backdrop-blur-sm">
-<span class="material-symbols-outlined text-[14px]">timer</span>
-                                04:23:12
-                            </span>
-</div>
-<h2 class="mb-2 text-3xl font-extrabold leading-tight text-white">En Karizmatik Bakış</h2>
-<div class="mb-5 flex items-center gap-3 text-white/90">
-<span class="material-symbols-outlined text-primary">emoji_events</span>
-<span class="text-sm font-medium">Ödül: <span class="font-bold text-white">10kg Pro Plan Mama</span></span>
-</div>
-<button class="flex w-full items-center justify-center gap-2 rounded-full bg-primary py-3.5 text-sm font-bold text-slate-900 shadow-lg shadow-primary/25 transition-transform active:scale-95">
-                            Hemen Katıl
-                            <span class="material-symbols-outlined text-[18px]">arrow_forward</span>
-</button>
-</div>
-</div>
-</section>
-<!-- Category Tabs -->
-<section class="w-full">
-<div class="scrollbar-hide flex w-full gap-3 overflow-x-auto px-4 pb-2">
-<button class="flex shrink-0 items-center gap-2 rounded-full bg-slate-900 dark:bg-white px-5 py-2.5 text-sm font-bold text-white dark:text-slate-900 shadow-md">
-<span class="material-symbols-outlined text-[18px]">local_fire_department</span>
-                        Popüler
+    <style>
+        body {
+            min-height: max(884px, 100dvh);
+        }
+    </style>
+</head>
+
+<body
+    class="bg-background-light dark:bg-background-dark font-display text-[#1c170d] dark:text-[#f8f7f5] antialiased selection:bg-primary selection:text-white pb-24">
+    <header
+        class="sticky top-0 z-50 bg-background-light/95 dark:bg-background-dark/95 backdrop-blur-md transition-colors duration-300 border-b border-black/5 dark:border-white/5">
+        <div class="flex items-center px-4 py-3 justify-between">
+            <div class="flex items-center gap-2">
+                <div
+                    class="size-8 rounded-full bg-primary flex items-center justify-center text-white font-bold text-lg shadow-sm">
+                    <span class="material-symbols-outlined filled text-[20px]">pets</span>
+                </div>
+                <h1 class="text-xl font-extrabold tracking-tight text-neutral-900 dark:text-white">CiciPet</h1>
+            </div>
+            <div class="flex items-center gap-3">
+                <button
+                    class="flex items-center justify-center rounded-full size-10 hover:bg-black/5 dark:hover:bg-white/10 transition-colors relative">
+                    <span class="material-symbols-outlined text-[#1c170d] dark:text-white"
+                        style="font-size: 26px;">notifications</span>
+                    <span
+                        class="absolute top-2.5 right-2.5 h-2 w-2 rounded-full bg-primary border border-background-light dark:border-background-dark"></span>
+                </button>
+                <div
+                    class="flex size-9 shrink-0 items-center justify-center rounded-full bg-secondary/10 overflow-hidden ring-2 ring-transparent hover:ring-secondary/20 transition-all cursor-pointer">
+                    <span class="material-symbols-outlined text-secondary filled">person</span>
+                </div>
+            </div>
+        </div>
+    </header>
+    <main class="flex flex-col gap-6 pt-4">
+        <section class="w-full overflow-hidden px-4">
+            <div class="relative w-full aspect-[16/9] rounded-2xl overflow-hidden shadow-lg group">
+                <div class="absolute inset-0 bg-cover bg-center transition-transform duration-700 group-hover:scale-105"
+                    data-alt="Close up of a cute cat looking at the camera"
+                    style="background-image: url('https://lh3.googleusercontent.com/aida-public/AB6AXuBcoxQt5YAPUPl6OswTEcHXPIijjDl7uIBKMQ6TyPiLdLNoXx-8IOKavXND-4hXd_qmOaZV2dHLZi1NUABkAA0L_dLMTNF-ERccXR36ywHRAdyRaiCaIo7NO8igLnnfUlkoArdqel51J8a3hpiVh9-XeBdyn1nokJusf58SJrQm7n6OEDWSc88TR47JYNUB6S0xK9lrXZMA466A-PMg2EXvH_SIqwWrtZq2CoZpDgMp8qNAexR2fs8sUNlR2-pUOzabMWOKtpFIYkM');">
+                </div>
+                <div class="absolute inset-0 bg-gradient-to-t from-secondary/90 via-black/20 to-transparent"></div>
+                <div class="absolute bottom-0 left-0 w-full p-5 flex flex-col items-start gap-2">
+                    <div class="flex items-center gap-2 mb-1">
+                        <span
+                            class="bg-white/20 backdrop-blur-md text-white text-[10px] font-bold px-2 py-0.5 rounded-lg uppercase tracking-wider border border-white/20">
+                            CiciYarışma
+                        </span>
+                        <div
+                            class="flex items-center gap-1 bg-black/40 backdrop-blur-sm px-2 py-0.5 rounded-lg border border-white/10">
+                            <span class="material-symbols-outlined text-white text-[12px]">timer</span>
+                            <span class="text-white text-[10px] font-medium">Son 2 gün</span>
+                        </div>
+                    </div>
+                    <h2 class="text-white text-xl font-bold leading-tight shadow-sm">Haftanın Gözdesi: <br />Boncuk 🏆
+                    </h2>
+                    <p class="text-white/90 text-xs font-medium line-clamp-1 max-w-[85%]">En tatlı uyku pozu için oy
+                        ver!</p>
+                    <button
+                        class="mt-1 bg-white text-secondary hover:bg-white/90 font-bold py-2 px-4 rounded-xl text-sm shadow-lg transition-transform active:scale-95 flex items-center justify-center gap-1">
+                        <span>Hemen Katıl</span>
+                        <span class="material-symbols-outlined text-[16px]">arrow_forward</span>
                     </button>
-<button class="flex shrink-0 items-center gap-2 rounded-full bg-white dark:bg-slate-800 px-5 py-2.5 text-sm font-medium text-slate-600 dark:text-slate-300 shadow-sm ring-1 ring-slate-900/5 dark:ring-white/10">
-<span class="material-symbols-outlined text-[18px] text-[#2a9d8f]">location_on</span>
-                        Yerel (İstanbul)
-                    </button>
-<button class="flex shrink-0 items-center gap-2 rounded-full bg-white dark:bg-slate-800 px-5 py-2.5 text-sm font-medium text-slate-600 dark:text-slate-300 shadow-sm ring-1 ring-slate-900/5 dark:ring-white/10">
-<span class="material-symbols-outlined text-[18px] text-[#e76f51]">pets</span>
-                        Yetenek
-                    </button>
-<button class="flex shrink-0 items-center gap-2 rounded-full bg-white dark:bg-slate-800 px-5 py-2.5 text-sm font-medium text-slate-600 dark:text-slate-300 shadow-sm ring-1 ring-slate-900/5 dark:ring-white/10">
-<span class="material-symbols-outlined text-[18px] text-[#2a9d8f]">volunteer_activism</span>
-                        Barınak Destek
-                    </button>
-</div>
-</section>
-<!-- Leaderboard Snippet -->
-<section class="px-4">
-<div class="flex items-center justify-between mb-3">
-<h3 class="text-lg font-bold text-slate-900 dark:text-white">Haftanın Şampiyonları</h3>
-<a class="text-xs font-bold text-primary hover:underline" href="#">Tümünü Gör</a>
-</div>
-<div class="flex items-start gap-4 overflow-x-auto scrollbar-hide pb-2">
-<!-- Winner 1 -->
-<div class="flex flex-col items-center gap-1 min-w-[70px]">
-<div class="relative">
-<div class="h-16 w-16 rounded-full border-2 border-primary p-0.5">
-<div class="h-full w-full rounded-full bg-cover bg-center" data-alt="Golden Retriever smiling" style="background-image: url('https://lh3.googleusercontent.com/aida-public/AB6AXuDiH8fidrSk3pvSOsQK5wLjrSRWPUHP3z3AGt8Be1NhWbsieAyhqEqENyMfBJIQf_Q7b7lh_X2733uJCXaA2453jlXqAxO2UUkHUpVmKc9XOmFfYzW2uEPuU7-Nv4uWsPXWjZ9uMbt3tP06ZtJFgFQ7DfKnBg-qqUp7CNYmnT3FdImuYaDQrx2XAs53gbOwwQ9KWkhOhHUrcJUDSbCOOYLsRREitUcM1dGNFNVEC0uKRmHciYnLDVlSG929JZeRPX2pl5USKjDmL_Y');"></div>
-</div>
-<div class="absolute -bottom-1 -right-1 flex h-6 w-6 items-center justify-center rounded-full bg-primary text-xs font-bold text-white shadow-sm">1</div>
-</div>
-<span class="text-xs font-bold text-slate-800 dark:text-slate-200 mt-1">Boncuk</span>
-<span class="text-[10px] font-medium text-slate-500">850 P</span>
-</div>
-<!-- Winner 2 -->
-<div class="flex flex-col items-center gap-1 min-w-[70px]">
-<div class="relative">
-<div class="h-16 w-16 rounded-full border-2 border-slate-200 dark:border-slate-700 p-0.5">
-<div class="h-full w-full rounded-full bg-cover bg-center" data-alt="Ginger cat looking curious" style="background-image: url('https://lh3.googleusercontent.com/aida-public/AB6AXuD-xV2Ry5H6U89mVIRilVX-BdrZDN29vLCCnuYX9dmXk_F0Y5K4qJwLY9C5LM6BMFH_7GLNbwINbI97gyDJFywixSbrpyfrKoCaTbtesEzZDSRY09AdUPQxPFlon-yzGmH2iUFszKkT2Y_s-gCkYiKXtS-IVFRENfJhFFgmo9djQLKJsOXiV8Y8D8pICKH8ERFEhCyo6lc4ysZx755HNU83tvbcHuU7Hu7S5KnqSyjAYmfr3ZkdImnzK8QcUyPFme6jTxv7upvKGx0');"></div>
-</div>
-<div class="absolute -bottom-1 -right-1 flex h-6 w-6 items-center justify-center rounded-full bg-slate-400 text-xs font-bold text-white shadow-sm">2</div>
-</div>
-<span class="text-xs font-bold text-slate-800 dark:text-slate-200 mt-1">Mia</span>
-<span class="text-[10px] font-medium text-slate-500">720 P</span>
-</div>
-<!-- Winner 3 -->
-<div class="flex flex-col items-center gap-1 min-w-[70px]">
-<div class="relative">
-<div class="h-16 w-16 rounded-full border-2 border-slate-200 dark:border-slate-700 p-0.5">
-<div class="h-full w-full rounded-full bg-cover bg-center" data-alt="Bull dog looking funny" style="background-image: url('https://lh3.googleusercontent.com/aida-public/AB6AXuAKW_yokU29dIs7ZGSM36hbRuCKcWQ8qTwjTqqMw7nXPHzC76gu5tnphM1nUpZngEG3F3kVbB_xS2HLhEqw8jJ5AdZjaBwZnQtPKCATNTrs3vYs1U4qxXWyNYSvhhykWU60Y9MTkDpfNLjVatZSwcwXyL9PpVimQuttuvsVgwAMh11FbH4cVetrXJvrtMFx-Zuck3TcM_C16SygMVkMPrK4znlp6wkQNglteEguyGc_PCsuKTzNEuwrPlYGAIWuBWiBIAyVuJhFpHw');"></div>
-</div>
-<div class="absolute -bottom-1 -right-1 flex h-6 w-6 items-center justify-center rounded-full bg-[#d68c45] text-xs font-bold text-white shadow-sm">3</div>
-</div>
-<span class="text-xs font-bold text-slate-800 dark:text-slate-200 mt-1">Paşa</span>
-<span class="text-[10px] font-medium text-slate-500">640 P</span>
-</div>
-<!-- Winner 4 -->
-<div class="flex flex-col items-center gap-1 min-w-[70px] opacity-70">
-<div class="relative">
-<div class="h-16 w-16 rounded-full border-2 border-slate-100 dark:border-slate-800 p-0.5">
-<div class="h-full w-full rounded-full bg-cover bg-center" data-alt="Small dog running" style="background-image: url('https://lh3.googleusercontent.com/aida-public/AB6AXuBT9kiLTa2ATMpyXFNBvV857NiA5V6D3GrqcH7QIp1r9mp7jT26nr5e6uZXHVNKbtG7GCx4hml3mUCqw6EB6GVwH7TFvgCEIv8o7nTHDTdyImQBVZUyhidUgO4aCFumjHJIItZlMKyCYqY5Qi6C6pKEVaWF-x3nWqQDEuct8RXFmwy2LYXq_qBCsfEjRiAFzP-0Y6ezeFnSm3DiMOWsYERnnMDpRttxQhI7DCCwHH5I_7K8w1PP2Ai3kVDMl5VFq5V3JwdENi2JBZ0');"></div>
-</div>
-</div>
-<span class="text-xs font-bold text-slate-800 dark:text-slate-200 mt-1">Zeytin</span>
-<span class="text-[10px] font-medium text-slate-500">510 P</span>
-</div>
-</div>
-</section>
-<!-- Grid Layout -->
-<section class="px-4 pb-4">
-<div class="grid grid-cols-2 gap-4">
-<!-- Card 1 -->
-<article class="flex flex-col overflow-hidden rounded-2xl bg-white dark:bg-slate-800 shadow-sm ring-1 ring-slate-900/5 dark:ring-white/10">
-<div class="relative aspect-square w-full">
-<div class="h-full w-full bg-cover bg-center" data-alt="Cat wearing sunglasses looking cool" style="background-image: url('https://lh3.googleusercontent.com/aida-public/AB6AXuCWqux1XIhvybvFOJnRSXu_6qRkWLcuHb8HjtRDfOKzKd7hBiaQlWLH-Knd9DpCov43Qvatn2ThAFXdKJk3Y1r6JaTlZxZTCKCS8k6KjxOsD9Blz-S5c3JEen8SkWxKruMqK02_qLW7a_xdoi_XV-PQ-RuurXyGKXOdZyBkhbRcG0dRTtBSDI9gAO9HLrF7eSepVzPcvMWRSSGokuFb5iQcTu4nFlzUyIJoPx7V3h9czkGnxGpfxo5x-QvE12H1WTEf-bn3H851IA0');"></div>
-<div class="absolute top-2 right-2 rounded-full bg-white/90 px-2 py-0.5 text-[10px] font-bold text-slate-900 backdrop-blur-sm shadow-sm">
-                                📍 Kadıköy
+                </div>
+            </div>
+        </section>
+        <section class="px-4">
+            <h3 class="text-sm font-bold text-neutral-900 dark:text-white mb-3 flex items-center gap-1">
+                Hikayeler <span class="text-xs font-normal text-neutral-500 ml-auto">Tümünü gör</span>
+            </h3>
+            <div class="flex gap-4 overflow-x-auto hide-scrollbar pb-1">
+                <div class="flex flex-col items-center gap-1.5 shrink-0">
+                    <div
+                        class="size-16 rounded-full bg-white dark:bg-white/5 border-2 border-dashed border-neutral-300 dark:border-neutral-600 flex items-center justify-center relative cursor-pointer">
+                        <span class="material-symbols-outlined text-secondary text-2xl">add</span>
+                        <div
+                            class="absolute bottom-0 right-0 bg-secondary text-white rounded-full p-0.5 border-2 border-white dark:border-background-dark">
+                            <span class="material-symbols-outlined text-[10px] block">add</span>
+                        </div>
+                    </div>
+                    <span class="text-xs font-medium text-neutral-600 dark:text-neutral-400">Ekle</span>
+                </div>
+                <div class="flex flex-col items-center gap-1.5 shrink-0 cursor-pointer">
+                    <div class="size-16 rounded-full p-0.5 bg-gradient-to-tr from-primary to-secondary">
+                        <div class="w-full h-full rounded-full bg-white dark:bg-black p-0.5">
+                            <img alt="User story" class="w-full h-full rounded-full object-cover"
+                                src="https://lh3.googleusercontent.com/aida-public/AB6AXuCUaOlYsT2STSMRed6Bw9DAKkzlg2uYk4oY6wkjpG4Ul-H8SJiSWwxHDxkwmwbJYzngiRlmVkhCzWtMSE2U3iPH5W_3Y0YOXRnqTYLMF9hD_q7YntvgXGc3zDtXeCfjYRmeahdzVfs8BoHisGm-Pdxpml4D4fcZZO8DMBVO_TmtHXn2gEeW072t9ikWrd7cmmV1DorhCSgBmF6C7PSxyqUae_WEbMMnFikjcPmhIEZDPUyCzOEkEH9obFXAcq-3YCRN5AFQ5EFnWTQ" />
+                        </div>
+                    </div>
+                    <span class="text-xs font-medium text-neutral-900 dark:text-white">Elif</span>
+                </div>
+                <div class="flex flex-col items-center gap-1.5 shrink-0 cursor-pointer">
+                    <div class="size-16 rounded-full p-0.5 bg-gradient-to-tr from-primary to-secondary">
+                        <div class="w-full h-full rounded-full bg-white dark:bg-black p-0.5">
+                            <img alt="User story" class="w-full h-full rounded-full object-cover"
+                                src="https://lh3.googleusercontent.com/aida-public/AB6AXuCuIZBrFyk9LaTHqwN7a8I4GL5_NjmMONtJo2yYyGyPi190BO2Ue0ULzKYx8vxAYs4z5incCD2WG8_SQ_VvT5CCq-d0txy-RVOLPyXWbAl1THfue_m_IkgqraT8K7QSR8pvt0szyqHXoHF2E2jP9gQebt0Hqn7jyzCzROXzTQkI54lopeKIFR1jdHDhuKN9qPh2anDMoXPGuJXycn81qpc6UOpeE94ldktHKWPdkHC_cSg8ye3QyIhSClfK5xccm-rmQM1uI0u5TLw" />
+                        </div>
+                    </div>
+                    <span class="text-xs font-medium text-neutral-900 dark:text-white">Can</span>
+                </div>
+                <div class="flex flex-col items-center gap-1.5 shrink-0 cursor-pointer opacity-70">
+                    <div class="size-16 rounded-full border-2 border-neutral-200 dark:border-neutral-700 p-0.5">
+                        <img alt="User story" class="w-full h-full rounded-full object-cover"
+                            src="https://lh3.googleusercontent.com/aida-public/AB6AXuC3QQIeNTmkKhzgX6GF897ZjC3hfL2AhrUMwFp1MB4vKcxUTTXXnpdQsyNM7IzQH3WZImsnBPuqbsrwXPTXVsqqbxd3JlvRvoavn0gJqXhrbALSBfxShvjjApE4AAdHLlFBfk42UYGemMJKEGGmtlUOQHEpSF2xPt9CA2oXPsdv1u6T9_2bj3QouR58wSmTsIEn_1XR3S3J5b7UV9weztgcFeBGwQrY1RJzDqKFjzmPZSq7ZA4QRhHF-uI2GW9-TSVhohTv2AQwmAs" />
+                    </div>
+                    <span class="text-xs font-medium text-neutral-600 dark:text-neutral-400">Pamuk</span>
+                </div>
+                <div class="flex flex-col items-center gap-1.5 shrink-0 cursor-pointer opacity-70">
+                    <div class="size-16 rounded-full border-2 border-neutral-200 dark:border-neutral-700 p-0.5">
+                        <img alt="User story" class="w-full h-full rounded-full object-cover"
+                            src="https://lh3.googleusercontent.com/aida-public/AB6AXuC4uQ6xyT3941YBcHxTcGlYi7Df4f1CR1Vk6p_TC_B-ihCnBSo2qCj6EacEbiyxb_5DAllsUuBsCpR6kLGSwhqF584t0c-D0E51QaMRAnoap7FjW5i6sSwgIXxrMu_2yBsDb1oXNGnkbZIqoLAVhUz0lziXR9dOl_Gt3uHzM98eR0Y356JdLT17w61h3CUiSVsbFxglJ0nQnvSIh8q263csGJm2NYB27CKOgMIFXVFwaHgvcjoO8hvxnq51BpEBJyMoS2V0G2nPhME" />
+                    </div>
+                    <span class="text-xs font-medium text-neutral-600 dark:text-neutral-400">Markalar</span>
+                </div>
+            </div>
+        </section>
+        <article class="px-4">
+            <div
+                class="flex flex-col gap-3 bg-white dark:bg-[#2c2415] p-4 rounded-2xl shadow-sm border border-black/5 dark:border-white/5">
+                <div class="flex items-center justify-between">
+                    <div class="flex items-center gap-3">
+                        <div class="size-10 rounded-full bg-gray-200 overflow-hidden">
+                            <img alt="User avatar" class="h-full w-full object-cover"
+                                data-alt="Portrait of a young woman with dark hair"
+                                src="https://lh3.googleusercontent.com/aida-public/AB6AXuCUaOlYsT2STSMRed6Bw9DAKkzlg2uYk4oY6wkjpG4Ul-H8SJiSWwxHDxkwmwbJYzngiRlmVkhCzWtMSE2U3iPH5W_3Y0YOXRnqTYLMF9hD_q7YntvgXGc3zDtXeCfjYRmeahdzVfs8BoHisGm-Pdxpml4D4fcZZO8DMBVO_TmtHXn2gEeW072t9ikWrd7cmmV1DorhCSgBmF6C7PSxyqUae_WEbMMnFikjcPmhIEZDPUyCzOEkEH9obFXAcq-3YCRN5AFQ5EFnWTQ" />
+                        </div>
+                        <div class="flex flex-col">
+                            <div class="flex items-center gap-1">
+                                <h3 class="text-sm font-bold text-neutral-900 dark:text-white">Elif &amp; Pamuk</h3>
+                                <span
+                                    class="material-symbols-outlined text-secondary text-[14px] fill-current">verified</span>
                             </div>
-</div>
-<div class="flex flex-1 flex-col p-3">
-<h3 class="mb-1 text-base font-bold leading-tight text-slate-900 dark:text-white">Kadıköy'ün Maskotu</h3>
-<p class="mb-3 text-xs font-medium text-slate-500 dark:text-slate-400">120 Katılımcı</p>
-<button class="mt-auto flex w-full items-center justify-center gap-1.5 rounded-xl border border-primary/30 bg-primary/5 py-2 text-xs font-bold text-primary transition-colors hover:bg-primary hover:text-white dark:border-primary/50 dark:bg-primary/10 dark:hover:bg-primary">
-<span class="material-symbols-outlined text-[16px] filled">how_to_vote</span>
-                                Oy Ver
-                            </button>
-</div>
-</article>
-<!-- Card 2 -->
-<article class="flex flex-col overflow-hidden rounded-2xl bg-white dark:bg-slate-800 shadow-sm ring-1 ring-slate-900/5 dark:ring-white/10">
-<div class="relative aspect-square w-full">
-<div class="h-full w-full bg-cover bg-center" data-alt="Cat sleeping in a funny position" style="background-image: url('https://lh3.googleusercontent.com/aida-public/AB6AXuADRPQ7eGHbEkuKdMO1ZsRc9swJZaKSzLt18wUQ4xLS6AN4U_mCHVVNl_Vxs3mEJKg2PhWs7AqKQEEnfCEq_KfBqZSn-RP5D2-r5tC7sRZUL28gbM_Dd0jsGYczTYQom9yZy9_CfPGn4x6XV5yH8Fm9AV32o9g5xhvvV68kGEfGx4Qsz6-Tnn5DY0_myL7bPzFAbQchVPZHvCv-iVzAecTm-CcM1Ueo1tqM4SdF_VaRbaPxezP81_HqHIx4vBPKOQu6pB6SekOb7BI');"></div>
-<div class="absolute top-2 right-2 rounded-full bg-[#2a9d8f]/90 px-2 py-0.5 text-[10px] font-bold text-white backdrop-blur-sm shadow-sm">
-                                💤 Uyku
+                            <span class="text-xs text-neutral-500 dark:text-neutral-400">İstanbul, Kadıköy • 2s
+                                önce</span>
+                        </div>
+                    </div>
+                    <button
+                        class="flex items-center justify-center size-8 rounded-full hover:bg-black/5 dark:hover:bg-white/10 text-neutral-500">
+                        <span class="material-symbols-outlined">more_horiz</span>
+                    </button>
+                </div>
+                <div class="w-full aspect-[4/5] rounded-xl overflow-hidden bg-gray-100 dark:bg-gray-800 relative">
+                    <img alt="White cat with sunglasses sitting in the sun" class="w-full h-full object-cover"
+                        data-alt="White cat wearing sunglasses sitting on a patio"
+                        src="https://lh3.googleusercontent.com/aida-public/AB6AXuC3QQIeNTmkKhzgX6GF897ZjC3hfL2AhrUMwFp1MB4vKcxUTTXXnpdQsyNM7IzQH3WZImsnBPuqbsrwXPTXVsqqbxd3JlvRvoavn0gJqXhrbALSBfxShvjjApE4AAdHLlFBfk42UYGemMJKEGGmtlUOQHEpSF2xPt9CA2oXPsdv1u6T9_2bj3QouR58wSmTsIEn_1XR3S3J5b7UV9weztgcFeBGwQrY1RJzDqKFjzmPZSq7ZA4QRhHF-uI2GW9-TSVhohTv2AQwmAs" />
+                    <div
+                        class="absolute bottom-3 right-3 bg-black/60 backdrop-blur-sm rounded-full px-3 py-1 flex items-center gap-1">
+                        <span class="material-symbols-outlined text-white text-[16px]">photo_camera</span>
+                        <span class="text-xs font-medium text-white">Canon R5</span>
+                    </div>
+                </div>
+                <div class="flex items-center justify-between mt-1">
+                    <div class="flex items-center gap-4">
+                        <button class="group flex items-center gap-1.5 text-neutral-600 dark:text-neutral-300">
+                            <span
+                                class="material-symbols-outlined group-hover:text-red-500 transition-colors">favorite</span>
+                            <span class="text-sm font-medium">2.4k</span>
+                        </button>
+                        <button class="group flex items-center gap-1.5 text-neutral-600 dark:text-neutral-300">
+                            <span
+                                class="material-symbols-outlined group-hover:text-blue-500 transition-colors">chat_bubble</span>
+                            <span class="text-sm font-medium">128</span>
+                        </button>
+                        <button class="group flex items-center gap-1.5 text-neutral-600 dark:text-neutral-300">
+                            <span
+                                class="material-symbols-outlined group-hover:text-green-500 transition-colors">send</span>
+                        </button>
+                    </div>
+                    <button class="text-neutral-600 dark:text-neutral-300 hover:text-secondary transition-colors">
+                        <span class="material-symbols-outlined">bookmark</span>
+                    </button>
+                </div>
+                <div>
+                    <p class="text-sm text-neutral-800 dark:text-neutral-200 leading-relaxed">
+                        Bugün İstanbul'da havanın tadını çıkarıyoruz! ☀️ Pamuk balkondaki yeni yerini çok sevdi. <span
+                            class="text-secondary font-medium">#KediHayatı #İstanbulKedileri</span>
+                    </p>
+                </div>
+            </div>
+        </article>
+        <section class="px-4">
+            <div
+                class="bg-gradient-to-br from-orange-50 to-orange-100 dark:from-orange-900/10 dark:to-orange-900/20 p-4 rounded-2xl border border-primary/20 flex gap-4 items-center relative overflow-hidden">
+                <div class="absolute top-0 left-0 bg-primary text-white text-[10px] font-bold px-3 py-1 rounded-br-lg">
+                    Sponsorlu
+                </div>
+                <div class="w-24 h-24 shrink-0 bg-white rounded-xl p-1 shadow-sm">
+                    <img alt="Dog treats in a bowl" class="w-full h-full object-cover rounded-lg"
+                        data-alt="Close up of dog treats in a wooden bowl"
+                        src="https://lh3.googleusercontent.com/aida-public/AB6AXuC4uQ6xyT3941YBcHxTcGlYi7Df4f1CR1Vk6p_TC_B-ihCnBSo2qCj6EacEbiyxb_5DAllsUuBsCpR6kLGSwhqF584t0c-D0E51QaMRAnoap7FjW5i6sSwgIXxrMu_2yBsDb1oXNGnkbZIqoLAVhUz0lziXR9dOl_Gt3uHzM98eR0Y356JdLT17w61h3CUiSVsbFxglJ0nQnvSIh8q263csGJm2NYB27CKOgMIFXVFwaHgvcjoO8hvxnq51BpEBJyMoS2V0G2nPhME" />
+                </div>
+                <div class="flex flex-col flex-1 gap-1">
+                    <h4 class="text-sm font-bold text-neutral-900 dark:text-white">Organik Köpek Ödül Maması</h4>
+                    <p class="text-xs text-neutral-500 dark:text-neutral-400">Tamamen doğal içerikli, vitamin deposu.
+                    </p>
+                    <div class="flex items-center justify-between mt-2">
+                        <span class="text-lg font-bold text-primary">120 TL</span>
+                        <button
+                            class="bg-primary hover:bg-primary/90 text-white text-xs font-bold py-2 px-4 rounded-lg transition-colors shadow-sm">
+                            Satın Al
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </section>
+        <article class="px-4">
+            <div
+                class="flex flex-col gap-3 bg-white dark:bg-[#2c2415] p-4 rounded-2xl shadow-sm border border-black/5 dark:border-white/5">
+                <div class="flex items-center justify-between">
+                    <div class="flex items-center gap-3">
+                        <div class="size-10 rounded-full bg-gray-200 overflow-hidden">
+                            <img alt="User avatar" class="h-full w-full object-cover"
+                                data-alt="Portrait of a man with a beard"
+                                src="https://lh3.googleusercontent.com/aida-public/AB6AXuCuIZBrFyk9LaTHqwN7a8I4GL5_NjmMONtJo2yYyGyPi190BO2Ue0ULzKYx8vxAYs4z5incCD2WG8_SQ_VvT5CCq-d0txy-RVOLPyXWbAl1THfue_m_IkgqraT8K7QSR8pvt0szyqHXoHF2E2jP9gQebt0Hqn7jyzCzROXzTQkI54lopeKIFR1jdHDhuKN9qPh2anDMoXPGuJXycn81qpc6UOpeE94ldktHKWPdkHC_cSg8ye3QyIhSClfK5xccm-rmQM1uI0u5TLw" />
+                        </div>
+                        <div class="flex flex-col">
+                            <div class="flex items-center gap-1">
+                                <h3 class="text-sm font-bold text-neutral-900 dark:text-white">Can &amp; Max</h3>
                             </div>
-</div>
-<div class="flex flex-1 flex-col p-3">
-<h3 class="mb-1 text-base font-bold leading-tight text-slate-900 dark:text-white">En Komik Uyku</h3>
-<p class="mb-3 text-xs font-medium text-slate-500 dark:text-slate-400">85 Katılımcı</p>
-<button class="mt-auto flex w-full items-center justify-center gap-1.5 rounded-xl border border-slate-200 bg-white py-2 text-xs font-bold text-slate-700 shadow-sm transition-colors hover:bg-slate-50 dark:border-slate-700 dark:bg-slate-700 dark:text-slate-200">
-<span class="material-symbols-outlined text-[16px]">how_to_vote</span>
-                                Oy Ver
-                            </button>
-</div>
-</article>
-<!-- Card 3 -->
-<article class="flex flex-col overflow-hidden rounded-2xl bg-white dark:bg-slate-800 shadow-sm ring-1 ring-slate-900/5 dark:ring-white/10">
-<div class="relative aspect-square w-full">
-<div class="h-full w-full bg-cover bg-center" data-alt="Dog catching a frisbee in mid-air" style="background-image: url('https://lh3.googleusercontent.com/aida-public/AB6AXuCu9alSqQFJeggRAHXhUTT5Xe03q8exkd0Yp-cBerEYgh7USiLyjU9kM-dmYkVk0UbPC8lpYurh8-kTzqEW7bShH0Y5UWQbOJuRlRjQpWNcvFufkc2g3uoZEP_kAiuWlR4egfXY6L2acCyXne2PU1QzmXpcFQbFP_Tq2dY-8BdyGG251Jk7phvtWhLwSuatu5V6UthK0T6KQ01ed6cu0rDP9Zq-63qP5nGaztRmjFUMU8zDEuT3xKZzWqr2VFQVviXvHqpQO3w-1Ec');"></div>
-<div class="absolute top-2 right-2 rounded-full bg-[#e76f51]/90 px-2 py-0.5 text-[10px] font-bold text-white backdrop-blur-sm shadow-sm">
-                                ⚡ Yetenek
-                            </div>
-</div>
-<div class="flex flex-1 flex-col p-3">
-<h3 class="mb-1 text-base font-bold leading-tight text-slate-900 dark:text-white">Havada Yakala</h3>
-<p class="mb-3 text-xs font-medium text-slate-500 dark:text-slate-400">204 Katılımcı</p>
-<button class="mt-auto flex w-full items-center justify-center gap-1.5 rounded-xl border border-slate-200 bg-white py-2 text-xs font-bold text-slate-700 shadow-sm transition-colors hover:bg-slate-50 dark:border-slate-700 dark:bg-slate-700 dark:text-slate-200">
-<span class="material-symbols-outlined text-[16px]">how_to_vote</span>
-                                Oy Ver
-                            </button>
-</div>
-</article>
-<!-- Card 4 -->
-<article class="flex flex-col overflow-hidden rounded-2xl bg-white dark:bg-slate-800 shadow-sm ring-1 ring-slate-900/5 dark:ring-white/10">
-<div class="relative aspect-square w-full">
-<div class="h-full w-full bg-cover bg-center" data-alt="German Shepherd looking very serious" style="background-image: url('https://lh3.googleusercontent.com/aida-public/AB6AXuDLwanF9xbCAb4mBXURMr-yPnA73t8tHmafvwg6_9p0SeIL0oS-vwSicVI-LebXc64VsBrU2IrWlzqqJ-Pk0FOSWn6x3ltHP8fUtEgerPeWvlfGQuByRUrzX-vXmSHdcowiTP0U0SHC6j8Ir8-xAnYtR1nmYf_1Vpd_Ofot0tu6cNr6c5nHA4MEKr0i-A0fb5AkE5RXEmtRkkwJFVzwjZxN7XmhEvuX7Y2REXgOA83UG-pyuJy2YzY-kQQdXB9prl4UGvW5u4vYRos');"></div>
-</div>
-<div class="flex flex-1 flex-col p-3">
-<h3 class="mb-1 text-base font-bold leading-tight text-slate-900 dark:text-white">En Ciddi Duruş</h3>
-<p class="mb-3 text-xs font-medium text-slate-500 dark:text-slate-400">56 Katılımcı</p>
-<button class="mt-auto flex w-full items-center justify-center gap-1.5 rounded-xl border border-slate-200 bg-white py-2 text-xs font-bold text-slate-700 shadow-sm transition-colors hover:bg-slate-50 dark:border-slate-700 dark:bg-slate-700 dark:text-slate-200">
-<span class="material-symbols-outlined text-[16px]">how_to_vote</span>
-                                Oy Ver
-                            </button>
-</div>
-</article>
-</div>
-</section>
-</main>
-<!-- Bottom Navigation -->
-<nav class="fixed bottom-0 z-50 w-full border-t border-slate-200 bg-white/90 dark:bg-background-dark/95 dark:border-slate-800 pb-safe backdrop-blur-lg">
-<div class="flex h-16 items-center justify-around px-2">
-<a class="flex flex-col items-center gap-1 p-2 text-slate-400 transition-colors hover:text-primary dark:text-slate-500" href="#">
-<span class="material-symbols-outlined text-2xl">home</span>
-<span class="text-[10px] font-medium">Ana Sayfa</span>
-</a>
-<a class="flex flex-col items-center gap-1 p-2 text-slate-400 transition-colors hover:text-primary dark:text-slate-500" href="#">
-<span class="material-symbols-outlined text-2xl">search</span>
-<span class="text-[10px] font-medium">Keşfet</span>
-</a>
-<!-- Active Item -->
-<div class="relative -top-5">
-<button class="flex h-14 w-14 items-center justify-center rounded-full bg-primary shadow-lg shadow-primary/40 ring-4 ring-white dark:ring-background-dark">
-<span class="material-symbols-outlined text-3xl text-white">emoji_events</span>
-</button>
-</div>
-<a class="flex flex-col items-center gap-1 p-2 text-slate-400 transition-colors hover:text-primary dark:text-slate-500" href="#">
-<span class="material-symbols-outlined text-2xl">forum</span>
-<span class="text-[10px] font-medium">Forum</span>
-</a>
-<a class="flex flex-col items-center gap-1 p-2 text-slate-400 transition-colors hover:text-primary dark:text-slate-500" href="#">
-<span class="material-symbols-outlined text-2xl">pets</span>
-<span class="text-[10px] font-medium">Profilim</span>
-</a>
-</div>
-<!-- Safe area spacer for iPhone X+ -->
-<div class="h-4 w-full"></div>
-</nav>
-</div>
-</body></html>
+                            <span class="text-xs text-neutral-500 dark:text-neutral-400">İzmir, Türkiye • 5s önce</span>
+                        </div>
+                    </div>
+                    <button
+                        class="flex bg-secondary/10 hover:bg-secondary/20 text-secondary text-xs font-bold px-3 py-1.5 rounded-full transition-colors">
+                        Takip Et
+                    </button>
+                </div>
+                <div class="w-full aspect-square rounded-xl overflow-hidden bg-gray-100 dark:bg-gray-800">
+                    <img alt="Two dogs running on a beach" class="w-full h-full object-cover"
+                        data-alt="Two happy dogs running and jumping"
+                        src="https://lh3.googleusercontent.com/aida-public/AB6AXuBMskjYiRNGF3CCVxGHPvh1kS-wb7Ir1Oow--xkCHFwQArFS38CPvtoTEF11_5_A4l-v8Nf7p5-Ho6KWvwQv5fuirrzvl7MbQwiE9CD-fjQOyp4GHy8tbiHDo9eSdlmBYwmSOZQoWi4kMXjWenA1sIiaEfP-lmNt6fWrBhV3WctQz5D8WPrk46gb9Mfk-QzFQCPOPeLU5G9EXYd9ns6fcCDCvCRunjFeCvXpj8vA2UYObp8Xyz8dt9TKFij_JSYhGi8PUOdNzfCsOg" />
+                </div>
+                <div class="flex items-center justify-between mt-1">
+                    <div class="flex items-center gap-4">
+                        <button class="group flex items-center gap-1.5 text-neutral-600 dark:text-neutral-300">
+                            <span
+                                class="material-symbols-outlined group-hover:text-red-500 transition-colors">favorite_border</span>
+                            <span class="text-sm font-medium">856</span>
+                        </button>
+                        <button class="group flex items-center gap-1.5 text-neutral-600 dark:text-neutral-300">
+                            <span
+                                class="material-symbols-outlined group-hover:text-blue-500 transition-colors">chat_bubble</span>
+                            <span class="text-sm font-medium">42</span>
+                        </button>
+                    </div>
+                    <button class="text-neutral-600 dark:text-neutral-300 hover:text-secondary transition-colors">
+                        <span class="material-symbols-outlined">bookmark</span>
+                    </button>
+                </div>
+                <div>
+                    <p class="text-sm text-neutral-800 dark:text-neutral-200 leading-relaxed">
+                        Sonsuza kadar en iyi arkadaşlar! Max bugün parkta yeni bir arkadaş edindi. 🐶 <span
+                            class="text-secondary font-medium">#KöpekSevgisi #İzmir</span>
+                    </p>
+                </div>
+            </div>
+        </article>
+        <section class="py-2">
+            <div class="px-4 mb-3 flex items-center justify-between">
+                <h2 class="text-base font-bold text-neutral-900 dark:text-white flex items-center gap-2">
+                    <span class="material-symbols-outlined text-secondary">percent</span>
+                    Sponsorlu Fırsatlar
+                </h2>
+                <a class="text-xs font-bold text-secondary hover:text-secondary/80" href="#">Tümü</a>
+            </div>
+            <div class="flex overflow-x-auto gap-3 px-4 pb-4 hide-scrollbar snap-x snap-mandatory">
+                <div
+                    class="snap-center shrink-0 w-36 bg-white dark:bg-[#2c2415] rounded-xl overflow-hidden shadow-sm border border-black/5 dark:border-white/5 flex flex-col group">
+                    <div class="aspect-square bg-gray-100 relative overflow-hidden">
+                        <img alt="Modern dog leash"
+                            class="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110"
+                            data-alt="Colorful dog leash on a plain background"
+                            src="https://lh3.googleusercontent.com/aida-public/AB6AXuCx5K3TWcIFLixbgb1KLFagzLB1qg-z_7nFPg4BaryGKAUCLJ8N080---UyGw-Rgk9QwZiMXItRxUEMIJ6kWwoQRnOThhTg9CBrDNQ43KNeTqN17r2zXPn-FkBXSoiXVayNtonpXZT7toOMEoivoAR8bMfBirZWkBWCV7CWtSeOicLwwGkygh7mvDSIyirKZUcPQZ6uXaUQ-ynPzHrColDV_8TJV3utxEuH9-EUc1zlZVo0HhhCjM6ViorTwsXt9oNrpr0YBJxP9g8" />
+                    </div>
+                    <div class="p-2.5 flex flex-col gap-1 flex-1">
+                        <h4 class="text-xs font-semibold text-neutral-900 dark:text-white line-clamp-1">Dayanıklı Tasma
+                        </h4>
+                        <div class="flex items-center gap-1 mt-auto">
+                            <span class="text-sm font-bold text-primary">245 TL</span>
+                        </div>
+                    </div>
+                </div>
+                <div
+                    class="snap-center shrink-0 w-36 bg-white dark:bg-[#2c2415] rounded-xl overflow-hidden shadow-sm border border-black/5 dark:border-white/5 flex flex-col group">
+                    <div class="aspect-square bg-gray-100 relative overflow-hidden">
+                        <img alt="Cat bed"
+                            class="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110"
+                            data-alt="Cozy grey cat bed with a fluffy pillow"
+                            src="https://lh3.googleusercontent.com/aida-public/AB6AXuAQC2b6AeYVRD9hwYY5v0V1xr7ELVPE0nsmVvZJ3okiy1-AtxrC-9i2EXGbs2WP57gKZMzynzqz7MItcXOwVBRyCMQH02QLbbCZWWUG6QBfZoE6pUhC-8sudSGBVmKBj8iFyzgxhxyBgh0vEdJ7xjkx8W-JYy9MJ6g_D16rQA2fIvexQ8chDNHb9ed3NtkuQvGoNkbyei8SrWH00UgvClZ4fStu7yFp3Mdc_jJp5FCBANTrS97UdfF8G9X7-IT9GAMWbl4YSlZg8MM" />
+                        <div
+                            class="absolute top-2 left-2 bg-secondary text-white text-[9px] font-bold px-2 py-0.5 rounded-full">
+                            Yeni</div>
+                    </div>
+                    <div class="p-2.5 flex flex-col gap-1 flex-1">
+                        <h4 class="text-xs font-semibold text-neutral-900 dark:text-white line-clamp-1">Kedi Yatağı</h4>
+                        <div class="flex items-center gap-1 mt-auto">
+                            <span class="text-sm font-bold text-primary">599 TL</span>
+                        </div>
+                    </div>
+                </div>
+                <div
+                    class="snap-center shrink-0 w-36 bg-white dark:bg-[#2c2415] rounded-xl overflow-hidden shadow-sm border border-black/5 dark:border-white/5 flex flex-col group">
+                    <div class="aspect-square bg-gray-100 relative overflow-hidden">
+                        <img alt="Dog treats"
+                            class="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110"
+                            data-alt="Close up of dog treats in a wooden bowl"
+                            src="https://lh3.googleusercontent.com/aida-public/AB6AXuC4uQ6xyT3941YBcHxTcGlYi7Df4f1CR1Vk6p_TC_B-ihCnBSo2qCj6EacEbiyxb_5DAllsUuBsCpR6kLGSwhqF584t0c-D0E51QaMRAnoap7FjW5i6sSwgIXxrMu_2yBsDb1oXNGnkbZIqoLAVhUz0lziXR9dOl_Gt3uHzM98eR0Y356JdLT17w61h3CUiSVsbFxglJ0nQnvSIh8q263csGJm2NYB27CKOgMIFXVFwaHgvcjoO8hvxnq51BpEBJyMoS2V0G2nPhME" />
+                        <div
+                            class="absolute top-2 left-2 bg-red-500 text-white text-[9px] font-bold px-2 py-0.5 rounded-full">
+                            -20%</div>
+                    </div>
+                    <div class="p-2.5 flex flex-col gap-1 flex-1">
+                        <h4 class="text-xs font-semibold text-neutral-900 dark:text-white line-clamp-1">Somon Ödül</h4>
+                        <div class="flex items-center gap-1 mt-auto">
+                            <span class="text-sm font-bold text-primary">120 TL</span>
+                            <span class="text-[10px] text-neutral-400 line-through">150 TL</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+        <section class="px-4">
+            <div
+                class="bg-secondary dark:bg-secondary/20 rounded-2xl p-5 relative overflow-hidden text-white shadow-md">
+                <div class="absolute -right-4 -top-4 text-white/10 dark:text-white/5 rotate-12">
+                    <span class="material-symbols-outlined text-[120px] filled">favorite</span>
+                </div>
+                <div class="relative z-10">
+                    <div class="flex items-center gap-2 mb-2">
+                        <span class="material-symbols-outlined filled text-white text-2xl">volunteer_activism</span>
+                        <h2 class="text-lg font-bold">Eş Bulma</h2>
+                    </div>
+                    <h3 class="text-xl font-bold leading-tight mb-2">Kedime eş arıyorum 😻</h3>
+                    <p class="text-white/90 text-sm mb-4 max-w-[70%]">Minik dostunuz için ideal arkadaşı veya eşi bulun.
+                    </p>
+                    <button
+                        class="bg-white text-secondary font-bold py-2.5 px-5 rounded-xl text-sm hover:bg-neutral-50 shadow-sm transition-colors">
+                        Hemen Başla
+                    </button>
+                </div>
+            </div>
+        </section>
+        <article class="px-4 pb-4">
+            <div
+                class="flex flex-col gap-3 bg-white dark:bg-[#2c2415] p-4 rounded-2xl shadow-sm border border-black/5 dark:border-white/5">
+                <div class="flex items-center justify-between">
+                    <div class="flex items-center gap-3">
+                        <div class="size-10 rounded-full bg-gray-200 overflow-hidden ring-2 ring-primary/20">
+                            <img alt="Another user avatar" class="h-full w-full object-cover"
+                                src="https://lh3.googleusercontent.com/aida-public/AB6AXuAtfYtUb9L8lgu9JjwHn3bXnTaijo111jciD23vZ2ect98yCbN-JHXJ1MJZZSU0l0M8P9UtLIeOD5zfWb9_3bJh7ewkevsA6hah3g5txvOw2hQvDaSnH8p_T9FSIff17IZFi22ouy3-aM-lrnGu9kPRvEnUbtaYDbCxM5oT9nAVeVtCU1PJNunjPv00P5ovfIB-cJ-p4oK9vhqGWr-UtvSIOnNWI6jP8SZUEqCmlceEEm-u8CxLLU9bOq3ZLgxE0b6-gHGk9TvlsBI" />
+                        </div>
+                        <div class="flex flex-col">
+                            <h3 class="text-sm font-bold text-neutral-900 dark:text-white">Zeynep &amp; Çiko</h3>
+                            <span class="text-xs text-neutral-500 dark:text-neutral-400">Ankara, Türkiye • 6s
+                                önce</span>
+                        </div>
+                    </div>
+                    <button
+                        class="flex items-center justify-center size-8 rounded-full hover:bg-black/5 dark:hover:bg-white/10 text-neutral-500">
+                        <span class="material-symbols-outlined">more_horiz</span>
+                    </button>
+                </div>
+                <div class="p-2">
+                    <p class="text-sm text-neutral-800 dark:text-neutral-200 leading-relaxed font-medium">
+                        Herkese selam! Çiko için yeni bir veteriner arıyoruz Ankara Çankaya tarafında. Tavsiyesi olan
+                        var mı? 🙏
+                    </p>
+                </div>
+                <div class="flex items-center justify-between pt-1 border-t border-black/5 dark:border-white/5 mt-1">
+                    <div class="flex items-center gap-4 mt-2">
+                        <button class="group flex items-center gap-1.5 text-neutral-600 dark:text-neutral-300">
+                            <span
+                                class="material-symbols-outlined group-hover:text-red-500 transition-colors">favorite_border</span>
+                            <span class="text-sm font-medium">12</span>
+                        </button>
+                        <button class="group flex items-center gap-1.5 text-neutral-600 dark:text-neutral-300">
+                            <span
+                                class="material-symbols-outlined group-hover:text-blue-500 transition-colors">chat_bubble</span>
+                            <span class="text-sm font-medium">5</span>
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </article>
+    </main>
+    <nav
+        class="fixed bottom-0 left-0 w-full z-50 bg-white dark:bg-[#1a160f] border-t border-black/5 dark:border-white/5 pb-safe pt-2 px-6 shadow-[0_-5px_20px_rgba(0,0,0,0.03)]">
+        <div class="flex items-end justify-between max-w-md mx-auto h-16 pb-2">
+            <button class="flex flex-col items-center gap-1 w-14 group">
+                <span class="material-symbols-outlined text-primary text-[26px] filled mb-0.5">home</span>
+                <span class="text-[10px] font-bold text-primary">Anasayfa</span>
+            </button>
+            <button
+                class="flex flex-col items-center gap-1 w-14 group text-neutral-400 dark:text-neutral-500 hover:text-neutral-900 dark:hover:text-white transition-colors">
+                <span class="material-symbols-outlined text-[26px] mb-0.5">emoji_events</span>
+                <span class="text-[10px] font-medium">Yarışmalar</span>
+            </button>
+            <button
+                class="flex flex-col items-center gap-1 w-14 group text-neutral-400 dark:text-neutral-500 hover:text-neutral-900 dark:hover:text-white transition-colors">
+                <span class="material-symbols-outlined text-[26px] mb-0.5">storefront</span>
+                <span class="text-[10px] font-medium">Pazar</span>
+            </button>
+            <button
+                class="flex flex-col items-center gap-1 w-14 group text-neutral-400 dark:text-neutral-500 hover:text-neutral-900 dark:hover:text-white transition-colors">
+                <span class="material-symbols-outlined text-[26px] mb-0.5">cabin</span>
+                <span class="text-[10px] font-medium">Barınaklar</span>
+            </button>
+            <button
+                class="flex flex-col items-center gap-1 w-14 group text-neutral-400 dark:text-neutral-500 hover:text-neutral-900 dark:hover:text-white transition-colors">
+                <span class="material-symbols-outlined text-[26px] mb-0.5">person</span>
+                <span class="text-[10px] font-medium">Profil</span>
+            </button>
+        </div>
+    </nav>
+
+</body>
+
+</html>
