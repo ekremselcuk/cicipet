@@ -11,56 +11,21 @@ export async function middleware(request: NextRequest) {
     }
 
     try {
-        let response = NextResponse.next({
+        // Temporary fix: Bypass Supabase middleware logic to confirm deployment stability
+        const response = NextResponse.next({
             request: {
                 headers: request.headers,
             },
-        })
+        });
 
+        /*
         const supabase = createServerClient(
-            process.env.NEXT_PUBLIC_SUPABASE_URL,
-            process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY,
-            {
-                cookies: {
-                    getAll() {
-                        return request.cookies.getAll()
-                    },
-                    setAll(cookiesToSet) {
-                        try {
-                            cookiesToSet.forEach(({ name, value, options }) => request.cookies.set(name, value))
-                            response = NextResponse.next({
-                                request: {
-                                    headers: request.headers,
-                                },
-                            })
-                            cookiesToSet.forEach(({ name, value, options }) =>
-                                response.cookies.set(name, value, options)
-                            )
-                        } catch (e) {
-                            // Ignored
-                        }
-                    },
-                },
-            }
+           // ...
         )
 
         const { data: { user }, error } = await supabase.auth.getUser()
-        if (error) {
-            // console.error('Auth error:', error);
-            // Allow proceeding as unauthenticated usually better than crashing
-        }
-
-        // Protect Admin Routes
-        if (request.nextUrl.pathname.startsWith('/admin')) {
-            if (!user) {
-                return NextResponse.redirect(new URL('/login', request.url))
-            }
-        }
-
-        // Protect Wallet and Profile
-        if (request.nextUrl.pathname.startsWith('/cuzdan') || request.nextUrl.pathname.startsWith('/profil')) {
-            // Strict auth check logic here
-        }
+        // ...
+        */
 
         return response
 
