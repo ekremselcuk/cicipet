@@ -6,32 +6,53 @@ import Link from "next/link";
 import { redirect } from "next/navigation";
 
 export default async function ProfilPage() {
+    // Verify Env Vars (Client-side mainly, but good for server logs)
+    if (!process.env.NEXT_PUBLIC_SUPABASE_URL || !process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY) {
+        console.error("Missing Supabase Environment Variables!");
+        // We can throw here or let createClient fail, but logging helps diagnosis.
+    }
+
     const supabase = await createClient();
 
-    // 1. Auth Check (Must be outside try/catch because redirect throws an error)
-    const user = await requireAuth();
+    let user = null;
+    try {
+        // Use requireAuth but handle known redirect error if it wasn't automatically handled
+        // Actually, Next.js handles redirects by throwing an error. 
+        // We want to let that error pass through, but catch others.
+        user = await requireAuth();
+    } catch (e: any) {
+        if (e?.message === 'NEXT_REDIRECT' || e?.digest?.startsWith('NEXT_REDIRECT')) {
+            throw e; // Forward the redirect
+        }
+        console.error("Auth check failed:", e);
+        // If auth fails unexpectedly (not redirect), force login or return null
+        redirect("/auth/login");
+    }
 
     let pets = [];
     let userProfile = null;
 
-    try {
-        // Fetch User Profile
-        const { data: profile } = await supabase
-            .from('users')
-            .select('*')
-            .eq('id', user.id)
-            .single();
-        userProfile = profile;
+    if (user) {
+        try {
+            // Fetch User Profile
+            const { data: profile } = await supabase
+                .from('users')
+                .select('*')
+                .eq('id', user.id)
+                .single();
+            userProfile = profile;
 
-        // Fetch Pets
-        const { data: userPets } = await supabase
-            .from('pets')
-            .select('*')
-            .eq('owner_id', user.id);
-        pets = userPets || [];
+            // Fetch Pets
+            const { data: userPets } = await supabase
+                .from('pets')
+                .select('*')
+                .eq('owner_id', user.id);
+            pets = userPets || [];
 
-    } catch (error) {
-        console.error("Profile load error:", error);
+        } catch (error) {
+            console.error("Profile load error:", error);
+            // Continue with defaults
+        }
     }
 
 
