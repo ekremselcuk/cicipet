@@ -2,7 +2,6 @@
 import { requireAuth } from "@/utils/supabase/check-auth";
 import { createClient } from "@/utils/supabase/server";
 import SignOutButton from "@/components/auth/SignOutButton";
-import AddPetModal from "@/components/profile/AddPetModal";
 import Link from "next/link";
 import { redirect } from "next/navigation";
 
@@ -90,7 +89,13 @@ export default async function ProfilPage() {
                             ))
                         ) : null}
 
-                        <AddPetModal />
+
+                        <Link href="/pet/ekle" className="flex-shrink-0 flex flex-col items-center gap-2 group cursor-pointer">
+                            <div className="w-20 h-20 rounded-2xl border-2 border-dashed border-gray-300 dark:border-gray-600 bg-gray-50 dark:bg-surface-dark flex items-center justify-center text-gray-400 group-hover:text-primary group-hover:border-primary group-hover:bg-primary/5 transition-all">
+                                <span className="material-symbols-outlined text-[28px]">add</span>
+                            </div>
+                            <span className="text-xs font-bold text-gray-400 group-hover:text-primary transition-colors">Yeni Pet Ekle</span>
+                        </Link>
                     </div>
                 </section>
                 <section className="bg-white dark:bg-surface-dark rounded-3xl shadow-sm border border-gray-100 dark:border-gray-800 overflow-hidden">
