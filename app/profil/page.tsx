@@ -6,22 +6,39 @@ import Link from "next/link";
 import { redirect } from "next/navigation";
 
 export default async function ProfilPage() {
-    const user = await requireAuth();
     const supabase = await createClient();
 
-    // Fetch User Profile from 'users' table (assuming it exists, or fallback to auth metadata)
-    // We'll try to get extended info. If table doesn't match exactly, we'll handle gracefully.
-    const { data: userProfile, error: profileError } = await supabase
-        .from('users')
-        .select('*')
-        .eq('id', user.id)
-        .single();
+    let user = null;
+    let pets = [];
+    let userProfile = null;
 
-    // Fetch Pets
-    const { data: pets, error: petsError } = await supabase
-        .from('pets')
-        .select('*')
-        .eq('owner_id', user.id);
+    try {
+        const authData = await requireAuth();
+        user = authData;
+
+        // Fetch User Profile
+        const { data: profile } = await supabase
+            .from('users')
+            .select('*')
+            .eq('id', user.id)
+            .single();
+        userProfile = profile;
+
+        // Fetch Pets
+        const { data: userPets } = await supabase
+            .from('pets')
+            .select('*')
+            .eq('owner_id', user.id);
+        pets = userPets || [];
+
+    } catch (error) {
+        console.error("Profile load error:", error);
+        // If critical auth error, likely redirected already by requireAuth
+        // If just db error, we show default empty states
+    }
+
+    if (!user) return null; // Should not trigger due to requireAuth, but safety.
+
 
     // Fallback data if DB fetch fails or is empty (for demo continuity if migrations aren't perfect)
     const displayName = userProfile?.full_name || user.user_metadata?.full_name || user.email?.split('@')[0] || "Kullanıcı";
