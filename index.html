@@ -440,33 +440,38 @@
         </article>
     </main>
     <nav
-        class="fixed bottom-0 left-0 w-full z-50 bg-white dark:bg-[#1a160f] border-t border-black/5 dark:border-white/5 pb-safe pt-2 px-6 shadow-[0_-5px_20px_rgba(0,0,0,0.03)]">
-        <div class="flex items-end justify-between max-w-md mx-auto h-16 pb-2">
-            <button class="flex flex-col items-center gap-1 w-14 group">
-                <span class="material-symbols-outlined text-primary text-[26px] filled mb-0.5">home</span>
-                <span class="text-[10px] font-bold text-primary">Anasayfa</span>
-            </button>
-            <button
-                class="flex flex-col items-center gap-1 w-14 group text-neutral-400 dark:text-neutral-500 hover:text-neutral-900 dark:hover:text-white transition-colors">
-                <span class="material-symbols-outlined text-[26px] mb-0.5">emoji_events</span>
-                <span class="text-[10px] font-medium">Yarışmalar</span>
-            </button>
-            <button
-                class="flex flex-col items-center gap-1 w-14 group text-neutral-400 dark:text-neutral-500 hover:text-neutral-900 dark:hover:text-white transition-colors">
-                <span class="material-symbols-outlined text-[26px] mb-0.5">storefront</span>
+        class="fixed bottom-0 z-50 w-full border-t border-slate-200 bg-white/95 dark:bg-background-dark/95 dark:border-slate-800 pb-safe backdrop-blur-lg">
+        <div class="flex h-16 items-center justify-around px-2">
+            <a class="flex flex-col items-center gap-1 p-2 text-slate-400 transition-colors hover:text-primary dark:text-slate-500"
+                href="#">
+                <span class="material-symbols-outlined text-2xl">home</span>
+                <span class="text-[10px] font-medium">Anasayfa</span>
+            </a>
+            <a class="flex flex-col items-center gap-1 p-2 text-slate-400 transition-colors hover:text-primary dark:text-slate-500"
+                href="#">
+                <span class="material-symbols-outlined text-2xl">storefront</span>
                 <span class="text-[10px] font-medium">Pazar</span>
-            </button>
-            <button
-                class="flex flex-col items-center gap-1 w-14 group text-neutral-400 dark:text-neutral-500 hover:text-neutral-900 dark:hover:text-white transition-colors">
-                <span class="material-symbols-outlined text-[26px] mb-0.5">cabin</span>
+            </a>
+            <div class="relative -top-5">
+                <button
+                    class="flex h-14 w-14 flex-col items-center justify-center rounded-full bg-primary shadow-lg shadow-primary/40 ring-4 ring-white dark:ring-background-dark transition-transform active:scale-95">
+                    <span class="material-symbols-outlined text-3xl text-white fill-1">emoji_events</span>
+                </button>
+                <span
+                    class="absolute -bottom-4 left-1/2 -translate-x-1/2 text-[10px] font-bold text-primary whitespace-nowrap">Yarışmalar</span>
+            </div>
+            <a class="flex flex-col items-center gap-1 p-2 text-slate-400 transition-colors hover:text-primary dark:text-slate-500"
+                href="#">
+                <span class="material-symbols-outlined text-2xl">volunteer_activism</span>
                 <span class="text-[10px] font-medium">Barınaklar</span>
-            </button>
-            <button
-                class="flex flex-col items-center gap-1 w-14 group text-neutral-400 dark:text-neutral-500 hover:text-neutral-900 dark:hover:text-white transition-colors">
-                <span class="material-symbols-outlined text-[26px] mb-0.5">person</span>
+            </a>
+            <a class="flex flex-col items-center gap-1 p-2 text-slate-400 transition-colors hover:text-primary dark:text-slate-500"
+                href="#">
+                <span class="material-symbols-outlined text-2xl">person</span>
                 <span class="text-[10px] font-medium">Profil</span>
-            </button>
+            </a>
         </div>
+        <div class="h-4 w-full"></div>
     </nav>
 
 </body>
