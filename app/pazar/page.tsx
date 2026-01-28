@@ -1,6 +1,9 @@
+import Header from "@/components/layout/Header";
+
 export default function PazarPage() {
     return (
         <main className="pb-24">
+            <Header />
             <div className="px-4 py-3">
                 <div className="relative flex items-center w-full h-11 rounded-xl bg-white dark:bg-surface-dark shadow-sm border border-gray-100 dark:border-gray-700 overflow-hidden group focus-within:ring-2 focus-within:ring-primary/50 transition-all">
                     <div className="grid place-items-center h-full w-10 text-text-sub pl-1">

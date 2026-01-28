@@ -28,23 +28,7 @@ export default function BottomNav() {
                     <span className="material-symbols-outlined text-2xl">volunteer_activism</span>
                     <span className="text-[10px] font-medium">Barınaklar</span>
                 </Link>
-                <Link href="/cuzdan" className="flex flex-col items-center gap-1 p-2 text-slate-400 transition-colors hover:text-primary dark:text-slate-500">
-                    {/* Changed Profil link to /cuzdan temporarily as shown in static cuzdan.html usage, or keep standard 'Profil' -> /profil */}
-                    {/* The user requested cuzdan page content, and cuzdan.html nav says "Profil". 
-              Usually Profil is /profil. Cuzdan is separate. 
-              But let's stick to the static HTML logic. 
-              Wait, static HTML cuzdan.html nav says "Profil" icon -> #. 
-              The user created cuzdan.html. 
-              Let's map: 
-              Anasayfa -> /
-              Pazar -> /pazar
-              Yarışmalar -> /yarisma
-              Barınaklar -> /barinaklar
-              Profil -> /profil (or /cuzdan?)
-              Typically users check wallet in profile or separate. 
-              I'll link Profil to /cuzdan for now as the user focused on it, or create /profil later. 
-              Actually, I'll link to /cuzdan for visibility since we have that page. 
-          */}
+                <Link href="/profil" className="flex flex-col items-center gap-1 p-2 text-slate-400 transition-colors hover:text-primary dark:text-slate-500">
                     <span className="material-symbols-outlined text-2xl">person</span>
                     <span className="text-[10px] font-medium">Profil</span>
                 </Link>

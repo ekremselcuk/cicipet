@@ -1,7 +1,6 @@
 import type { Metadata } from "next";
 import { Plus_Jakarta_Sans } from "next/font/google";
 import "./globals.css";
-import Header from "@/components/layout/Header";
 import BottomNav from "@/components/layout/BottomNav";
 import { AuthProvider } from "@/context/AuthContext";
 
@@ -31,7 +30,6 @@ export default function RootLayout({
         className={`${jakarta.variable} bg-background-light dark:bg-background-dark text-slate-900 dark:text-slate-100 antialiased overflow-x-hidden selection:bg-primary/30 pb-24`}
       >
         <AuthProvider>
-          <Header />
           {children}
           <BottomNav />
         </AuthProvider>

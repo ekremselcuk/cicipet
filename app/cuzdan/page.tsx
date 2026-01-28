@@ -1,6 +1,9 @@
+import Header from "@/components/layout/Header";
+
 export default function CuzdanPage() {
     return (
         <main className="flex flex-col gap-6 w-full mt-4 pb-24">
+            <Header />
             <section className="px-4">
                 <div className="relative w-full overflow-hidden rounded-[2rem] bg-gradient-to-br from-primary via-[#fbbf24] to-secondary shadow-xl shadow-primary/20 p-6 text-white">
                     <div className="absolute -right-8 -top-8 h-40 w-40 rounded-full bg-white/20 blur-3xl"></div>
