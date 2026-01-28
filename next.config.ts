@@ -13,6 +13,13 @@ const withPWA = require("@ducanh2912/next-pwa").default({
 
 const nextConfig: NextConfig = {
   /* config options here */
+  webpack: (config, { webpack, isServer, nextRuntime }) => {
+    if (nextRuntime === 'edge') {
+      config.resolve.alias['ws'] = false;
+      config.resolve.alias['buffer'] = false;
+    }
+    return config;
+  },
 };
 
 export default withPWA(nextConfig);
