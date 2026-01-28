@@ -1,8 +1,8 @@
-import { requireAuth } from "@/utils/supabase/check-auth";
+import { requireAdmin } from "@/utils/supabase/check-auth";
 import Link from "next/link";
 
 export default async function AdminPage() {
-    await requireAuth();
+    await requireAdmin();
 
     return (
         <div className="relative flex min-h-screen w-full flex-col pb-24 bg-background-light dark:bg-background-dark font-display text-slate-900 dark:text-white overflow-x-hidden antialiased">

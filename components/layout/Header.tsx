@@ -18,9 +18,9 @@ export default function Header() {
                         <span className="material-symbols-outlined text-[#1c170d] dark:text-white" style={{ fontSize: '26px' }}>notifications</span>
                         <span className="absolute top-2.5 right-2.5 h-2 w-2 rounded-full bg-primary border border-background-light dark:border-background-dark"></span>
                     </button>
-                    <div className="flex size-9 shrink-0 items-center justify-center rounded-full bg-secondary/10 overflow-hidden ring-2 ring-transparent hover:ring-secondary/20 transition-all cursor-pointer">
+                    <Link href="/profil" className="flex size-9 shrink-0 items-center justify-center rounded-full bg-secondary/10 overflow-hidden ring-2 ring-transparent hover:ring-secondary/20 transition-all cursor-pointer">
                         <span className="material-symbols-outlined text-secondary filled">person</span>
-                    </div>
+                    </Link>
                 </div>
             </div>
         </header>

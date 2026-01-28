@@ -6,7 +6,17 @@ export async function requireAuth() {
     const { data: { user }, error } = await supabase.auth.getUser();
 
     if (error || !user) {
-        redirect("/login");
+        redirect("/auth/login");
+    }
+
+    return user;
+}
+
+export async function requireAdmin() {
+    const user = await requireAuth();
+
+    if (user.email !== "ekremselcuk@gmail.com") {
+        redirect("/"); // Or a 403 page
     }
 
     return user;
