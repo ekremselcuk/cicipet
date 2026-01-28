@@ -24,35 +24,45 @@ export default function LostAdPage() {
     const [loading, setLoading] = useState(false);
     const supabase = createClient();
     const [termsAccepted, setTermsAccepted] = useState(false);
+    const [analyzing, setAnalyzing] = useState(false);
     // Dynamic import to avoid SSR issues with some libs if any, though here it's fine.
     // We'll use the one we created.
     const { analyzeImage } = require('@/utils/image-analysis');
     const router = require('next/navigation').useRouter();
 
+    const handlePhotoSelect = async (file: File) => {
+        setFormData({ ...formData, photo: file });
+
+        setAnalyzing(true);
+        try {
+            const result = await analyzeImage(file);
+            setAnalyzing(false);
+
+            if (!result.valid) {
+                alert(`Görsel Reddedildi: ${result.reason}`);
+                setFormData(prev => ({ ...prev, photo: null }));
+            }
+        } catch (error) {
+            console.error("Analysis error:", error);
+            setAnalyzing(false);
+        }
+    };
+
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
+
+        if (!termsAccepted) {
+            alert('Lütfen görsel yükleme şartlarını kabul edin.');
+            return;
+        }
+
         setLoading(true);
 
         try {
-            if (!termsAccepted) {
-                alert('Lütfen görsel yükleme şartlarını kabul edin.');
-                setLoading(false);
-                return;
-            }
-
             let photoUrl = null;
+            // Photo is already validated on select, but we can check if null (cleared)
             if (formData.photo) {
-                const analysis = await analyzeImage(formData.photo);
-                if (!analysis.valid) {
-                    alert(`Görsel onaylanmadı: ${analysis.reason}`);
-                    setLoading(false);
-                    return;
-                }
-
-                // --- Upload Logic (Mocked Storage URL for now, but inserted to DB) ---
-                // const { data, error } = await supabase.storage.from('ads').upload(...)
-                // For MVP without bucket setup, we use a placeholder or data URL if small, 
-                // but let's stick to the consistent mock URL for now.
+                // Mock Upload
                 photoUrl = "https://lh3.googleusercontent.com/aida-public/AB6AXuAnLEykf_jW6kowf6oISTaUimFCqyGZ6J6r4QLKJSghKFPC-DKcR9W8mb-Sd42s82AqUu7_Uop0pSPcONvrojB-2JT08JnFKd5SOPeT-lAaOwuUtKR5MH1uT-5iYi-yKjuIM5uA2j3Ke2QLU1rb4evjs9C5otGWCCKgGmN6NcELFrhkKPK2B7Kt2Lm1WO1K-tYtGk6MYgYugM-8mskwdo5OEDqNM-IPdqcjkADRW4QyER6ctL2Jk5S_6wEm9Lkg-C6h_jGpHnifTeM";
             }
 
@@ -100,10 +110,18 @@ export default function LostAdPage() {
 
             <main className="p-4">
                 <form onSubmit={handleSubmit} className="flex flex-col gap-6">
-                    <PhotoUploader
-                        colorTheme="red"
-                        onFileSelect={(file) => setFormData({ ...formData, photo: file })}
-                    />
+                    <div className="relative">
+                        <PhotoUploader
+                            colorTheme="red"
+                            onFileSelect={handlePhotoSelect}
+                        />
+                        {analyzing && (
+                            <div className="absolute inset-0 bg-black/50 rounded-2xl flex flex-col items-center justify-center text-white backdrop-blur-sm z-10">
+                                <span className="material-symbols-outlined animate-spin text-3xl mb-2">smart_toy</span>
+                                <span className="font-bold text-sm">İnceleniyor...</span>
+                            </div>
+                        )}
+                    </div>
 
                     <div className="space-y-2">
                         <label className="text-sm font-bold text-slate-700 dark:text-gray-300 ml-1">Kategorisi</label>

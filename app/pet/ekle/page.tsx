@@ -11,6 +11,8 @@ import { createClient } from "@/utils/supabase/client";
 export default function AddPetPage() {
     const router = useRouter();
     const [loading, setLoading] = useState(false);
+    const [analyzing, setAnalyzing] = useState(false);
+    const [termsAccepted, setTermsAccepted] = useState(false);
     const [formData, setFormData] = useState({
         name: '',
         category: 'kedi',
@@ -19,31 +21,54 @@ export default function AddPetPage() {
         photo: null as File | null
     });
 
+    // Dynamic import to avoid SSR issues with some libs if any, though here it's fine.
+    // We'll use the one we created.
+    const { analyzeImage } = require('@/utils/image-analysis');
+
     const supabase = createClient();
+
+    const handlePhotoSelect = async (file: File) => {
+        setFormData({ ...formData, photo: file });
+
+        // Immediate AI Analysis
+        setAnalyzing(true);
+        try {
+            const result = await analyzeImage(file);
+            setAnalyzing(false);
+
+            if (!result.valid) {
+                alert(`Görsel Reddedildi: ${result.reason}`);
+                setFormData(prev => ({ ...prev, photo: null })); // Clear invalid photo
+            } else {
+                // Success feedback (optional, or just show photo)
+            }
+        } catch (error) {
+            console.error("Analysis error:", error);
+            setAnalyzing(false);
+        }
+    };
 
     const handleUpload = async (file: File) => {
         // 1. Upload to Supabase Storage
         const fileExt = file.name.split('.').pop();
         const fileName = `${Math.random()}.${fileExt}`;
-        const filePath = `${fileName}`;
-
-        /* 
-           Note: Ensure 'pets_images' bucket exists in Supabase.
-           If not, this will fail. For demo/prototype without direct DB access, 
-           we simulate success or log error.
-        */
-
-        // In a real scenario, we'd do:
-        // const { error: uploadError } = await supabase.storage.from('pets_images').upload(filePath, file);
-        // const { data } = supabase.storage.from('pets_images').getPublicUrl(filePath);
-
-        // For now, we'll assume we get a URL or skip actual storage if buckets aren't set up.
-        // Just returning a mock/local URL for the "DB Insert" step effectively.
+        // Mock URL for now as per previous implementation logic
         return "https://lh3.googleusercontent.com/aida-public/AB6AXuACdszP9Owo_giuD_cOFvDCsciUgRRjCl0ttEGK3iHXjRAhptbmyrguHv_21pMgTgv_Xodgo5ttPM5uce6UG2OXLM1Af-B7w3hzhZWDAlzu_DtLvxvUVsqJdBk01qAExuoaIDNx-zYh7UsvHr9QiiXKjXtn2RE6uKGGDLiCR387D6wmRHWR46SCtAlSm2scpx9_ShOKTMsrBvfT-HlFN3RofYqmBYTQD_6oHBzkn_z5W-Z2EQo82YaqmbmLDc66RiqsVPVpVrS6-u4";
     };
 
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
+
+        if (!termsAccepted) {
+            alert("Lütfen kuralları kabul ediniz.");
+            return;
+        }
+
+        if (!formData.name || !formData.age) {
+            alert("Lütfen isim ve yaş alanlarını doldurunuz.");
+            return;
+        }
+
         setLoading(true);
 
         try {
@@ -56,14 +81,15 @@ export default function AddPetPage() {
             const { data: { user } } = await supabase.auth.getUser();
 
             if (user) {
-                // Insert into 'pets' table
+                // Insert into 'pets' table with 'pending' status
                 const { error } = await supabase.from('pets').insert({
                     owner_id: user.id,
                     name: formData.name,
                     type: formData.category,
                     breed: formData.breed || 'Diğer',
                     age: (formData.age && !isNaN(parseInt(formData.age))) ? parseInt(formData.age) : null,
-                    image_url: photoUrl
+                    image_url: photoUrl,
+                    status: 'pending' // Moderation required
                 });
 
                 if (error) {
@@ -94,14 +120,22 @@ export default function AddPetPage() {
 
             <main className="p-4">
                 <form onSubmit={handleSubmit} className="flex flex-col gap-6">
-                    {/* Photo Upload */}
-                    <PhotoUploader
-                        onFileSelect={(file) => setFormData({ ...formData, photo: file })}
-                    />
+                    {/* Photo Upload with Analysis Status */}
+                    <div className="relative">
+                        <PhotoUploader
+                            onFileSelect={handlePhotoSelect}
+                        />
+                        {analyzing && (
+                            <div className="absolute inset-0 bg-black/50 rounded-2xl flex flex-col items-center justify-center text-white backdrop-blur-sm z-10">
+                                <span className="material-symbols-outlined animate-spin text-3xl mb-2">smart_toy</span>
+                                <span className="font-bold text-sm">Yapay Zeka Görseli İnceliyor...</span>
+                            </div>
+                        )}
+                    </div>
 
                     {/* Name */}
                     <div className="space-y-1">
-                        <label className="text-sm font-medium text-slate-700 dark:text-gray-300 ml-1">Pet İsmi</label>
+                        <label className="text-sm font-medium text-slate-700 dark:text-gray-300 ml-1">Pet İsmi <span className="text-red-500">*</span></label>
                         <input
                             type="text"
                             required
@@ -145,9 +179,10 @@ export default function AddPetPage() {
                         />
 
                         <div className="space-y-1">
-                            <label className="text-sm font-medium text-slate-700 dark:text-gray-300 ml-1">Yaşı</label>
+                            <label className="text-sm font-medium text-slate-700 dark:text-gray-300 ml-1">Yaşı <span className="text-red-500">*</span></label>
                             <input
                                 type="number"
+                                required
                                 value={formData.age}
                                 onChange={(e) => setFormData({ ...formData, age: e.target.value })}
                                 placeholder="Örn: 2"
@@ -156,14 +191,40 @@ export default function AddPetPage() {
                         </div>
                     </div>
 
+                    {/* Terms Checkbox */}
+                    <div className="flex items-start gap-3 p-4 bg-blue-50 dark:bg-blue-900/20 rounded-xl border border-blue-100 dark:border-blue-800">
+                        <div className="relative flex items-center">
+                            <input
+                                type="checkbox"
+                                id="terms"
+                                checked={termsAccepted}
+                                onChange={(e) => setTermsAccepted(e.target.checked)}
+                                className="peer h-5 w-5 cursor-pointer appearance-none rounded-md border-2 border-slate-300 transition-all checked:border-primary checked:bg-primary"
+                            />
+                            <span className="pointer-events-none absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 text-white opacity-0 peer-checked:opacity-100">
+                                <svg xmlns="http://www.w3.org/2000/svg" className="h-3.5 w-3.5" viewBox="0 0 20 20" fill="currentColor">
+                                    <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
+                                </svg>
+                            </span>
+                        </div>
+                        <label htmlFor="terms" className="text-xs text-slate-600 dark:text-slate-300 cursor-pointer select-none">
+                            Yüklediğim görselin <span className="font-bold text-primary">kendi evcil hayvanıma</span> ait olduğunu,
+                            topluluk kurallarına uygun olduğunu ve NSFW (Uygunsuz) içerik barındırmadığını kabul ediyorum.
+                        </label>
+                    </div>
+
                     {/* Submit Button */}
                     <button
                         type="submit"
-                        disabled={loading}
-                        className="w-full py-4 bg-primary text-black font-bold rounded-2xl shadow-lg shadow-primary/30 hover:shadow-primary/50 active:scale-[0.98] transition-all mt-4 flex items-center justify-center gap-2 disabled:opacity-50"
+                        disabled={loading || analyzing || !termsAccepted}
+                        className="w-full py-4 bg-primary text-black font-bold rounded-2xl shadow-lg shadow-primary/30 hover:shadow-primary/50 active:scale-[0.98] transition-all flex items-center justify-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed"
                     >
-                        {loading ? 'Ekleniyor...' : 'Kaydet'}
+                        {loading ? 'Ekleniyor...' : (analyzing ? 'Görsel İnceleniyor...' : 'Kaydet ve Onaya Gönder')}
                     </button>
+
+                    <p className="text-center text-[10px] text-gray-400">
+                        * Eklenen petler moderasyon onayından sonra profilinizde yayınlanacaktır.
+                    </p>
                 </form>
             </main>
         </div>

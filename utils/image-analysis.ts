@@ -12,20 +12,21 @@
  */
 export async function analyzeImage(file: File): Promise<{ valid: boolean; reason?: string }> {
     // Simulate API delay
-    await new Promise((resolve) => setTimeout(resolve, 1500));
+    await new Promise((resolve) => setTimeout(resolve, 2000));
 
     // Mock Validation Logic:
-    // For demo purposes, we accept everything unless the filename contains 'fail'
-    // or 'nsfw'.
-
     const name = file.name.toLowerCase();
 
-    if (name.includes('nsfw')) {
-        return { valid: false, reason: "Görsel uygunsuz içerik barındırıyor olabilir. (NSFW)" };
+    // 1. Check for NSFW (Simulation)
+    // If filename contains 'nsfw', 'adult', 'explicit', reject.
+    if (name.match(/(nsfw|adult|explicit|xxx)/)) {
+        return { valid: false, reason: "Görsel güvenlik kurallarına uymuyor (NSFW Tespiti)." };
     }
 
-    if (name.includes('fail')) {
-        return { valid: false, reason: "Görselde bir evcil hayvan tespit edilemedi." };
+    // 2. Check for Pet (Simulation)
+    // If filename contains 'fail', 'car', 'building', reject.
+    if (name.match(/(fail|car|building|object|man|woman|human)/)) {
+        return { valid: false, reason: "Görselde evcil hayvan tespit edilemedi. Lütfen net bir hayvan fotoğrafı yükleyin." };
     }
 
     // Default Success
