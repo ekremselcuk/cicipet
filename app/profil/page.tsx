@@ -181,6 +181,16 @@ export default function ProfilPage() {
                         </div>
                         <span className="material-symbols-outlined text-gray-300 group-hover:text-gray-500 transition-colors">chevron_right</span>
                     </Link>
+                    {/* Admin Access (Conditional or just visible for demo) */}
+                    <Link href="/admin/moderasyon" className="w-full flex items-center justify-between p-4 hover:bg-red-50 dark:hover:bg-red-900/10 transition-colors group">
+                        <div className="flex items-center gap-4">
+                            <div className="w-10 h-10 rounded-full bg-red-100 dark:bg-red-900/30 flex items-center justify-center text-red-500 group-hover:scale-110 transition-transform">
+                                <span className="material-symbols-outlined">security</span>
+                            </div>
+                            <span className="font-bold text-slate-900 dark:text-white text-sm">Yönetici Paneli (Moderasyon)</span>
+                        </div>
+                        <span className="material-symbols-outlined text-gray-300 group-hover:text-red-500 transition-colors">chevron_right</span>
+                    </Link>
                 </section>
 
                 <SignOutButton />

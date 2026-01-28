@@ -18,11 +18,31 @@ export default async function PetDetailPage({ params }: { params: { id: string }
         .eq('id', id)
         .single();
 
-    if (error || !pet) {
-        // If real DB fails/not found, show 404.
-        // For development continuity if DB is empty, we might want a fallback,
-        // but user asked for "System", so real logic is better.
-        return notFound();
+    if (error) {
+        return (
+            <div className="min-h-screen flex flex-col items-center justify-center p-4">
+                <h1 className="text-xl font-bold text-red-500 mb-2">Veri Çekme Hatası</h1>
+                <code className="bg-gray-100 p-4 rounded text-sm mb-4 block overflow-auto max-w-full">
+                    {JSON.stringify(error, null, 2)}
+                </code>
+                <p className="text-gray-500">ID: {id}</p>
+            </div>
+        );
+    }
+
+    if (!pet) {
+        return (
+            <div className="min-h-screen flex flex-col items-center justify-center p-4">
+                <h1 className="text-2xl font-bold text-slate-900 dark:text-white mb-2">Pet Bulunamadı 🐾</h1>
+                <p className="text-gray-500">Aradığınız pet silinmiş veya hiç var olmamış olabilir.</p>
+                <div className="mt-4 p-2 bg-yellow-50 text-yellow-800 text-xs rounded border border-yellow-200">
+                    Debug ID: {id}
+                </div>
+                <Link href="/profil" className="mt-6 px-6 py-3 bg-primary text-black font-bold rounded-xl">
+                    Profile Dön
+                </Link>
+            </div>
+        );
     }
 
     return (
