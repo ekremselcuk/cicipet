@@ -14,6 +14,7 @@ export default function LostAdPage() {
     // or we're okay with client-side only check if data persistence is blocked.
 
     const [formData, setFormData] = useState({
+        name: '', // Added Pet Name
         category: 'kedi',
         breed: '',
         age: '',
@@ -56,6 +57,11 @@ export default function LostAdPage() {
             return;
         }
 
+        if (!formData.name || !formData.location) {
+            alert('Lütfen isim ve konum bilgilerini doldurunuz.');
+            return;
+        }
+
         setLoading(true);
 
         try {
@@ -71,6 +77,7 @@ export default function LostAdPage() {
             if (user) {
                 const { error } = await supabase.from('ads').insert({
                     user_id: user.id,
+                    title: formData.name, // Use 'title' column for Ad Name/Pet Name
                     type: 'kayip',
                     category: formData.category,
                     breed: formData.breed || 'Diğer',
@@ -83,7 +90,9 @@ export default function LostAdPage() {
 
                 if (error) {
                     console.error('Ad Error:', error);
-                    alert('İlan oluşturulurken hata oluştu.');
+                    // If error mentions column 'title' does not exist, we can try 'name'
+                    // but usually 'title' is standard for ads.
+                    alert(`İlan oluşturulurken hata oluştu: ${error.message}`);
                 } else {
                     alert('İlan başarıyla oluşturuldu ve onaya gönderildi.');
                     router.push('/ilanlar');
@@ -121,6 +130,19 @@ export default function LostAdPage() {
                                 <span className="font-bold text-sm">İnceleniyor...</span>
                             </div>
                         )}
+                    </div>
+
+                    {/* Pet Name Input */}
+                    <div className="space-y-1">
+                        <label className="text-sm font-medium text-slate-700 dark:text-gray-300 ml-1">Pet İsmi <span className="text-red-500">*</span></label>
+                        <input
+                            type="text"
+                            required
+                            value={formData.name}
+                            onChange={(e) => setFormData({ ...formData, name: e.target.value })}
+                            placeholder="Örn: Pamuk"
+                            className="w-full px-4 py-3 rounded-xl bg-white dark:bg-surface-dark border border-gray-200 dark:border-white/10 focus:ring-2 focus:ring-red-500 focus:border-transparent outline-none transition-all dark:text-white text-sm"
+                        />
                     </div>
 
                     <div className="space-y-2">

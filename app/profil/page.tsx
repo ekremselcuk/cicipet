@@ -154,7 +154,7 @@ export default function ProfilPage() {
                         </div>
                         <span className="material-symbols-outlined text-gray-300 group-hover:text-primary transition-colors">chevron_right</span>
                     </Link>
-                    <Link href="/ilanlar" className="w-full flex items-center justify-between p-4 border-b border-gray-50 dark:border-gray-800 hover:bg-gray-50 dark:hover:bg-white/5 active:bg-gray-100 transition-colors group">
+                    <Link href="/profil/ilanlar" className="w-full flex items-center justify-between p-4 border-b border-gray-50 dark:border-gray-800 hover:bg-gray-50 dark:hover:bg-white/5 active:bg-gray-100 transition-colors group">
                         <div className="flex items-center gap-4">
                             <div className="w-10 h-10 rounded-full bg-teal-100 dark:bg-teal-900/30 flex items-center justify-center text-secondary group-hover:scale-110 transition-transform">
                                 <span className="material-symbols-outlined">campaign</span>
