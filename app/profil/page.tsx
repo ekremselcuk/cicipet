@@ -1,31 +1,69 @@
+'use client';
 
-import { requireAuth } from "@/utils/supabase/check-auth";
-import { createClient } from "@/utils/supabase/server";
+import { createClient } from "@/utils/supabase/client";
 import SignOutButton from "@/components/auth/SignOutButton";
 import Link from "next/link";
-import { redirect } from "next/navigation";
+import { useRouter } from "next/navigation";
+import { useEffect, useState } from "react";
 
-export default async function ProfilPage() {
-    const supabase = await createClient();
-    const user = await requireAuth();
+export default function ProfilPage() {
+    const supabase = createClient();
+    const router = useRouter();
+    const [loading, setLoading] = useState(true);
+    const [user, setUser] = useState<any>(null);
+    const [pets, setPets] = useState<any[]>([]);
+    const [userProfile, setUserProfile] = useState<any>(null);
 
-    // Fetch User Profile
-    let { data: userProfile } = await supabase
-        .from('users')
-        .select('*')
-        .eq('id', user.id)
-        .single();
+    useEffect(() => {
+        const loadData = async () => {
+            try {
+                // 1. Check Auth
+                const { data: { user: currentUser }, error: authError } = await supabase.auth.getUser();
 
-    // Fetch Pets
-    let { data: pets } = await supabase
-        .from('pets')
-        .select('*')
-        .eq('owner_id', user.id);
+                if (authError || !currentUser) {
+                    router.push('/auth/login');
+                    return;
+                }
+                setUser(currentUser);
 
-    // Ensure arrays are initialized if null
-    pets = pets || [];
+                // 2. Fetch Profile
+                const { data: profile } = await supabase
+                    .from('users')
+                    .select('*')
+                    .eq('id', currentUser.id)
+                    .single();
+                setUserProfile(profile);
+
+                // 3. Fetch Pets
+                const { data: userPets } = await supabase
+                    .from('pets')
+                    .select('*')
+                    .eq('owner_id', currentUser.id);
+                setPets(userPets || []);
+
+            } catch (err) {
+                console.error("Data load error:", err);
+            } finally {
+                setLoading(false);
+            }
+        };
+
+        loadData();
+    }, [router, supabase]);
+
+    if (loading) {
+        return (
+            <div className="min-h-screen flex items-center justify-center bg-background-light dark:bg-background-dark">
+                <span className="material-symbols-outlined animate-spin text-4xl text-primary">progress_activity</span>
+            </div>
+        );
+    }
+
+    if (!user) return null; // Redirecting...
+
+    // Fallback data
     const displayName = userProfile?.full_name || user.user_metadata?.full_name || user.email?.split('@')[0] || "Kullanıcı";
-    const avatarUrl = userProfile?.avatar_url || user.user_metadata?.avatar_url || "https://lh3.googleusercontent.com/aida-public/AB6AXuACdszP9Owo_giuD_cOFvDCsciUgRRjCl0ttEGK3iHXjRAhptbmyrguHv_21pMgTgv_Xodgo5ttPM5uce6UG2OXLM1Af-B7w3hzhZWDAlzu_DtLvxvUVsqJdBk01qAExuoaIDNx-zYh7UsvHr9QiiXKjXtn2RE6uKGGDLiCR387D6wmRHWR46SCtAlSm2scpx9_ShOKTMsrBvfT-HlFN3RofYqmBYTQD_6oHBzkn_z5W-Z2EQo82YaqmbmLDc66RiqsVPVpVrS6-u4";
+    const avatarUrl = userProfile?.avatar_url || user.user_metadata?.avatar_url || "https://lh3.googleusercontent.com/aida-public/AB6AXuACdszP9Owo_giuD_cOFvDCsciUgRRjCl0ttEGK3iHXjRAhptbmyrguHv_21pMgTgv_Xodgo5ttPM5uce6UG2OXLM1Af-B7w3hzhZWDAlzu_DtLvxvUVsqJdBk01qAExuoaIDNx-zYh7UsvHr9QiiXKjXtn2RE6uKGGDLiCR387D6wmRHWR46SCtAlSm2scpx9_ShOKTMsrBvfT-HlFN3RofYqmBYTQD_6oHBzkn_z5W-Z2EQo82YaqmbnLDc66RiqsVPVpVrS6-u4";
     const ciciPoints = userProfile?.cicipoints || 0;
 
     // Default stats (placeholders until we have tables for posts/donations/contests)
@@ -36,7 +74,7 @@ export default async function ProfilPage() {
     };
 
     return (
-        <main className="pb-24">
+        <main className="pb-24 min-h-screen bg-background-light dark:bg-background-dark">
             <header className="sticky top-0 z-50 bg-background-light/95 dark:bg-background-dark/95 backdrop-blur-sm pt-safe px-4 py-3 flex items-center justify-between">
                 <h1 className="text-2xl font-extrabold tracking-tight text-text-main dark:text-white">Profilim</h1>
                 <Link href="/profil/ayarlar" className="p-2 bg-white dark:bg-surface-dark rounded-full shadow-sm border border-gray-100 dark:border-gray-800 text-gray-600 dark:text-gray-300 hover:text-primary transition-colors">
