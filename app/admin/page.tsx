@@ -1,4 +1,5 @@
 import { requireAdmin } from "@/utils/supabase/check-auth";
+import MenuTrigger from "@/components/admin/MenuTrigger";
 import Link from "next/link";
 
 export default async function AdminPage() {
@@ -9,9 +10,7 @@ export default async function AdminPage() {
             {/* Top App Bar - Admin */}
             <header className="sticky top-0 z-50 flex items-center justify-between bg-background-dark/95 backdrop-blur-sm p-4 pb-2 border-b border-[#362b1b]">
                 <div className="flex items-center gap-4">
-                    <button className="text-white flex items-center justify-center rounded-full p-2 hover:bg-white/10 transition-colors">
-                        <span className="material-symbols-outlined text-2xl">menu</span>
-                    </button>
+                    <MenuTrigger />
                     <h1 className="text-white text-xl font-bold leading-tight tracking-tight">Admin Paneli</h1>
                 </div>
                 <div className="flex items-center gap-3">
