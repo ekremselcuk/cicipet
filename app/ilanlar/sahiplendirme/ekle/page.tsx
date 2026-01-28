@@ -16,13 +16,61 @@ export default function AdoptionAdPage() {
         photo: null as File | null
     });
     const [loading, setLoading] = useState(false);
+    const [termsAccepted, setTermsAccepted] = useState(false);
+    const { analyzeImage } = require('@/utils/image-analysis');
+    const router = require('next/navigation').useRouter();
+    const supabase = createClient();
 
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
         setLoading(true);
-        await new Promise(r => setTimeout(r, 1000));
-        alert('İlan başarıyla oluşturuldu! (Simüle edildi)');
-        setLoading(false);
+
+        try {
+            if (!termsAccepted) {
+                alert('Lütfen görsel yükleme şartlarını kabul edin.');
+                setLoading(false);
+                return;
+            }
+
+            let photoUrl = null;
+            if (formData.photo) {
+                const analysis = await analyzeImage(formData.photo);
+                if (!analysis.valid) {
+                    alert(`Görsel onaylanmadı: ${analysis.reason}`);
+                    setLoading(false);
+                    return;
+                }
+                photoUrl = "https://lh3.googleusercontent.com/aida-public/AB6AXuAnLEykf_jW6kowf6oISTaUimFCqyGZ6J6r4QLKJSghKFPC-DKcR9W8mb-Sd42s82AqUu7_Uop0pSPcONvrojB-2JT08JnFKd5SOPeT-lAaOwuUtKR5MH1uT-5iYi-yKjuIM5uA2j3Ke2QLU1rb4evjs9C5otGWCCKgGmN6NcELFrhkKPK2B7Kt2Lm1WO1K-tYtGk6MYgYugM-8mskwdo5OEDqNM-IPdqcjkADRW4QyER6ctL2Jk5S_6wEm9Lkg-C6h_jGpHnifTeM";
+            }
+
+            const { data: { user } } = await supabase.auth.getUser();
+
+            if (user) {
+                const { error } = await supabase.from('ads').insert({
+                    user_id: user.id,
+                    type: 'sahiplendirme',
+                    category: formData.category,
+                    breed: formData.breed || 'Diğer',
+                    age: formData.age ? parseInt(formData.age) : null,
+                    description: formData.description,
+                    photo_url: photoUrl,
+                    status: 'pending'
+                });
+
+                if (error) {
+                    console.error('Ad Error:', error);
+                    alert('İlan oluşturulurken hata oluştu.');
+                } else {
+                    alert('İlan başarıyla oluşturuldu ve onaya gönderildi.');
+                    router.push('/ilanlar');
+                    router.refresh();
+                }
+            }
+        } catch (error) {
+            console.error(error);
+        } finally {
+            setLoading(false);
+        }
     };
 
     return (
@@ -72,9 +120,10 @@ export default function AdoptionAdPage() {
                             colorTheme="green"
                         />
                         <div className="space-y-1">
-                            <label className="text-sm font-medium text-slate-700 dark:text-gray-300 ml-1">Yaşı</label>
+                            <label className="text-sm font-medium text-slate-700 dark:text-gray-300 ml-1">Yaşı <span className="text-green-500">*</span></label>
                             <input
                                 type="number"
+                                required
                                 value={formData.age}
                                 onChange={(e) => setFormData({ ...formData, age: e.target.value })}
                                 placeholder="Örn: 1"
@@ -84,9 +133,10 @@ export default function AdoptionAdPage() {
                     </div>
 
                     <div className="space-y-1">
-                        <label className="text-sm font-medium text-slate-700 dark:text-gray-300 ml-1">Karakter Özellikleri / Hikayesi</label>
+                        <label className="text-sm font-medium text-slate-700 dark:text-gray-300 ml-1">Karakter Özellikleri / Hikayesi <span className="text-green-500">*</span></label>
                         <textarea
                             rows={4}
+                            required
                             value={formData.description}
                             onChange={(e) => setFormData({ ...formData, description: e.target.value })}
                             placeholder="Neden sahiplendiriyorsunuz? Huyu nasıl? Aşıları tam mı?"
@@ -94,7 +144,22 @@ export default function AdoptionAdPage() {
                         ></textarea>
                     </div>
 
-                    <button type="submit" className="w-full py-4 bg-green-500 text-white font-bold rounded-2xl shadow-lg shadow-green-500/30 hover:shadow-green-500/50 active:scale-[0.98] transition-all mt-2 flex items-center justify-center gap-2">
+                    <label className="flex items-start gap-3 p-3 rounded-xl bg-gray-50 dark:bg-white/5 cursor-pointer hover:bg-gray-100 dark:hover:bg-white/10 transition-colors">
+                        <div className="relative flex items-center mt-0.5">
+                            <input
+                                type="checkbox"
+                                required
+                                checked={termsAccepted}
+                                onChange={(e) => setTermsAccepted(e.target.checked)}
+                                className="peer h-5 w-5 rounded-md border-gray-300 text-green-500 focus:ring-green-500 dark:border-gray-600 dark:bg-gray-700"
+                            />
+                        </div>
+                        <span className="text-xs text-slate-600 dark:text-gray-400">
+                            Yüklediğim görselin genel ahlak kurallarına uygun olduğunu ve <strong>gerçek bir evcil hayvan görseli</strong> olduğunu kabul ediyorum.
+                        </span>
+                    </label>
+
+                    <button type="submit" className="w-full py-4 bg-green-500 text-white font-bold rounded-2xl shadow-lg shadow-green-500/30 hover:shadow-green-500/50 active:scale-[0.98] transition-all mt-2 flex items-center justify-center gap-2 disabled:opacity-50">
                         <span className="material-symbols-outlined">check_circle</span>
                         {loading ? 'Yayınlanıyor...' : 'Sahiplendirme İlanı Oluştur'}
                     </button>

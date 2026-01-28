@@ -12,8 +12,6 @@ export default function LostAdPage() {
     // Note: We need a server check for auth, but since we are converting this to "use client", 
     // we should ideally wrap it or do a check. For MVP/Simplicity, we'll assume middleware/layout does it,
     // or we're okay with client-side only check if data persistence is blocked.
-    // Ideally: Parent Server Component does check -> renders Client Form. 
-    // But to save files, I'll just write Client logic here.
 
     const [formData, setFormData] = useState({
         category: 'kedi',
@@ -23,18 +21,71 @@ export default function LostAdPage() {
         description: '',
         photo: null as File | null
     });
-
     const [loading, setLoading] = useState(false);
     const supabase = createClient();
+    const [termsAccepted, setTermsAccepted] = useState(false);
+    // Dynamic import to avoid SSR issues with some libs if any, though here it's fine.
+    // We'll use the one we created.
+    const { analyzeImage } = require('@/utils/image-analysis');
+    const router = require('next/navigation').useRouter();
 
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
         setLoading(true);
-        // Simulate upload and DB insert
-        await new Promise(r => setTimeout(r, 1000));
-        alert('İlan başarıyla oluşturuldu! (Simüle edildi)');
-        setLoading(false);
-        // Redirect logic...
+
+        try {
+            if (!termsAccepted) {
+                alert('Lütfen görsel yükleme şartlarını kabul edin.');
+                setLoading(false);
+                return;
+            }
+
+            let photoUrl = null;
+            if (formData.photo) {
+                const analysis = await analyzeImage(formData.photo);
+                if (!analysis.valid) {
+                    alert(`Görsel onaylanmadı: ${analysis.reason}`);
+                    setLoading(false);
+                    return;
+                }
+
+                // --- Upload Logic (Mocked Storage URL for now, but inserted to DB) ---
+                // const { data, error } = await supabase.storage.from('ads').upload(...)
+                // For MVP without bucket setup, we use a placeholder or data URL if small, 
+                // but let's stick to the consistent mock URL for now.
+                photoUrl = "https://lh3.googleusercontent.com/aida-public/AB6AXuAnLEykf_jW6kowf6oISTaUimFCqyGZ6J6r4QLKJSghKFPC-DKcR9W8mb-Sd42s82AqUu7_Uop0pSPcONvrojB-2JT08JnFKd5SOPeT-lAaOwuUtKR5MH1uT-5iYi-yKjuIM5uA2j3Ke2QLU1rb4evjs9C5otGWCCKgGmN6NcELFrhkKPK2B7Kt2Lm1WO1K-tYtGk6MYgYugM-8mskwdo5OEDqNM-IPdqcjkADRW4QyER6ctL2Jk5S_6wEm9Lkg-C6h_jGpHnifTeM";
+            }
+
+            const { data: { user } } = await supabase.auth.getUser();
+
+            if (user) {
+                const { error } = await supabase.from('ads').insert({
+                    user_id: user.id,
+                    type: 'kayip',
+                    category: formData.category,
+                    breed: formData.breed || 'Diğer',
+                    age: formData.age ? parseInt(formData.age) : null,
+                    location: formData.location,
+                    description: formData.description,
+                    photo_url: photoUrl,
+                    status: 'pending'
+                });
+
+                if (error) {
+                    console.error('Ad Error:', error);
+                    alert('İlan oluşturulurken hata oluştu.');
+                } else {
+                    alert('İlan başarıyla oluşturuldu ve onaya gönderildi.');
+                    router.push('/ilanlar');
+                    router.refresh();
+                }
+            }
+        } catch (error) {
+            console.error(error);
+            alert('Beklenmedik bir hata oluştu.');
+        } finally {
+            setLoading(false);
+        }
     };
 
     return (
@@ -49,13 +100,11 @@ export default function LostAdPage() {
 
             <main className="p-4">
                 <form onSubmit={handleSubmit} className="flex flex-col gap-6">
-                    {/* Photo Upload Area */}
                     <PhotoUploader
                         colorTheme="red"
                         onFileSelect={(file) => setFormData({ ...formData, photo: file })}
                     />
 
-                    {/* Category Selection */}
                     <div className="space-y-2">
                         <label className="text-sm font-bold text-slate-700 dark:text-gray-300 ml-1">Kategorisi</label>
                         <div className="grid grid-cols-3 gap-3">
@@ -78,7 +127,6 @@ export default function LostAdPage() {
                         </div>
                     </div>
 
-                    {/* Details Grid */}
                     <div className="grid grid-cols-2 gap-4">
                         <BreedSelect
                             category={formData.category}
@@ -87,9 +135,10 @@ export default function LostAdPage() {
                             colorTheme="red"
                         />
                         <div className="space-y-1">
-                            <label className="text-sm font-medium text-slate-700 dark:text-gray-300 ml-1">Yaşı</label>
+                            <label className="text-sm font-medium text-slate-700 dark:text-gray-300 ml-1">Yaşı <span className="text-red-500">*</span></label>
                             <input
                                 type="number"
+                                required
                                 value={formData.age}
                                 onChange={(e) => setFormData({ ...formData, age: e.target.value })}
                                 placeholder="Örn: 2"
@@ -98,13 +147,13 @@ export default function LostAdPage() {
                         </div>
                     </div>
 
-                    {/* Location */}
                     <div className="space-y-1">
-                        <label className="text-sm font-medium text-slate-700 dark:text-gray-300 ml-1">Kaybolduğu Yer</label>
+                        <label className="text-sm font-medium text-slate-700 dark:text-gray-300 ml-1">Kaybolduğu Yer <span className="text-red-500">*</span></label>
                         <div className="relative">
                             <span className="absolute left-3 top-3.5 material-symbols-outlined text-gray-400 text-[20px]">location_on</span>
                             <input
                                 type="text"
+                                required
                                 value={formData.location}
                                 onChange={(e) => setFormData({ ...formData, location: e.target.value })}
                                 placeholder="Örn: Kadıköy / Moda"
@@ -113,11 +162,11 @@ export default function LostAdPage() {
                         </div>
                     </div>
 
-                    {/* Description Textarea */}
                     <div className="space-y-1">
-                        <label className="text-sm font-medium text-slate-700 dark:text-gray-300 ml-1">Detaylı Açıklama</label>
+                        <label className="text-sm font-medium text-slate-700 dark:text-gray-300 ml-1">Detaylı Açıklama <span className="text-red-500">*</span></label>
                         <textarea
                             rows={4}
+                            required
                             value={formData.description}
                             onChange={(e) => setFormData({ ...formData, description: e.target.value })}
                             placeholder="Nasıl kayboldu? Tasması var mıydı? Belirgin özellikleri neler?"
@@ -125,8 +174,22 @@ export default function LostAdPage() {
                         ></textarea>
                     </div>
 
-                    {/* Submit Button */}
-                    <button type="submit" className="w-full py-4 bg-red-500 text-white font-bold rounded-2xl shadow-lg shadow-red-500/30 hover:shadow-red-500/50 active:scale-[0.98] transition-all mt-2 flex items-center justify-center gap-2">
+                    <label className="flex items-start gap-3 p-3 rounded-xl bg-gray-50 dark:bg-white/5 cursor-pointer hover:bg-gray-100 dark:hover:bg-white/10 transition-colors">
+                        <div className="relative flex items-center mt-0.5">
+                            <input
+                                type="checkbox"
+                                required
+                                checked={termsAccepted}
+                                onChange={(e) => setTermsAccepted(e.target.checked)}
+                                className="peer h-5 w-5 rounded-md border-gray-300 text-red-500 focus:ring-red-500 dark:border-gray-600 dark:bg-gray-700"
+                            />
+                        </div>
+                        <span className="text-xs text-slate-600 dark:text-gray-400">
+                            Yüklediğim görselin genel ahlak kurallarına uygun olduğunu, şiddet ve uygunsuz içerik barındırmadığını ve <strong>gerçek bir evcil hayvan görseli</strong> olduğunu kabul ediyorum.
+                        </span>
+                    </label>
+
+                    <button type="submit" className="w-full py-4 bg-red-500 text-white font-bold rounded-2xl shadow-lg shadow-red-500/30 hover:shadow-red-500/50 active:scale-[0.98] transition-all mt-2 flex items-center justify-center gap-2 disabled:opacity-50">
                         <span className="material-symbols-outlined">campaign</span>
                         {loading ? 'Yayınlanıyor...' : 'Kayıp İlanı Yayınla'}
                     </button>
