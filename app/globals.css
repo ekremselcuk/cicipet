@@ -1,0 +1,77 @@
+@import "tailwindcss";
+
+@plugin "tailwindcss-animate";
+
+:root {
+  --background: #fcfaf8;
+  --foreground: #1c170d;
+
+  --primary: #f4ab25;
+  --primary-dark: #d98e0d;
+  --secondary: #0d9488;
+  --secondary-light: #ccfbf1;
+
+  --surface-light: #ffffff;
+  --surface-dark: #2a241b;
+
+  --text-main: #1c170d;
+  --text-sub: #9c7f49;
+
+  --background-light: #fcfaf8;
+  --background-dark: #1c170d;
+}
+
+@theme inline {
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+
+  --color-primary: var(--primary);
+  --color-primary-dark: var(--primary-dark);
+  --color-secondary: var(--secondary);
+  --color-secondary-light: var(--secondary-light);
+
+  --color-surface-light: var(--surface-light);
+  --color-surface-dark: var(--surface-dark);
+
+  --color-text-main: var(--text-main);
+  --color-text-sub: var(--text-sub);
+
+  --color-background-light: var(--background-light);
+  --color-background-dark: var(--background-dark);
+
+  --font-display: var(--font-jakarta);
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    --background: #1c170d;
+    --foreground: #ededed;
+    --background-light: #1c170d;
+    /* Map for compatibility */
+  }
+}
+
+body {
+  background: var(--background);
+  color: var(--foreground);
+  font-family: var(--font-jakarta), sans-serif;
+}
+
+/* Material Symbols Utilities */
+.material-symbols-outlined {
+  font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+}
+
+.material-symbols-outlined.filled {
+  font-variation-settings: 'FILL' 1, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+}
+
+/* Hide Scrollbar Utilities */
+.hide-scrollbar::-webkit-scrollbar {
+  display: none;
+}
+
+.hide-scrollbar {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
