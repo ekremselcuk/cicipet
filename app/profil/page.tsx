@@ -82,7 +82,15 @@ export default async function ProfilPage() {
                             pets.map((pet: any) => (
                                 <Link href={`/pet/${pet.id}`} key={pet.id} className="flex-shrink-0 flex flex-col items-center gap-2 group cursor-pointer">
                                     <div className="w-20 h-20 rounded-2xl p-[2px] border-2 border-transparent group-hover:border-primary transition-colors">
-                                        <img alt={pet.name} className="w-full h-full rounded-[14px] object-cover shadow-md" src={pet.image_url || "https://via.placeholder.com/150"} />
+                                        <img
+                                            alt={pet.name}
+                                            className="w-full h-full rounded-[14px] object-cover shadow-md"
+                                            src={pet.image_url || "https://via.placeholder.com/150"}
+                                            onError={(e) => {
+                                                // Fallback if image fails
+                                                (e.target as HTMLImageElement).src = "https://via.placeholder.com/150";
+                                            }}
+                                        />
                                     </div>
                                     <span className="text-xs font-bold text-gray-700 dark:text-gray-300">{pet.name}</span>
                                 </Link>
