@@ -1,6 +1,9 @@
 import Header from "@/components/layout/Header";
+import { requireAuth } from "@/utils/supabase/check-auth";
 
-export default function CuzdanPage() {
+export default async function CuzdanPage() {
+    await requireAuth();
+
     return (
         <main className="flex flex-col gap-6 w-full mt-4 pb-24">
             <Header />

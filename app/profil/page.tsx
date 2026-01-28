@@ -1,5 +1,8 @@
+import { requireAuth } from "@/utils/supabase/check-auth";
 
-export default function ProfilPage() {
+export default async function ProfilPage() {
+    await requireAuth();
+
     return (
         <main className="pb-24">
             <header className="sticky top-0 z-50 bg-background-light/95 dark:bg-background-dark/95 backdrop-blur-sm pt-safe px-4 py-3 flex items-center justify-between">
