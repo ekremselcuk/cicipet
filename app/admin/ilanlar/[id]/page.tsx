@@ -19,7 +19,7 @@ export default async function AdminAdDetailPage({ params }: { params: { id: stri
             profiles:user_id (
                 id,
                 full_name,
-                username
+                email
             )
         `)
         .eq('id', id)
@@ -95,7 +95,7 @@ export default async function AdminAdDetailPage({ params }: { params: { id: stri
                         <div className="mt-2 text-sm opacity-90">
                             İlan Sahibi:{" "}
                             <Link href={ad.profiles?.id ? `/admin/kullanicilar/${ad.profiles.id}` : '#'} className="font-bold underline hover:text-primary transition-colors">
-                                {ad.profiles?.full_name || ad.profiles?.username || 'Bilinmeyen'}
+                                {ad.profiles?.full_name || ad.profiles?.email || 'Bilinmeyen'}
                             </Link>
                         </div>
                     </div>
