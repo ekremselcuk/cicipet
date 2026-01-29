@@ -23,34 +23,28 @@ export default function ModerationGrid({ initialItems }: { initialItems: Moderat
         // Optimistic UI update
         setItems(items.filter(i => i.id !== id));
 
-        const table = type === 'pet' ? 'pets' : 'ads';
-
         try {
+            const { approveItem, rejectItem } = await import('@/app/admin/actions');
+            let result;
+
             if (action === 'reject') {
-                // DELETE logic requested by user
-                const { error } = await supabase
-                    .from(table)
-                    .delete()
-                    .eq('id', id);
-
-                if (error) throw error;
+                result = await rejectItem(id, type);
             } else {
-                // APPROVE logic
-                const { error } = await supabase
-                    .from(table)
-                    .update({ status: 'approved' })
-                    .eq('id', id);
-
-                if (error) throw error;
+                result = await approveItem(id, type);
             }
 
-            // Small delay to ensure DB propagation before re-fetching
-            await new Promise(resolve => setTimeout(resolve, 500));
-            router.refresh(); // Sync server state
-        } catch (e) {
-            console.error(e);
-            alert('İşlem sırasında bir hata oluştu.');
-            // Ideally revert optimistic update here, but acceptable for MVP
+            if (result.error) {
+                console.error('Server Action Error:', result.error);
+                alert(`İşlem başarısız: ${result.error}`);
+                // Revert optimistic update nicely would be better but reloading page is a safe fallback
+                location.reload();
+            } else {
+                router.refresh();
+            }
+        } catch (e: any) {
+            console.error('Handler Error:', e);
+            alert(`Beklenmeyen hata: ${e.message}`);
+            location.reload();
         }
     };
 
