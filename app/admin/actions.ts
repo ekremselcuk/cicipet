@@ -28,6 +28,8 @@ export async function approveItem(id: string, type: 'pet' | 'ad') {
         }
 
         revalidatePath('/admin/moderasyon');
+        revalidatePath('/admin/petler');
+        revalidatePath('/admin/kullanicilar');
         return { success: true };
     } catch (e: any) {
         console.error('Unexpected Approve Error:', e);
@@ -59,6 +61,8 @@ export async function rejectItem(id: string, type: 'pet' | 'ad') {
         }
 
         revalidatePath('/admin/moderasyon');
+        revalidatePath('/admin/petler');
+        revalidatePath('/admin/kullanicilar');
         return { success: true };
     } catch (e: any) {
         console.error('Unexpected Reject Error:', e);
