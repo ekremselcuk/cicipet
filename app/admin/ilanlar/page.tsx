@@ -23,7 +23,14 @@ export default async function AdminAdsPage() {
         .order('created_at', { ascending: false });
 
     if (error) {
-        console.error("Error fetching ads:", error);
+        return (
+            <div className="bg-background-light dark:bg-background-dark min-h-screen p-4">
+                <div className="p-4 bg-red-100 border border-red-400 text-red-700 rounded-lg">
+                    <h3 className="font-bold">Veri Çekme Hatası</h3>
+                    <p className="font-mono text-sm mt-2">{JSON.stringify(error, null, 2)}</p>
+                </div>
+            </div>
+        )
     }
 
     const adsList = ads || [];
