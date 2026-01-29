@@ -129,7 +129,7 @@ export default async function AdminUsersPage() {
                                         ID: {user.id.slice(0, 8)}...
                                     </div>
                                 </div>
-                                <Link href={`/profil/${user.id}`} className="shrink-0 text-slate-400 dark:text-white/50 hover:text-primary dark:hover:text-primary p-1 rounded-lg hover:bg-slate-100 dark:hover:bg-white/5 transition-colors">
+                                <Link href={`/admin/kullanicilar/${user.id}`} className="shrink-0 text-slate-400 dark:text-white/50 hover:text-primary dark:hover:text-primary p-1 rounded-lg hover:bg-slate-100 dark:hover:bg-white/5 transition-colors">
                                     <span className="material-symbols-outlined">visibility</span>
                                 </Link>
                             </div>

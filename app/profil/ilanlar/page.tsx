@@ -61,19 +61,19 @@ export default function MyAdsPage() {
             <main className="p-4 space-y-6">
                 {/* Action Buttons - Always Visible */}
                 <div className="grid grid-cols-3 gap-2">
-                    <Link href="/ilanlar/ekle?type=kayip" className="flex flex-col items-center justify-center p-3 bg-red-50 dark:bg-red-900/10 border border-red-100 dark:border-red-900/30 rounded-xl hover:bg-red-100 dark:hover:bg-red-900/20 transition-colors gap-2">
+                    <Link href="/ilanlar/kayip/ekle" className="flex flex-col items-center justify-center p-3 bg-red-50 dark:bg-red-900/10 border border-red-100 dark:border-red-900/30 rounded-xl hover:bg-red-100 dark:hover:bg-red-900/20 transition-colors gap-2">
                         <div className="w-10 h-10 rounded-full bg-red-100 dark:bg-red-900/30 flex items-center justify-center text-red-600 dark:text-red-400">
                             <span className="material-symbols-outlined">campaign</span>
                         </div>
                         <span className="text-xs font-bold text-center text-red-700 dark:text-red-300">Kayıp İlanı</span>
                     </Link>
-                    <Link href="/ilanlar/ekle?type=es-bulma" className="flex flex-col items-center justify-center p-3 bg-pink-50 dark:bg-pink-900/10 border border-pink-100 dark:border-pink-900/30 rounded-xl hover:bg-pink-100 dark:hover:bg-pink-900/20 transition-colors gap-2">
+                    <Link href="/ilanlar/es-bulma/ekle" className="flex flex-col items-center justify-center p-3 bg-pink-50 dark:bg-pink-900/10 border border-pink-100 dark:border-pink-900/30 rounded-xl hover:bg-pink-100 dark:hover:bg-pink-900/20 transition-colors gap-2">
                         <div className="w-10 h-10 rounded-full bg-pink-100 dark:bg-pink-900/30 flex items-center justify-center text-pink-600 dark:text-pink-400">
                             <span className="material-symbols-outlined">favorite</span>
                         </div>
                         <span className="text-xs font-bold text-center text-pink-700 dark:text-pink-300">Eş Bulma</span>
                     </Link>
-                    <Link href="/ilanlar/ekle?type=sahiplendirme" className="flex flex-col items-center justify-center p-3 bg-green-50 dark:bg-green-900/10 border border-green-100 dark:border-green-900/30 rounded-xl hover:bg-green-100 dark:hover:bg-green-900/20 transition-colors gap-2">
+                    <Link href="/ilanlar/sahiplendirme/ekle" className="flex flex-col items-center justify-center p-3 bg-green-50 dark:bg-green-900/10 border border-green-100 dark:border-green-900/30 rounded-xl hover:bg-green-100 dark:hover:bg-green-900/20 transition-colors gap-2">
                         <div className="w-10 h-10 rounded-full bg-green-100 dark:bg-green-900/30 flex items-center justify-center text-green-600 dark:text-green-400">
                             <span className="material-symbols-outlined">pets</span>
                         </div>
