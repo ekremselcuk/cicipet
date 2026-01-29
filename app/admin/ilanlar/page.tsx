@@ -17,7 +17,7 @@ export default async function AdminAdsPage() {
             profiles (
                 id,
                 full_name,
-                username
+                email
             )
         `)
         .order('created_at', { ascending: false });
@@ -125,7 +125,7 @@ export default async function AdminAdsPage() {
                                             <span className="material-symbols-outlined text-[16px]">
                                                 person
                                             </span>
-                                            {ad.profiles?.full_name || ad.profiles?.username || 'Bilinmeyen Sahip'}
+                                            {ad.profiles?.full_name || ad.profiles?.email || 'Bilinmeyen Sahip'}
                                         </Link>
                                     </div>
                                 </div>
