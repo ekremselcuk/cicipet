@@ -2,6 +2,7 @@ import { requireAuth } from "@/utils/supabase/check-auth";
 import { createClient } from "@/utils/supabase/server";
 import Link from "next/link";
 import { notFound } from "next/navigation";
+import MenuTrigger from "@/components/admin/MenuTrigger";
 
 export default async function AdminPetDetailPage({ params }: { params: { id: string } }) {
     await requireAuth();
@@ -14,6 +15,7 @@ export default async function AdminPetDetailPage({ params }: { params: { id: str
         .select(`
             *,
             profiles:owner_id (
+                id,
                 full_name,
                 username
             )
@@ -21,7 +23,12 @@ export default async function AdminPetDetailPage({ params }: { params: { id: str
         .eq('id', id)
         .single();
 
+    if (error) {
+        console.error("Error fetching pet details:", error);
+    }
+
     if (error || !pet) {
+        console.log("Pet not found or error occurred for ID:", id);
         return notFound();
     }
 
@@ -30,16 +37,23 @@ export default async function AdminPetDetailPage({ params }: { params: { id: str
             {/* Top Header */}
             <header className="sticky top-0 z-20 bg-background-light/95 dark:bg-background-dark/95 backdrop-blur-sm border-b border-gray-200 dark:border-white/5 px-4 pt-4 pb-2">
                 <div className="flex items-center justify-between mb-4">
-                    <Link
-                        href="/admin/petler"
-                        className="p-2 -ml-2 text-slate-600 dark:text-gray-300 hover:text-primary transition-colors rounded-full hover:bg-black/5 dark:hover:bg-white/5"
-                    >
-                        <span className="material-symbols-outlined text-[28px]">arrow_back</span>
-                    </Link>
+                    <div className="flex items-center gap-2">
+                        {/* Mobile Menu Trigger */}
+                        <div className="md:hidden">
+                            <MenuTrigger />
+                        </div>
+                        <Link
+                            href="/admin/petler"
+                            className="p-2 -ml-2 text-slate-600 dark:text-gray-300 hover:text-primary transition-colors rounded-full hover:bg-black/5 dark:hover:bg-white/5"
+                        >
+                            <span className="material-symbols-outlined text-[24px]">arrow_back</span>
+                        </Link>
+                    </div>
                     <h1 className="text-xl font-bold tracking-tight text-center flex-1">
                         Pet Detayı
                     </h1>
-                    <div className="w-10"></div> {/* Spacer for alignment */}
+                    <div className="flex gap-2 w-10 justify-end">
+                    </div>
                 </div>
             </header>
 
@@ -64,7 +78,14 @@ export default async function AdminPetDetailPage({ params }: { params: { id: str
                             <span className="drop-shadow-md">{pet.age} Yaşında</span>
                         </div>
                         <div className="mt-2 text-sm opacity-90">
-                            Sahip: <span className="font-bold underline">{pet.profiles?.full_name || pet.profiles?.username || 'Bilinmeyen'}</span>
+                            Sahip:{" "}
+                            {pet.profiles ? (
+                                <Link href={`/admin/kullanicilar/${pet.profiles.id}`} className="font-bold underline hover:text-primary transition-colors">
+                                    {pet.profiles.full_name || pet.profiles.username || 'Bilinmeyen'}
+                                </Link>
+                            ) : (
+                                <span className="font-bold">Bilinmeyen</span>
+                            )}
                         </div>
                     </div>
                 </div>

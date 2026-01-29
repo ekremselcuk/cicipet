@@ -2,6 +2,7 @@ import { requireAuth } from "@/utils/supabase/check-auth";
 import { createClient } from "@/utils/supabase/server";
 import Link from "next/link";
 import { redirect } from "next/navigation";
+import MenuTrigger from "@/components/admin/MenuTrigger";
 
 export default async function PetlerPage() {
     await requireAuth();
@@ -13,6 +14,7 @@ export default async function PetlerPage() {
         .select(`
             *,
             profiles:owner_id (
+                id,
                 full_name
             )
         `)
@@ -36,12 +38,18 @@ export default async function PetlerPage() {
             {/* Top Header */}
             <header className="sticky top-0 z-20 bg-background-light/95 dark:bg-background-dark/95 backdrop-blur-sm border-b border-gray-200 dark:border-white/5 px-4 pt-4 pb-2">
                 <div className="flex items-center justify-between mb-4">
-                    <Link
-                        href="/admin"
-                        className="p-2 -ml-2 text-slate-600 dark:text-gray-300 hover:text-primary transition-colors rounded-full hover:bg-black/5 dark:hover:bg-white/5"
-                    >
-                        <span className="material-symbols-outlined text-[28px]">arrow_back</span>
-                    </Link>
+                    <div className="flex items-center gap-2">
+                        {/* Mobile Menu Trigger */}
+                        <div className="md:hidden">
+                            <MenuTrigger />
+                        </div>
+                        <Link
+                            href="/admin"
+                            className="p-2 -ml-2 text-slate-600 dark:text-gray-300 hover:text-primary transition-colors rounded-full hover:bg-black/5 dark:hover:bg-white/5"
+                        >
+                            <span className="material-symbols-outlined text-[28px]">arrow_back</span>
+                        </Link>
+                    </div>
                     <h1 className="text-xl font-bold tracking-tight text-center flex-1">
                         Pet Yönetimi
                     </h1>
