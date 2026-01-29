@@ -28,8 +28,26 @@ export default async function AdminPetDetailPage({ params }: { params: { id: str
     }
 
     if (error || !pet) {
-        console.log("Pet not found or error occurred for ID:", id);
-        return notFound();
+        return (
+            <div className="min-h-screen bg-background-light dark:bg-background-dark flex flex-col items-center justify-center p-4">
+                <div className="bg-red-50 dark:bg-red-900/10 p-6 rounded-2xl max-w-md w-full text-center border border-red-100 dark:border-red-900/20">
+                    <span className="material-symbols-outlined text-4xl text-red-500 mb-4">error</span>
+                    <h1 className="text-xl font-bold text-slate-900 dark:text-white mb-2">Pet Bulunamadı</h1>
+                    <p className="text-gray-600 dark:text-gray-400 mb-4 text-sm">
+                        Aradığınız pet sistemde bulunamadı veya bir hata oluştu.
+                    </p>
+                    <div className="bg-white dark:bg-black/20 p-3 rounded-lg text-left text-xs font-mono overflow-auto max-h-40 mb-4 border border-gray-200 dark:border-white/10">
+                        <div className="font-bold text-gray-500 mb-1">Hata Detayları:</div>
+                        <div>ID: {id}</div>
+                        {error && <div className="text-red-500 mt-1">{error.message}</div>}
+                        {!pet && !error && <div className="text-orange-500 mt-1">Pet verisi null döndü</div>}
+                    </div>
+                    <Link href="/admin/petler" className="inline-block px-6 py-2 bg-primary text-black font-bold rounded-lg hover:bg-primary/90 transition-colors">
+                        Listeye Dön
+                    </Link>
+                </div>
+            </div>
+        );
     }
 
     return (
