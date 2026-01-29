@@ -4,6 +4,8 @@ import Link from "next/link";
 import { redirect } from "next/navigation";
 import MenuTrigger from "@/components/admin/MenuTrigger";
 
+export const dynamic = 'force-dynamic';
+
 export default async function PetlerPage() {
     await requireAuth();
     const supabase = await createClient();

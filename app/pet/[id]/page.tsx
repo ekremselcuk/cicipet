@@ -22,13 +22,18 @@ export default async function PetDetailPage({ params }: { params: { id: string }
 
     if (error || !pet) {
         return (
-            <div className="min-h-screen flex col items-center justify-center p-4">
-                {/* Error UI same as before */}
-                <h1 className="text-xl font-bold text-red-500 mb-2">Veri Çekme Hatası</h1>
-                <code className="bg-gray-100 p-4 rounded text-sm mb-4 block overflow-auto max-w-full">
-                    {JSON.stringify(error, null, 2)}
-                </code>
-                <div className="text-xs text-gray-500">ID: {id}</div>
+            <div className="min-h-screen flex flex-col items-center justify-center p-4 bg-background-light dark:bg-background-dark">
+                <div className="bg-red-50 dark:bg-red-900/10 p-6 rounded-2xl max-w-md w-full text-center border border-red-100 dark:border-red-900/20">
+                    <span className="material-symbols-outlined text-4xl text-red-500 mb-4">error</span>
+                    <h1 className="text-xl font-bold text-slate-900 dark:text-white mb-2">Pet Verisi Alınamadı</h1>
+                    <code className="bg-white dark:bg-black/20 p-3 rounded-lg text-left text-xs font-mono overflow-auto max-h-40 mb-4 block border border-gray-200 dark:border-white/10 text-gray-700 dark:text-gray-300">
+                        {error ? JSON.stringify(error, null, 2) : 'Pet verisi null döndü.'}
+                    </code>
+                    <div className="text-xs text-gray-500 mb-6">ID: {id}</div>
+                    <Link href="/profil" className="inline-block px-6 py-3 bg-primary text-black font-bold rounded-xl hover:bg-primary/90 transition-colors">
+                        Profile Dön
+                    </Link>
+                </div>
             </div>
         );
     }

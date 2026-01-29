@@ -49,6 +49,7 @@ export default function AdminSidebar() {
 
                         <NavItem href="/admin/kullanicilar" icon="group" label="Kullanıcılar" active={pathname.includes('/kullanicilar')} />
                         <NavItem href="/admin/petler" icon="pets" label="Petler" active={pathname.includes('/petler')} />
+                        <NavItem href="/admin/ilanlar" icon="campaign" label="İlanlar" active={pathname.includes('/ilanlar')} />
                         <NavItem href="/admin/yarisma" icon="trophy" label="Yarışmalar" active={pathname.includes('/yarisma')} />
 
                         <div className="my-2 px-4 text-xs font-bold text-slate-400 uppercase tracking-widest">Sistem</div>
