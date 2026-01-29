@@ -14,7 +14,7 @@ export default async function AdminAdsPage() {
         .from('ads')
         .select(`
             *,
-            profiles:user_id (
+            profiles (
                 id,
                 full_name,
                 username
