@@ -1,6 +1,36 @@
+import { requireAuth } from "@/utils/supabase/check-auth";
+import { createClient } from "@/utils/supabase/server";
 import Link from "next/link";
+import { redirect } from "next/navigation";
 
-export default function PetlerPage() {
+export default async function PetlerPage() {
+    await requireAuth();
+    const supabase = await createClient();
+
+    // Fetch pets with owner profile
+    const { data: pets, error } = await supabase
+        .from('pets')
+        .select(`
+            *,
+            profiles:owner_id (
+                full_name
+            )
+        `)
+        .order('created_at', { ascending: false });
+
+    if (error) {
+        console.error("Error fetching pets:", error);
+        // Handle error gracefully, maybe show a message
+    }
+
+    const petsList = pets || [];
+
+    // Calculate stats
+    const totalPets = petsList.length;
+    const catCount = petsList.filter(p => p.type?.toLowerCase() === 'kedi').length;
+    const dogCount = petsList.filter(p => p.type?.toLowerCase() === 'köpek').length;
+    const otherCount = totalPets - catCount - dogCount;
+
     return (
         <div className="bg-background-light dark:bg-background-dark text-slate-900 dark:text-white font-display antialiased selection:bg-primary selection:text-black pb-24 min-h-screen">
             {/* Top Header */}
@@ -52,13 +82,13 @@ export default function PetlerPage() {
                             </span>
                         </div>
                         <p className="text-2xl font-bold text-slate-900 dark:text-white">
-                            1,204
+                            {catCount}
                         </p>
                         <p className="text-xs text-green-500 font-medium flex items-center mt-1">
                             <span className="material-symbols-outlined text-[16px] mr-0.5">
                                 trending_up
                             </span>{" "}
-                            +12%
+                            {(catCount / (totalPets || 1) * 100).toFixed(0)}%
                         </p>
                     </div>
                     <div className="snap-center shrink-0 min-w-[140px] flex-1 bg-white dark:bg-surface-dark p-4 rounded-xl shadow-sm border border-gray-100 dark:border-white/5 flex flex-col gap-1">
@@ -71,13 +101,13 @@ export default function PetlerPage() {
                             </span>
                         </div>
                         <p className="text-2xl font-bold text-slate-900 dark:text-white">
-                            850
+                            {dogCount}
                         </p>
                         <p className="text-xs text-green-500 font-medium flex items-center mt-1">
                             <span className="material-symbols-outlined text-[16px] mr-0.5">
                                 trending_up
                             </span>{" "}
-                            +5%
+                            {(dogCount / (totalPets || 1) * 100).toFixed(0)}%
                         </p>
                     </div>
                     <div className="snap-center shrink-0 min-w-[140px] flex-1 bg-white dark:bg-surface-dark p-4 rounded-xl shadow-sm border border-gray-100 dark:border-white/5 flex flex-col gap-1">
@@ -90,13 +120,13 @@ export default function PetlerPage() {
                             </span>
                         </div>
                         <p className="text-2xl font-bold text-slate-900 dark:text-white">
-                            120
+                            {otherCount}
                         </p>
-                        <p className="text-xs text-gray-500 font-medium flex items-center mt-1">
+                        <p className="text-xs text-green-500 font-medium flex items-center mt-1">
                             <span className="material-symbols-outlined text-[16px] mr-0.5">
-                                remove
+                                trending_up
                             </span>{" "}
-                            0%
+                            {(otherCount / (totalPets || 1) * 100).toFixed(0)}%
                         </p>
                     </div>
                 </section>
@@ -119,76 +149,87 @@ export default function PetlerPage() {
                 {/* Data List */}
                 <section className="flex flex-col gap-4">
                     <h2 className="text-sm font-bold text-gray-500 uppercase tracking-widest pl-1">
-                        Pet Listesi
+                        Pet Listesi ({totalPets})
                     </h2>
-                    {/* Card 1 */}
-                    <div className="bg-white dark:bg-surface-dark rounded-xl p-4 shadow-sm border border-gray-200 dark:border-white/5 flex flex-col gap-4">
-                        <div className="flex items-start gap-4">
-                            <div className="relative shrink-0">
-                                <div
-                                    className="w-16 h-16 rounded-lg bg-cover bg-center shadow-inner"
-                                    style={{
-                                        backgroundImage:
-                                            "url('https://lh3.googleusercontent.com/aida-public/AB6AXuDbs0BQ-wqBMgoef2fcOgGY3Pb987Ad8xr9vgBysyTTbwl_C58UeEhSeW1DXYa7uVT3AwSoK8qqZUvu4GV2fAvj6ad-XGEiJYwNVYmLyriWiLaND2Bbcr2BA9lqOrC9xfSL-Lwo3Y4HHYxDCaKAjdh4xC0zBmL70Sg8g48hfSjGLmrONrJDEZajKqhIQ6upVJGZUY0v21Avi8NeYR1GQciZ5hgafYnFltfKMyopMFSXNArD-4I5PCj3WurlyH31Rub5_MjxJlkD2IE')",
-                                    }}
-                                ></div>
-                                <div className="absolute -bottom-1.5 -right-1.5 bg-background-light dark:bg-surface-dark p-0.5 rounded-full">
-                                    <div className="bg-emerald-500 w-3 h-3 rounded-full border-2 border-white dark:border-surface-dark"></div>
-                                </div>
-                            </div>
-                            <div className="flex-1 min-w-0">
-                                <div className="flex justify-between items-start">
-                                    <div>
-                                        <h3 className="text-lg font-bold text-slate-900 dark:text-white leading-tight">
-                                            Boncuk
-                                        </h3>
-                                        <div className="flex items-center gap-1 text-xs text-gray-500 mt-1">
-                                            <span className="bg-orange-100 dark:bg-orange-900/30 text-orange-700 dark:text-orange-300 px-1.5 py-0.5 rounded text-[10px] font-bold uppercase">
-                                                Kedi
-                                            </span>
-                                            <span>•</span>
-                                            <span>Tekir</span>
-                                            <span>•</span>
-                                            <span>2 Yaşında</span>
+
+                    {petsList.length === 0 ? (
+                        <div className="text-center p-8 bg-white dark:bg-surface-dark rounded-xl border border-dashed border-gray-300 dark:border-gray-700">
+                            <p className="text-gray-500">Henüz kayıtlı pet bulunmamaktadır.</p>
+                        </div>
+                    ) : (
+                        petsList.map((pet) => (
+                            <div key={pet.id} className="bg-white dark:bg-surface-dark rounded-xl p-4 shadow-sm border border-gray-200 dark:border-white/5 flex flex-col gap-4">
+                                <div className="flex items-start gap-4">
+                                    <div className="relative shrink-0">
+                                        <div
+                                            className="w-16 h-16 rounded-lg bg-cover bg-center shadow-inner"
+                                            style={{
+                                                backgroundImage: `url('${pet.image_url || 'https://images.unsplash.com/photo-1514888286974-6c03e2ca1dba?q=80&w=2043&auto=format&fit=crop'}')`,
+                                            }}
+                                        ></div>
+                                        <div className="absolute -bottom-1.5 -right-1.5 bg-background-light dark:bg-surface-dark p-0.5 rounded-full">
+                                            <div className="bg-emerald-500 w-3 h-3 rounded-full border-2 border-white dark:border-surface-dark"></div>
                                         </div>
                                     </div>
-                                    <div className="flex items-center gap-1 bg-primary/10 px-2 py-1 rounded-full">
-                                        <span
-                                            className="material-symbols-outlined text-[16px] text-primary"
-                                            style={{ fontVariationSettings: "'FILL' 1" }}
-                                        >
-                                            emoji_events
-                                        </span>
-                                        <span className="text-xs font-bold text-primary">3</span>
+                                    <div className="flex-1 min-w-0">
+                                        <div className="flex justify-between items-start">
+                                            <div>
+                                                <h3 className="text-lg font-bold text-slate-900 dark:text-white leading-tight">
+                                                    {pet.name}
+                                                </h3>
+                                                <div className="flex items-center gap-1 text-xs text-gray-500 mt-1">
+                                                    <span className="bg-orange-100 dark:bg-orange-900/30 text-orange-700 dark:text-orange-300 px-1.5 py-0.5 rounded text-[10px] font-bold uppercase">
+                                                        {pet.type}
+                                                    </span>
+                                                    <span>•</span>
+                                                    <span>{pet.breed || 'Bilinmiyor'}</span>
+                                                    <span>•</span>
+                                                    <span>{pet.age ? `${pet.age} Yaşında` : '?'}</span>
+                                                </div>
+                                            </div>
+                                            {/* Pet Score Badge - Mock Data for now as it's not in schema yet fully */}
+                                            <div className="flex items-center gap-1 bg-primary/10 px-2 py-1 rounded-full">
+                                                <span
+                                                    className="material-symbols-outlined text-[16px] text-primary"
+                                                    style={{ fontVariationSettings: "'FILL' 1" }}
+                                                >
+                                                    emoji_events
+                                                </span>
+                                                <span className="text-xs font-bold text-primary">0</span>
+                                            </div>
+                                        </div>
+                                        <div className="mt-2 flex items-center gap-1 text-sm text-primary hover:underline w-fit">
+                                            <span className="material-symbols-outlined text-[16px]">
+                                                person
+                                            </span>
+                                            {pet.profiles?.full_name || 'Bilinmeyen Sahip'}
+                                        </div>
                                     </div>
                                 </div>
-                                <div className="mt-2 flex items-center gap-1 text-sm text-primary hover:underline w-fit">
-                                    <span className="material-symbols-outlined text-[16px]">
-                                        person
-                                    </span>
-                                    Ahmet Yılmaz
+                                <div className="border-t border-gray-100 dark:border-white/5 pt-3 flex items-center justify-between gap-2">
+                                    <Link
+                                        href={`/admin/petler/${pet.id}`}
+                                        className="flex-1 h-9 flex items-center justify-center gap-2 rounded-lg bg-gray-50 dark:bg-white/5 hover:bg-gray-100 dark:hover:bg-white/10 text-xs font-semibold text-slate-600 dark:text-gray-300 transition-colors"
+                                    >
+                                        <span className="material-symbols-outlined text-[18px]">
+                                            visibility
+                                        </span>
+                                        Profili Gör
+                                    </Link>
+                                    <button className="h-9 w-9 flex items-center justify-center rounded-lg bg-gray-50 dark:bg-white/5 hover:bg-primary/20 hover:text-primary text-slate-600 dark:text-gray-300 transition-colors">
+                                        <span className="material-symbols-outlined text-[18px]">
+                                            edit
+                                        </span>
+                                    </button>
+                                    <button className="h-9 w-9 flex items-center justify-center rounded-lg bg-gray-50 dark:bg-white/5 hover:bg-red-500/20 hover:text-red-500 text-slate-600 dark:text-gray-300 transition-colors">
+                                        <span className="material-symbols-outlined text-[18px]">
+                                            delete
+                                        </span>
+                                    </button>
                                 </div>
                             </div>
-                        </div>
-                        <div className="border-t border-gray-100 dark:border-white/5 pt-3 flex items-center justify-between gap-2">
-                            <button className="flex-1 h-9 flex items-center justify-center gap-2 rounded-lg bg-gray-50 dark:bg-white/5 hover:bg-gray-100 dark:hover:bg-white/10 text-xs font-semibold text-slate-600 dark:text-gray-300 transition-colors">
-                                <span className="material-symbols-outlined text-[18px]">
-                                    visibility
-                                </span>
-                                Profili Gör
-                            </button>
-                            <button className="h-9 w-9 flex items-center justify-center rounded-lg bg-gray-50 dark:bg-white/5 hover:bg-primary/20 hover:text-primary text-slate-600 dark:text-gray-300 transition-colors">
-                                <span className="material-symbols-outlined text-[18px]">
-                                    edit
-                                </span>
-                            </button>
-                            <button className="h-9 w-9 flex items-center justify-center rounded-lg bg-gray-50 dark:bg-white/5 hover:bg-red-500/20 hover:text-red-500 text-slate-600 dark:text-gray-300 transition-colors">
-                                <span className="material-symbols-outlined text-[18px]">
-                                    delete
-                                </span>
-                            </button>
-                        </div>
-                    </div>
+                        ))
+                    )}
                 </section>
                 {/* Pagination */}
                 <div className="flex justify-center pt-2 pb-6">
