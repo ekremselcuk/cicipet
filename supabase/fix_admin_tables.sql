@@ -9,7 +9,7 @@ CREATE TABLE IF NOT EXISTS ads (
   status TEXT DEFAULT 'pending', -- 'pending', 'approved', 'rejected'
   photo_url TEXT,
   city TEXT,
-  created_at TIMESTAMP WITH TIME ZONE DEFAULT timezone('utc'::null, now())
+  created_at TIMESTAMP WITH TIME ZONE DEFAULT timezone('utc'::text, now())
 );
 
 ALTER TABLE ads ENABLE ROW LEVEL SECURITY;
