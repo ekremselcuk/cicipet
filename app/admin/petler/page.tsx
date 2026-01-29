@@ -144,7 +144,24 @@ export default async function PetlerPage() {
                             expand_more
                         </span>
                     </button>
-                    {/* ... other filters ... */}
+                    <button className="flex items-center gap-1.5 px-4 py-2 bg-white dark:bg-surface-dark border border-gray-200 dark:border-white/10 text-slate-700 dark:text-gray-300 rounded-lg text-sm font-medium shrink-0 whitespace-nowrap active:bg-gray-100 dark:active:bg-white/10">
+                        Irk
+                        <span className="material-symbols-outlined text-[18px] opacity-70">
+                            expand_more
+                        </span>
+                    </button>
+                    <button className="flex items-center gap-1.5 px-4 py-2 bg-white dark:bg-surface-dark border border-gray-200 dark:border-white/10 text-slate-700 dark:text-gray-300 rounded-lg text-sm font-medium shrink-0 whitespace-nowrap active:bg-gray-100 dark:active:bg-white/10">
+                        Cinsiyet
+                        <span className="material-symbols-outlined text-[18px] opacity-70">
+                            expand_more
+                        </span>
+                    </button>
+                    <button className="flex items-center gap-1.5 px-4 py-2 bg-white dark:bg-surface-dark border border-gray-200 dark:border-white/10 text-slate-700 dark:text-gray-300 rounded-lg text-sm font-medium shrink-0 whitespace-nowrap active:bg-gray-100 dark:active:bg-white/10">
+                        Durum
+                        <span className="material-symbols-outlined text-[18px] opacity-70">
+                            expand_more
+                        </span>
+                    </button>
                 </section>
                 {/* Data List */}
                 <section className="flex flex-col gap-4">
