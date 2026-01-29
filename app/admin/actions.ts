@@ -12,14 +12,19 @@ export async function approveItem(id: string, type: 'pet' | 'ad') {
         const supabase = await createClient();
         const table = type === 'pet' ? 'pets' : 'ads';
 
-        const { error } = await supabase
+        const { data, error } = await supabase
             .from(table)
             .update({ status: 'approved' })
-            .eq('id', id);
+            .eq('id', id)
+            .select();
 
         if (error) {
             console.error('Approve Error:', error);
             return { error: error.message };
+        }
+
+        if (!data || data.length === 0) {
+            return { error: 'Kayıt güncellenemedi. RLS (Veritabanı İzinleri) engelliyor olabilir.' };
         }
 
         revalidatePath('/admin/moderasyon');
@@ -38,17 +43,19 @@ export async function rejectItem(id: string, type: 'pet' | 'ad') {
         const supabase = await createClient();
         const table = type === 'pet' ? 'pets' : 'ads';
 
-        // Note: 'delete' might violate foreign key constraints if dependent records exist.
-        // If so, we might need to delete dependents or just mark as status='rejected'.
-        // For now, attempting delete as per original code.
-        const { error } = await supabase
+        const { data, error } = await supabase
             .from(table)
             .delete()
-            .eq('id', id);
+            .eq('id', id)
+            .select();
 
         if (error) {
             console.error('Reject Error:', error);
             return { error: error.message };
+        }
+
+        if (!data || data.length === 0) {
+            return { error: 'Kayıt silinemedi. RLS (Veritabanı İzinleri) engelliyor olabilir.' };
         }
 
         revalidatePath('/admin/moderasyon');
