@@ -64,3 +64,5 @@ npm start
 - `context/`: Auth (Giriş) durumu yönetimi.
 - `public/`: Görseller ve ikonlar.
 - `utils/`: Supabase istemci ve sunucu yardımcı fonksiyonları.
+
+<!-- Test commit verification -->
