@@ -223,12 +223,12 @@ export default async function PetlerPage() {
                                                 <span className="text-xs font-bold text-primary">0</span>
                                             </div>
                                         </div>
-                                        <div className="mt-2 flex items-center gap-1 text-sm text-primary hover:underline w-fit">
+                                        <Link href={pet.profiles?.id ? `/admin/kullanicilar/${pet.profiles.id}` : '#'} className="mt-2 flex items-center gap-1 text-sm text-primary hover:underline w-fit">
                                             <span className="material-symbols-outlined text-[16px]">
                                                 person
                                             </span>
                                             {pet.profiles?.full_name || 'Bilinmeyen Sahip'}
-                                        </div>
+                                        </Link>
                                     </div>
                                 </div>
                                 <div className="border-t border-gray-100 dark:border-white/5 pt-3 flex items-center justify-between gap-2">

@@ -16,8 +16,7 @@ export default async function AdminPetDetailPage({ params }: { params: { id: str
             *,
             profiles:owner_id (
                 id,
-                full_name,
-                username
+                full_name
             )
         `)
         .eq('id', id)
