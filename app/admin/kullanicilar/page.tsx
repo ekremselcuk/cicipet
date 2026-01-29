@@ -9,9 +9,9 @@ export default async function AdminUsersPage() {
     const supabase = await createClient();
 
     const { data: users } = await supabase
-        .from('users')
+        .from('profiles')
         .select('*')
-        .order('id', { ascending: false });
+        .order('created_at', { ascending: false });
 
     // Count stats dynamically
     const totalUsers = users?.length || 0;
