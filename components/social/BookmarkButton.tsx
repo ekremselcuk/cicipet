@@ -14,6 +14,23 @@ export default function BookmarkButton({ itemId, itemType, initialBookmarked = f
     const [loading, setLoading] = useState(false);
     const supabase = createClient();
 
+    useEffect(() => {
+        const fetchStatus = async () => {
+            const { data: { user } } = await supabase.auth.getUser();
+            if (!user) return;
+
+            const { data } = await supabase
+                .from('bookmarks')
+                .select('*')
+                .eq('user_id', user.id)
+                .eq('item_id', itemId)
+                .maybeSingle();
+
+            if (data) setBookmarked(true);
+        };
+        fetchStatus();
+    }, [itemId, supabase]);
+
     // Verification check on mount (optional, or rely on prop)
     // We rely on prop for initial state to avoid layout shift, but simple logic here:
     // User toggles, we verify rights.

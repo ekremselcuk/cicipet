@@ -16,6 +16,30 @@ export default function LikeButton({ itemId, itemType, initialLikes, initialLike
     const [loading, setLoading] = useState(false);
     const supabase = createClient();
 
+    // Fetch actual status on mount to ensure consistency (fixes "disappearing on refresh")
+    useEffect(() => {
+        const fetchStatus = async () => {
+            const { data: { user } } = await supabase.auth.getUser();
+            if (!user) return;
+
+            // Interaction Check
+            const { data } = await supabase
+                .from('likes')
+                .select('*')
+                .eq('user_id', user.id)
+                .eq('item_id', itemId)
+                .maybeSingle(); // Use maybeSingle to avoid 406 error if not found
+
+            if (data) {
+                setLiked(true);
+            }
+
+            // Also refresh count if possible? - Optional, let's trust initial or allow simple one-off
+            // Getting accurate count is separate.
+        };
+        fetchStatus();
+    }, [itemId, supabase]);
+
     const toggleLike = async (e: React.MouseEvent) => {
         e.preventDefault();
         e.stopPropagation();
