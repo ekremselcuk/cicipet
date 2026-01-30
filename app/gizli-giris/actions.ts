@@ -9,7 +9,7 @@ export async function adminLogin(formData: FormData) {
 
     // Hardcoded credentials as requested
     if (user === 'ekremselcuk' && pass === 'Ekrem5298@') {
-        const cookieStore = cookies();
+        const cookieStore = await cookies();
         cookieStore.set('cicipet_admin_token', 'authorized_secret_access', {
             httpOnly: true,
             secure: process.env.NODE_ENV === 'production',
