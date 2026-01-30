@@ -2,6 +2,7 @@ import Header from "@/components/layout/Header";
 import { createClient } from "@/utils/supabase/server";
 import { getActiveContests, getContestDetails } from "@/utils/supabase/queries";
 import Link from "next/link";
+import StoryBar from "@/components/social/StoryBar";
 
 export const dynamic = "force-dynamic";
 
@@ -56,56 +57,7 @@ export default async function Home() {
           </div>
         )}
       </section>
-      <section className="px-4">
-        <h3 className="text-sm font-bold text-neutral-900 dark:text-white mb-3 flex items-center gap-1">
-          Hikayeler <span className="text-xs font-normal text-neutral-500 ml-auto">Tümünü gör</span>
-        </h3>
-        <div className="flex gap-4 overflow-x-auto hide-scrollbar pb-1">
-          <div className="flex flex-col items-center gap-1.5 shrink-0">
-            <div
-              className="size-16 rounded-full bg-white dark:bg-white/5 border-2 border-dashed border-neutral-300 dark:border-neutral-600 flex items-center justify-center relative cursor-pointer">
-              <span className="material-symbols-outlined text-secondary text-2xl">add</span>
-              <div
-                className="absolute bottom-0 right-0 bg-secondary text-white rounded-full p-0.5 border-2 border-white dark:border-background-dark">
-                <span className="material-symbols-outlined text-[10px] block">add</span>
-              </div>
-            </div>
-            <span className="text-xs font-medium text-neutral-600 dark:text-neutral-400">Ekle</span>
-          </div>
-          <div className="flex flex-col items-center gap-1.5 shrink-0 cursor-pointer">
-            <div className="size-16 rounded-full p-0.5 bg-gradient-to-tr from-primary to-secondary">
-              <div className="w-full h-full rounded-full bg-white dark:bg-black p-0.5">
-                <img alt="User story" className="w-full h-full rounded-full object-cover"
-                  src="https://lh3.googleusercontent.com/aida-public/AB6AXuCUaOlYsT2STSMRed6Bw9DAKkzlg2uYk4oY6wkjpG4Ul-H8SJiSWwxHDxkwmwbJYzngiRlmVkhCzWtMSE2U3iPH5W_3Y0YOXRnqTYLMF9hD_q7YntvgXGc3zDtXeCfjYRmeahdzVfs8BoHisGm-Pdxpml4D4fcZZO8DMBVO_TmtHXn2gEeW072t9ikWrd7cmmV1DorhCSgBmF6C7PSxyqUae_WEbMMnFikjcPmhIEZDPUyCzOEkEH9obFXAcq-3YCRN5AFQ5EFnWTQ" />
-              </div>
-            </div>
-            <span className="text-xs font-medium text-neutral-900 dark:text-white">Elif</span>
-          </div>
-          <div className="flex flex-col items-center gap-1.5 shrink-0 cursor-pointer">
-            <div className="size-16 rounded-full p-0.5 bg-gradient-to-tr from-primary to-secondary">
-              <div className="w-full h-full rounded-full bg-white dark:bg-black p-0.5">
-                <img alt="User story" className="w-full h-full rounded-full object-cover"
-                  src="https://lh3.googleusercontent.com/aida-public/AB6AXuCuIZBrFyk9LaTHqwN7a8I4GL5_NjmMONtJo2yYyGyPi190BO2Ue0ULzKYx8vxAYs4z5incCD2WG8_SQ_VvT5CCq-d0txy-RVOLPyXWbAl1THfue_m_IkgqraT8K7QSR8pvt0szyqHXoHF2E2jP9gQebt0Hqn7jyzCzROXzTQkI54lopeKIFR1jdHDhuKN9qPh2anDMoXPGuJXycn81qpc6UOpeE94ldktHKWPdkHC_cSg8ye3QyIhSClfK5xccm-rmQM1uI0u5TLw" />
-              </div>
-            </div>
-            <span className="text-xs font-medium text-neutral-900 dark:text-white">Can</span>
-          </div>
-          <div className="flex flex-col items-center gap-1.5 shrink-0 cursor-pointer opacity-70">
-            <div className="size-16 rounded-full border-2 border-neutral-200 dark:border-neutral-700 p-0.5">
-              <img alt="User story" className="w-full h-full rounded-full object-cover"
-                src="https://lh3.googleusercontent.com/aida-public/AB6AXuC3QQIeNTmkKhzgX6GF897ZjC3hfL2AhrUMwFp1MB4vKcxUTTXXnpdQsyNM7IzQH3WZImsnBPuqbsrwXPTXVsqqbxd3JlvRvoavn0gJqXhrbALSBfxShvjjApE4AAdHLlFBfk42UYGemMJKEGGmtlUOQHEpSF2xPt9CA2oXPsdv1u6T9_2bj3QouR58wSmTsIEn_1XR3S3J5b7UV9weztgcFeBGwQrY1RJzDqKFjzmPZSq7ZA4QRhHF-uI2GW9-TSVhohTv2AQwmAs" />
-            </div>
-            <span className="text-xs font-medium text-neutral-600 dark:text-neutral-400">Pamuk</span>
-          </div>
-          <div className="flex flex-col items-center gap-1.5 shrink-0 cursor-pointer opacity-70">
-            <div className="size-16 rounded-full border-2 border-neutral-200 dark:border-neutral-700 p-0.5">
-              <img alt="User story" className="w-full h-full rounded-full object-cover"
-                src="https://lh3.googleusercontent.com/aida-public/AB6AXuC4uQ6xyT3941YBcHxTcGlYi7Df4f1CR1Vk6p_TC_B-ihCnBSo2qCj6EacEbiyxb_5DAllsUuBsCpR6kLGSwhqF584t0c-D0E51QaMRAnoap7FjW5i6sSwgIXxrMu_2yBsDb1oXNGnkbZIqoLAVhUz0lziXR9dOl_Gt3uHzM98eR0Y356JdLT17w61h3CUiSVsbFxglJ0nQnvSIh8q263csGJm2NYB27CKOgMIFXVFwaHgvcjoO8hvxnq51BpEBJyMoS2V0G2nPhME" />
-            </div>
-            <span className="text-xs font-medium text-neutral-600 dark:text-neutral-400">Markalar</span>
-          </div>
-        </div>
-      </section>
+      <StoryBar />
       <article className="px-4">
         <div
           className="flex flex-col gap-3 bg-white dark:bg-[#2c2415] p-4 rounded-2xl shadow-sm border border-black/5 dark:border-white/5">

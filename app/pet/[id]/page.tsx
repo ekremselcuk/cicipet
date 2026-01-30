@@ -3,6 +3,10 @@ import { requireAuth } from "@/utils/supabase/check-auth";
 import { createClient } from "@/utils/supabase/server";
 import Link from "next/link";
 import { notFound } from "next/navigation";
+import LikeButton from "@/components/social/LikeButton";
+import BookmarkButton from "@/components/social/BookmarkButton";
+import CommentSection from "@/components/social/CommentSection";
+import ShareButton from "@/components/social/ShareButton";
 
 export default async function PetDetailPage({ params }: { params: { id: string } }) {
     await requireAuth();
@@ -79,15 +83,31 @@ export default async function PetDetailPage({ params }: { params: { id: string }
 
             <main className="p-4 flex flex-col gap-6">
                 {/* Pet Image Hero */}
-                <div className="relative w-full aspect-square rounded-3xl overflow-hidden shadow-lg border border-gray-100 dark:border-white/5 group">
+                <div className="relative w-full aspect-[4/5] rounded-3xl overflow-hidden shadow-lg border border-gray-100 dark:border-white/5 group bg-black">
                     <img
                         src={pet.image_url || "https://via.placeholder.com/400"}
                         alt={pet.name}
                         className="w-full h-full object-cover transition-transform group-hover:scale-105 duration-500"
                     />
-                    <div className="absolute inset-x-0 bottom-0 bg-gradient-to-t from-black/60 to-transparent p-6 pt-24">
-                        <h2 className="text-3xl font-extrabold text-white">{pet.name}</h2>
-                        <p className="text-white/80 font-medium">{pet.breed} • {pet.age} Yaşında</p>
+                    <div className="absolute inset-x-0 bottom-0 bg-gradient-to-t from-black/80 via-black/40 to-transparent p-6 pt-24">
+                        <div className="flex items-end justify-between">
+                            <div>
+                                <h2 className="text-3xl font-extrabold text-white leading-none mb-1">{pet.name}</h2>
+                                <p className="text-white/80 font-medium">{pet.breed} • {pet.age} Yaşında</p>
+                            </div>
+                            <div className="flex flex-col gap-2">
+                                <LikeButton itemId={pet.id} itemType="pet" initialLikes={pet.likes_count || 0} />
+                            </div>
+                        </div>
+                    </div>
+                    {/* Share & Bookmark Absolute */}
+                    <div className="absolute top-4 right-4 flex flex-col gap-2">
+                        <div className="p-2 bg-white/20 backdrop-blur-md rounded-full text-white hover:bg-white/30 transition-colors">
+                            <BookmarkButton itemId={pet.id} itemType="pet" />
+                        </div>
+                        <div className="p-2 bg-white/20 backdrop-blur-md rounded-full text-white hover:bg-white/30 transition-colors">
+                            <ShareButton title={`CiciPet: ${pet.name}`} text={`${pet.name} ile tanışın!`} url={`/pet/${pet.id}`} />
+                        </div>
                     </div>
                 </div>
 
@@ -114,7 +134,7 @@ export default async function PetDetailPage({ params }: { params: { id: string }
                     </div>
                     {/* Owner Link - Only if NOT owner */}
                     {!isOwner && pet.owner_id && (
-                        <Link href={`/profil/${pet.owner_id}`} className="col-span-2 bg-primary/10 p-4 rounded-2xl border border-primary/20 flex items-center justify-between group">
+                        <Link href={`/kullanici/${pet.owner_id}`} className="col-span-2 bg-primary/10 p-4 rounded-2xl border border-primary/20 flex items-center justify-between group">
                             <div className="flex flex-col">
                                 <span className="text-xs font-bold text-primary uppercase tracking-wider">Sahibi</span>
                                 <span className="text-sm font-bold text-slate-900 dark:text-white group-hover:underline">Profili Görüntüle</span>
@@ -124,9 +144,12 @@ export default async function PetDetailPage({ params }: { params: { id: string }
                     )}
                 </div>
 
+                {/* Comments Section */}
+                <CommentSection itemId={pet.id} itemType="pet" />
+
                 {/* Actions - Only Owner */}
                 {isOwner && (
-                    <div className="flex flex-col gap-3">
+                    <div className="flex flex-col gap-3 pt-4 border-t border-gray-100 dark:border-white/5">
                         <button className="w-full py-4 bg-white dark:bg-surface-dark border border-gray-200 dark:border-white/10 text-slate-700 dark:text-white font-bold rounded-2xl flex items-center justify-center gap-2 hover:bg-gray-50 dark:hover:bg-white/5 transition-colors">
                             <span className="material-symbols-outlined text-red-500">qr_code</span>
                             Künye Oluştur (QR)
