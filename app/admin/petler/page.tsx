@@ -118,11 +118,20 @@ export default async function PetlerPage({ searchParams }: { searchParams: { [ke
             <main className="flex flex-col gap-6 p-4">
                 {/* Stats Summary */}
                 <section className="flex gap-3 overflow-x-auto hide-scrollbar pb-1 -mx-4 px-4 snap-x">
-                    <StatCard icon="pets" label="Kedi" count={catCount || 0} color="text-primary" />
-                    <StatCard icon="pet_supplies" label="Köpek" count={dogCount || 0} color="text-blue-400" />
-                    <StatCard icon="flutter_dash" label="Kuş" count={birdCount || 0} color="text-yellow-400" />
-                    <StatCard icon="pest_control" label="Sürüngen" count={reptileCount || 0} color="text-green-400" />
-                    <StatCard icon="cruelty_free" label="Diğer" count={otherCount || 0} color="text-purple-400" />
+                    <Link href="/admin/petler" className={`snap-center shrink-0 min-w-[140px] flex-1 p-4 rounded-xl shadow-sm border flex flex-col gap-1 transition-all
+                        ${!typeFilter ? 'bg-primary text-black border-primary' : 'bg-white dark:bg-surface-dark border-gray-100 dark:border-white/5 text-gray-500 hover:border-primary/50'}`}>
+                        <div className="flex items-center gap-2 mb-1">
+                            <span className="material-symbols-outlined text-[20px]">apps</span>
+                            <span className="text-xs font-semibold uppercase tracking-wider">Tümü</span>
+                        </div>
+                        <p className="text-2xl font-bold">{totalPets}</p>
+                    </Link>
+
+                    <StatCardLink active={typeFilter === 'kedi'} type="kedi" icon="pets" label="Kedi" count={catCount || 0} color="text-primary" />
+                    <StatCardLink active={typeFilter === 'köpek'} type="köpek" icon="pet_supplies" label="Köpek" count={dogCount || 0} color="text-blue-400" />
+                    <StatCardLink active={typeFilter === 'kuş'} type="kuş" icon="flutter_dash" label="Kuş" count={birdCount || 0} color="text-yellow-400" />
+                    <StatCardLink active={typeFilter === 'sürüngen'} type="sürüngen" icon="pest_control" label="Sürüngen" count={reptileCount || 0} color="text-green-400" />
+                    <StatCardLink active={typeFilter && !['kedi', 'köpek', 'kuş', 'sürüngen'].includes(typeFilter)} type="other" icon="cruelty_free" label="Diğer" count={otherCount || 0} color="text-purple-400" />
                 </section>
 
                 {/* Filters */}
@@ -265,20 +274,21 @@ export default async function PetlerPage({ searchParams }: { searchParams: { [ke
     );
 }
 
-function StatCard({ icon, label, count, color }: { icon: string, label: string, count: number, color: string }) {
+function StatCardLink({ active, type, icon, label, count, color }: { active: boolean, type: string, icon: string, label: string, count: number, color: string }) {
     return (
-        <div className="snap-center shrink-0 min-w-[140px] flex-1 bg-white dark:bg-surface-dark p-4 rounded-xl shadow-sm border border-gray-100 dark:border-white/5 flex flex-col gap-1">
-            <div className="flex items-center gap-2 text-gray-500 dark:text-gray-400 mb-1">
-                <span className={`material-symbols-outlined text-[20px] ${color}`}>
+        <Link href={active ? '/admin/petler' : `/admin/petler?type=${type}`} className={`snap-center shrink-0 min-w-[140px] flex-1 p-4 rounded-xl shadow-sm border flex flex-col gap-1 transition-all group
+            ${active ? 'bg-primary text-black border-primary' : 'bg-white dark:bg-surface-dark border-gray-100 dark:border-white/5 hover:border-primary/50'}`}>
+            <div className={`flex items-center gap-2 mb-1 ${active ? 'text-black' : 'text-gray-500 dark:text-gray-400'}`}>
+                <span className={`material-symbols-outlined text-[20px] ${active ? 'text-black' : color}`}>
                     {icon}
                 </span>
                 <span className="text-xs font-semibold uppercase tracking-wider">
                     {label}
                 </span>
             </div>
-            <p className="text-2xl font-bold text-slate-900 dark:text-white">
+            <p className={`text-2xl font-bold ${active ? 'text-black' : 'text-slate-900 dark:text-white'}`}>
                 {count}
             </p>
-        </div>
+        </Link>
     )
 }

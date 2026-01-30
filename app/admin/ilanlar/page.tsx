@@ -3,6 +3,7 @@ import { createClient } from "@/utils/supabase/server";
 import Link from "next/link";
 import MenuTrigger from "@/components/admin/MenuTrigger";
 import Pagination from "@/components/admin/Pagination";
+import AdFilters from "@/components/admin/AdFilters";
 
 export const dynamic = 'force-dynamic';
 
@@ -11,7 +12,13 @@ export default async function AdminAdsPage({ searchParams }: { searchParams: { [
     const supabase = await createClient();
 
     const searchParamsVal = await searchParams;
-    const typeFilter = searchParamsVal?.type;
+    const typeFilter = searchParamsVal?.type as string; // 'es-bulma', 'sahiplendirme', 'kayip'
+    const categoryFilter = searchParamsVal?.category as string; // 'kedi', 'kopek'
+    const breedFilter = searchParamsVal?.breed as string;
+    const ageFilter = searchParamsVal?.age as string;
+    const genderFilter = searchParamsVal?.gender as string;
+    const cityFilter = searchParamsVal?.city as string;
+
     const limit = parseInt(searchParamsVal?.limit as string) || 20;
     const offset = parseInt(searchParamsVal?.offset as string) || 0;
 
@@ -26,9 +33,12 @@ export default async function AdminAdsPage({ searchParams }: { searchParams: { [
             )
         `, { count: 'exact' });
 
-    if (typeFilter) {
-        query = query.eq('type', typeFilter);
-    }
+    if (typeFilter) query = query.eq('type', typeFilter);
+    if (categoryFilter) query = query.eq('category', categoryFilter);
+    if (breedFilter) query = query.ilike('breed', `%${breedFilter}%`);
+    if (ageFilter) query = query.eq('age', ageFilter);
+    if (genderFilter) query = query.eq('gender', genderFilter);
+    if (cityFilter) query = query.ilike('city', `%${cityFilter}%`);
 
     const { data: ads, count, error } = await query
         .range(offset, offset + limit - 1)
@@ -96,6 +106,11 @@ export default async function AdminAdsPage({ searchParams }: { searchParams: { [
                     </Link>
                 </div>
 
+                {/* Secondary Filters (AdFilters) - Added as requested */}
+                <div className="mb-2">
+                    <AdFilters />
+                </div>
+
                 {typeFilter && (
                     <div className="flex justify-center mb-2">
                         <Link href="/admin/ilanlar" className="text-xs text-red-500 font-bold hover:underline flex items-center gap-1">
@@ -153,6 +168,12 @@ export default async function AdminAdsPage({ searchParams }: { searchParams: { [
                                                     <span>•</span>
                                                     <span>{new Date(ad.created_at).toLocaleDateString('tr-TR')}</span>
                                                 </div>
+                                                {ad.city && (
+                                                    <div className="text-xs text-gray-400 mt-1 flex items-center">
+                                                        <span className="material-symbols-outlined text-[14px] mr-0.5">location_on</span>
+                                                        {ad.city}
+                                                    </div>
+                                                )}
                                             </div>
                                         </div>
                                         <Link href={ad.profiles?.id ? `/admin/kullanicilar/${ad.profiles.id}` : '#'} className="mt-2 flex items-center gap-1 text-sm text-primary hover:underline w-fit">
