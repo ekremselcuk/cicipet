@@ -120,7 +120,7 @@ export default function StoryUploader({ onClose, onUploadSuccess }: StoryUploade
 
             {/* Bottom Section - Caption & Action */}
             {file && (
-                <div className="z-20 bg-neutral-900 border-t border-white/10 shrink-0 shadow-[0_-10px_40px_rgba(0,0,0,0.5)] safe-area-bottom">
+                <div className="z-20 bg-neutral-900 border-t border-white/10 shrink-0 shadow-[0_-10px_40px_rgba(0,0,0,0.5)] pb-8 pr-[env(safe-area-inset-right)] pl-[env(safe-area-inset-left)] pb-[env(safe-area-inset-bottom)]">
                     <div className="p-4 flex flex-col gap-3">
                         {/* Caption Input */}
                         <div className="relative">
