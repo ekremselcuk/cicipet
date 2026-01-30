@@ -1,34 +1,25 @@
+export const analyzeImage = async (file: File) => {
+    return new Promise<{ valid: boolean; reason?: string }>((resolve) => {
+        setTimeout(() => {
+            // Mock Checking Logic
+            // In a real app, this would call Google Cloud Vision, AWS Rekognition, or OpenAI Vision API
 
-/**
- * Simulates an AI Image Analysis service.
- * In a real application, you would replace this with calls to:
- * - Google Cloud Vision API
- * - AWS Rekognition
- * - Azure Computer Vision
- * 
- * Checks for:
- * 1. Is it an animal? (Detect labels)
- * 2. Is it safe? (SafeSearch detection)
- */
-export async function analyzeImage(file: File): Promise<{ valid: boolean; reason?: string }> {
-    // Simulate API delay
-    await new Promise((resolve) => setTimeout(resolve, 2000));
+            const fileName = file.name.toLowerCase();
 
-    // Mock Validation Logic:
-    const name = file.name.toLowerCase();
+            // Simulate NSFW Rejection
+            if (fileName.includes('nsfw') || fileName.includes('uygunsuz')) {
+                resolve({ valid: false, reason: 'Görsel topluluk kurallarına aykırı veya uygunsuz içerik barındırıyor olabilir.' });
+                return;
+            }
 
-    // 1. Check for NSFW (Simulation)
-    // If filename contains 'nsfw', 'adult', 'explicit', reject.
-    if (name.match(/(nsfw|adult|explicit|xxx)/)) {
-        return { valid: false, reason: "Görsel güvenlik kurallarına uymuyor (NSFW Tespiti)." };
-    }
+            // Simulate "No Pet" Rejection (e.g. if the file is named "landscape")
+            if (fileName.includes('manzara') || fileName.includes('araba') || fileName.includes('ev')) {
+                resolve({ valid: false, reason: 'Görselde belirgin bir evcil hayvan tespit edilemedi. Lütfen petinizin net göründüğü bir fotoğraf yükleyiniz.' });
+                return;
+            }
 
-    // 2. Check for Pet (Simulation)
-    // If filename contains 'fail', 'car', 'building', reject.
-    if (name.match(/(fail|car|building|object|man|woman|human)/)) {
-        return { valid: false, reason: "Görselde evcil hayvan tespit edilemedi. Lütfen net bir hayvan fotoğrafı yükleyin." };
-    }
-
-    // Default Success
-    return { valid: true };
-}
+            // Success
+            resolve({ valid: true });
+        }, 2500); // 2.5s simulated delay
+    });
+};

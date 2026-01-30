@@ -9,6 +9,7 @@ import { createClient } from "@/utils/supabase/client";
 
 export default function MateAdPage() {
     const [formData, setFormData] = useState({
+        name: '',
         category: 'kedi',
         breed: '',
         age: '',
@@ -62,6 +63,7 @@ export default function MateAdPage() {
             if (user) {
                 const { error } = await supabase.from('ads').insert({
                     user_id: user.id,
+                    title: formData.name, // Pet Name
                     type: 'es_bulma',
                     category: formData.category,
                     breed: formData.breed || 'Diğer',
@@ -110,6 +112,19 @@ export default function MateAdPage() {
                                 <span className="font-bold text-sm">İnceleniyor...</span>
                             </div>
                         )}
+                    </div>
+
+                    {/* Pet Name Input added */}
+                    <div className="space-y-1">
+                        <label className="text-sm font-medium text-slate-700 dark:text-gray-300 ml-1">Pet İsmi <span className="text-pink-500">*</span></label>
+                        <input
+                            type="text"
+                            required
+                            value={formData.name}
+                            onChange={(e) => setFormData({ ...formData, name: e.target.value })}
+                            placeholder="Örn: Pamuk"
+                            className="w-full px-4 py-3 rounded-xl bg-white dark:bg-surface-dark border border-gray-200 dark:border-white/10 focus:ring-2 focus:ring-pink-500 focus:border-transparent outline-none transition-all dark:text-white text-sm"
+                        />
                     </div>
 
                     <div className="space-y-2">
