@@ -38,7 +38,12 @@ export default function FeedItem({ item }: { item: FeedItemType }) {
                     </Link>
                     <div className="flex flex-col">
                         <Link href={`/profil/${item.profiles?.id}`} className="text-sm font-bold text-neutral-900 dark:text-white hover:underline decoration-primary">
-                            {item.profiles?.full_name || 'İsimsiz Kullanıcı'}
+                            {/* Title - Username Format Request */}
+                            {item.title ? (
+                                <span>{item.title} <span className="font-normal text-neutral-400 mx-1">•</span> {item.profiles?.full_name}</span>
+                            ) : (
+                                <span>{item.profiles?.full_name || 'Kullanıcı'}</span>
+                            )}
                         </Link>
                         <div className="flex items-center gap-1 text-xs text-neutral-500 dark:text-neutral-400">
                             {item.profiles?.city && <span>{item.profiles.city} • </span>}
@@ -50,25 +55,28 @@ export default function FeedItem({ item }: { item: FeedItemType }) {
             </div>
 
             {/* Content Media */}
-            <div className="w-full aspect-square bg-gray-100 dark:bg-gray-800 relative">
-                <Link href={detailLink}>
+            <div className="w-full aspect-square bg-black relative flex items-center justify-center">
+                <Link href={detailLink} className="w-full h-full">
+                    {/* Centered Image with Contain for stories to look better */}
                     <img
                         src={item.image_url || 'https://via.placeholder.com/600'}
                         alt={item.title}
-                        className="w-full h-full object-cover"
+                        className="w-full h-full object-contain"
                     />
                 </Link>
-                {/* Type Badge */}
-                <div className="absolute top-3 right-3">
-                    <span className={`px-2 py-1 rounded-lg text-[10px] font-bold uppercase shadow-sm backdrop-blur-md
+                {/* Type Badge - Hide if story */}
+                {item.type !== 'story' && (
+                    <div className="absolute top-3 right-3">
+                        <span className={`px-2 py-1 rounded-lg text-[10px] font-bold uppercase shadow-sm backdrop-blur-md
                         ${item.type === 'pet' ? 'bg-primary/90 text-black' :
-                            item.subType === 'kayip' ? 'bg-red-500/90 text-white' :
-                                item.subType === 'es_bulma' ? 'bg-pink-500/90 text-white' : 'bg-green-500/90 text-white'}`}>
-                        {item.type === 'pet' ? 'Yeni Pet' :
-                            item.subType === 'kayip' ? 'Kayıp İlanı' :
-                                item.subType === 'es_bulma' ? 'Eş Arıyor' : 'Sahiplendirme'}
-                    </span>
-                </div>
+                                item.subType === 'kayip' ? 'bg-red-500/90 text-white' :
+                                    item.subType === 'es_bulma' ? 'bg-pink-500/90 text-white' : 'bg-green-500/90 text-white'}`}>
+                            {item.type === 'pet' ? 'Yeni Pet' :
+                                item.subType === 'kayip' ? 'Kayıp İlanı' :
+                                    item.subType === 'es_bulma' ? 'Eş Arıyor' : 'Sahiplendirme'}
+                        </span>
+                    </div>
+                )}
             </div>
 
             {/* Actions Bar */}

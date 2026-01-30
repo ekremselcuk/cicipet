@@ -56,9 +56,12 @@ export async function getFeedItems(supabase: SupabaseClient): Promise<FeedItemTy
     const { data: stories, error: storiesError } = await supabase
         .from('stories')
         .select(`
-            *
+            *,
+            profiles!stories_user_id_fkey(full_name, avatar_url, id),
+            likes(count),
+            comments(count)
         `)
-        // .gt('expires_at', new Date().toISOString()) // Temporarily removed for timezone issues
+        // .gt('expires_at', new Date().toISOString()) 
         .order('created_at', { ascending: false })
         .limit(20);
 
