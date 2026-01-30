@@ -8,6 +8,7 @@ import { useEffect, useState, useRef } from "react";
 import LikeButton from "@/components/social/LikeButton";
 import ShareButton from "@/components/social/ShareButton";
 import PhotoUploader from "@/components/form/PhotoUploader";
+import StoryUploader from "@/components/social/StoryUploader";
 
 export default function ProfilPage() {
     const supabase = createClient();
@@ -16,6 +17,9 @@ export default function ProfilPage() {
     const [user, setUser] = useState<any>(null);
     const [userProfile, setUserProfile] = useState<any>(null);
     const [activeTab, setActiveTab] = useState<'pets' | 'ads'>('pets');
+
+    // UI State
+    const [uploadOpen, setUploadOpen] = useState(false);
 
     // Edit Mode State
     const [isEditingPhoto, setIsEditingPhoto] = useState(false);
@@ -228,13 +232,26 @@ export default function ProfilPage() {
                         İlan Ver
                     </Link>
                 </div>
+                {/* Story Uploader Modal */}
+                {uploadOpen && (
+                    <StoryUploader
+                        onClose={() => setUploadOpen(false)}
+                        onUploadSuccess={() => {
+                            // Re-fetch stories (simplified by forcing a reload or just append)
+                            // A reload is expensive. Ideally we add to state.
+                            // For simplicity in this edit: reload page or ignore since homepage feed has it.
+                            alert("Hikaye başarıyla oluşturuldu!");
+                            setUploadOpen(false);
+                        }}
+                    />
+                )}
             </div>
 
             {/* Stories Section (Horizontal Scroll) */}
             <div className="mb-6 border-b border-gray-100 dark:border-white/5 pb-4">
                 <div className="flex gap-4 overflow-x-auto px-4 hide-scrollbar snap-x items-center">
                     {/* Add Story Card */}
-                    <button onClick={() => alert('Story özelliği yakında aktif!')} className="flex flex-col items-center gap-2 snap-center shrink-0">
+                    <button onClick={() => setUploadOpen(true)} className="flex flex-col items-center gap-2 snap-center shrink-0">
                         <div className="w-16 h-16 rounded-full border-2 border-dashed border-primary/50 flex items-center justify-center text-primary bg-primary/5 hover:bg-primary/10 transition-colors">
                             <span className="material-symbols-outlined">add</span>
                         </div>

@@ -1,25 +1,60 @@
-export const analyzeImage = async (file: File) => {
-    return new Promise<{ valid: boolean; reason?: string }>((resolve) => {
-        setTimeout(() => {
-            // Mock Checking Logic
-            // In a real app, this would call Google Cloud Vision, AWS Rekognition, or OpenAI Vision API
+import * as tf from '@tensorflow/tfjs';
+import * as nsfwjs from 'nsfwjs';
+import * as cocoSsd from '@tensorflow-models/coco-ssd';
 
-            const fileName = file.name.toLowerCase();
+// Models cache
+let nsfwModel: nsfwjs.NSFWJS | null = null;
+let cocoModel: cocoSsd.ObjectDetection | null = null;
 
-            // Simulate NSFW Rejection
-            if (fileName.includes('nsfw') || fileName.includes('uygunsuz')) {
-                resolve({ valid: false, reason: 'Görsel topluluk kurallarına aykırı veya uygunsuz içerik barındırıyor olabilir.' });
-                return;
-            }
+const VALID_PETS = ['cat', 'dog', 'bird', 'horse', 'sheep', 'cow', 'elephant', 'bear', 'zebra', 'giraffe'];
 
-            // Simulate "No Pet" Rejection (e.g. if the file is named "landscape")
-            if (fileName.includes('manzara') || fileName.includes('araba') || fileName.includes('ev')) {
-                resolve({ valid: false, reason: 'Görselde belirgin bir evcil hayvan tespit edilemedi. Lütfen petinizin net göründüğü bir fotoğraf yükleyiniz.' });
-                return;
-            }
+export async function analyzeImage(file: File): Promise<{ valid: boolean; reason?: string }> {
+    try {
+        // Load models if not loaded
+        if (!nsfwModel) {
+            nsfwModel = await nsfwjs.load(); // Load from default CDN
+        }
+        if (!cocoModel) {
+            cocoModel = await cocoSsd.load(); // Load from default CDN
+        }
 
-            // Success
-            resolve({ valid: true });
-        }, 2500); // 2.5s simulated delay
-    });
-};
+        // Create HTMLImageElement from file
+        const img = document.createElement('img');
+        const objectUrl = URL.createObjectURL(file);
+
+        await new Promise((resolve, reject) => {
+            img.onload = resolve;
+            img.onerror = reject;
+            img.src = objectUrl;
+        });
+
+        // 1. NSFW Check
+        const predictions = await nsfwModel.classify(img);
+        // Classes: 'Drawing', 'Hentai', 'Neutral', 'Porn', 'Sexy'
+        const pornProb = predictions.find(p => p.className === 'Porn')?.probability || 0;
+        const hentaiProb = predictions.find(p => p.className === 'Hentai')?.probability || 0;
+        const sexyProb = predictions.find(p => p.className === 'Sexy')?.probability || 0;
+
+        if (pornProb > 0.4 || hentaiProb > 0.4 || sexyProb > 0.6) {
+            URL.revokeObjectURL(objectUrl);
+            return { valid: false, reason: 'Görsel uygunsuz içerik (NSFW) barındırıyor olabilir. Lütfen başka bir fotoğraf seçin.' };
+        }
+
+        // 2. Pet Detection
+        const detectedObjects = await cocoModel.detect(img);
+        const hasPet = detectedObjects.some(obj => VALID_PETS.includes(obj.class));
+
+        URL.revokeObjectURL(objectUrl);
+
+        if (!hasPet) {
+            return { valid: false, reason: 'Görselde belirgin bir evcil hayvan tespit edilemedi. Lütfen hayvanın net göründüğü bir fotoğraf yükleyin.' };
+        }
+
+        return { valid: true };
+
+    } catch (error) {
+        console.error('AI Analysis Error:', error);
+        // Fail open to avoid blocking users on browser error
+        return { valid: true };
+    }
+}
