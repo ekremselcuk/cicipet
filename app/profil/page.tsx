@@ -75,7 +75,7 @@ export default function ProfilPage() {
                 // 5. Fetch Stories
                 const { data: userStories } = await supabase
                     .from('stories')
-                    .select('*')
+                    .select('*, likes(count), comments(count)')
                     .eq('user_id', currentUser.id)
                     .gt('expires_at', new Date().toISOString()) // Only active stories
                     .order('created_at', { ascending: false });
@@ -359,7 +359,7 @@ export default function ProfilPage() {
                                             // so profiles is current user.
                                         },
                                         likes_count: story.likes?.[0]?.count || 0,
-                                        comments_count: 0, // Story comments are separate or not fetched in basic query, defaulting 0
+                                        comments_count: story.comments?.[0]?.count || 0,
                                         is_liked: false // Logic to check if self liked is complex here without extra fetch
                                     };
 
