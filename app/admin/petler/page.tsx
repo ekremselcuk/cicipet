@@ -60,7 +60,12 @@ export default async function PetlerPage({ searchParams }: { searchParams: { [ke
     }
     if (breedFilter) query = query.ilike('breed', `%${breedFilter}%`);
     if (ageFilter) query = query.eq('age', ageFilter);
-    if (statusFilter) query = query.eq('status', statusFilter);
+    if (statusFilter) {
+        query = query.eq('status', statusFilter);
+    } else {
+        // Default: Exclude pending
+        query = query.neq('status', 'pending');
+    }
 
     // City filter (if param exists)
     if (searchParamsVal?.city) {

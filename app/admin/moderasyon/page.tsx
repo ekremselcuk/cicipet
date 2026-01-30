@@ -17,7 +17,7 @@ export default async function AdminModerationPage({ searchParams }: { searchPara
     let pets: any[] = [];
     let ads: any[] = [];
 
-    // Fetch Pets if needed
+    // Fetch Pets if needed (only if type is 'pets' or undefined/null, BUT NOT if type is 'ads')
     if (!typeFilter || typeFilter === 'pets') {
         const { data } = await supabase
             .from('pets')
@@ -26,7 +26,7 @@ export default async function AdminModerationPage({ searchParams }: { searchPara
         pets = data || [];
     }
 
-    // Fetch Ads if needed
+    // Fetch Ads if needed (only if type is 'ads' or undefined/null, BUT NOT if type is 'pets')
     if (!typeFilter || typeFilter === 'ads') {
         const { data } = await supabase
             .from('ads')

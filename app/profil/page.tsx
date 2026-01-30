@@ -273,21 +273,23 @@ export default function ProfilPage() {
                 </div>
 
                 {/* Tab Content */}
-                <div className="grid grid-cols-2 gap-4">
+                <div className="grid grid-cols-3 gap-3">
                     {activeTab === 'pets' && (
                         pets.length > 0 ? pets.map(pet => (
-                            <Link href={`/pet/${pet.id}`} key={pet.id} className="group relative aspect-[4/5] rounded-xl overflow-hidden bg-gray-100 dark:bg-surface-dark">
-                                <img src={pet.image_url} className="w-full h-full object-cover transition-transform group-hover:scale-105" />
-                                <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent opacity-0 group-hover:opacity-100 transition-opacity flex flex-col justify-end p-3">
-                                    <span className="text-white font-bold">{pet.name}</span>
-                                    <div className="flex items-center gap-3 mt-1 text-white/90">
-                                        <div className="flex items-center gap-1 text-xs">
-                                            <span className="material-symbols-outlined text-[14px]">favorite</span>
-                                            {pet.likes_count || 0}
+                            pet.id ? (
+                                <Link href={`/pet/${pet.id}`} key={pet.id} className="group relative aspect-[4/5] rounded-xl overflow-hidden bg-gray-100 dark:bg-surface-dark">
+                                    <img src={pet.image_url} className="w-full h-full object-cover transition-transform group-hover:scale-105" />
+                                    <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent opacity-0 group-hover:opacity-100 transition-opacity flex flex-col justify-end p-3">
+                                        <span className="text-white font-bold">{pet.name}</span>
+                                        <div className="flex items-center gap-3 mt-1 text-white/90">
+                                            <div className="flex items-center gap-1 text-xs">
+                                                <span className="material-symbols-outlined text-[14px]">favorite</span>
+                                                {pet.likes_count || 0}
+                                            </div>
                                         </div>
                                     </div>
-                                </div>
-                            </Link>
+                                </Link>
+                            ) : null
                         )) : (
                             <div className="col-span-2 text-center py-12 text-gray-400 bg-gray-50 dark:bg-white/5 rounded-xl border border-dashed border-gray-200 dark:border-white/10">
                                 <span className="material-symbols-outlined text-4xl mb-2">pets</span>
