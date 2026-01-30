@@ -5,6 +5,7 @@ import { redirect } from "next/navigation";
 import MenuTrigger from "@/components/admin/MenuTrigger";
 import Pagination from "@/components/admin/Pagination";
 import PetFilters from "@/components/admin/PetFilters";
+import DeletePetButton from "@/components/admin/DeletePetButton";
 
 export const dynamic = 'force-dynamic';
 
@@ -203,16 +204,12 @@ export default async function PetlerPage({ searchParams }: { searchParams: { [ke
                                         </span>
                                         Profili Gör
                                     </Link>
-                                    <button className="h-9 w-9 flex items-center justify-center rounded-lg bg-gray-50 dark:bg-white/5 hover:bg-primary/20 hover:text-primary text-slate-600 dark:text-gray-300 transition-colors">
+                                    <button className="h-9 w-9 flex items-center justify-center rounded-lg bg-gray-50 dark:bg-white/5 hover:bg-primary/20 hover:text-primary text-slate-600 dark:text-gray-300 transition-colors opacity-0 cursor-default">
                                         <span className="material-symbols-outlined text-[18px]">
                                             edit
                                         </span>
                                     </button>
-                                    <button className="h-9 w-9 flex items-center justify-center rounded-lg bg-gray-50 dark:bg-white/5 hover:bg-red-500/20 hover:text-red-500 text-slate-600 dark:text-gray-300 transition-colors">
-                                        <span className="material-symbols-outlined text-[18px]">
-                                            delete
-                                        </span>
-                                    </button>
+                                    <DeletePetButton id={pet.id} />
                                 </div>
                             </div>
                         ))

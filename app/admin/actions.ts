@@ -94,3 +94,50 @@ export async function globalSearch(query: string) {
         return { users: [], pets: [], ads: [], contests: [] };
     }
 }
+
+export async function deletePet(id: string) {
+    return rejectItem(id, 'pet');
+}
+
+export async function createContest(formData: FormData) {
+    try {
+        await requireAdmin();
+        const supabase = await createClient();
+
+        const title = formData.get('title') as string;
+        const description = formData.get('description') as string;
+        const category = formData.get('category') as string;
+        const requirementsStr = formData.get('requirements') as string;
+        const start_date = formData.get('start_date') as string;
+        const end_date = formData.get('end_date') as string;
+        // Image handling would ideally go here, using a placeholder for now if not uploaded
+        const image_url = 'https://images.unsplash.com/photo-1514888286974-6c03e2ca1dba';
+
+        const requirements = requirementsStr ? JSON.parse(requirementsStr) : {};
+
+        const { data, error } = await supabase
+            .from('contests')
+            .insert({
+                title,
+                description,
+                category,
+                requirements,
+                start_date: new Date(start_date).toISOString(),
+                end_date: new Date(end_date).toISOString(),
+                image_url,
+                status: 'active'
+            })
+            .select();
+
+        if (error) {
+            console.error('Create Contest Error:', error);
+            return { error: error.message };
+        }
+
+        revalidatePath('/admin/yarisma');
+        return { success: true };
+    } catch (e: any) {
+        console.error('Create Contest Exception:', e);
+        return { error: e.message };
+    }
+}
