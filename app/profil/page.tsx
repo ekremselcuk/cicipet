@@ -224,14 +224,23 @@ export default function ProfilPage() {
                 </div>
 
                 {/* Quick Actions - Updated Links */}
-                <div className="grid grid-cols-2 gap-3 w-full max-w-sm mb-8">
-                    <Link href="/pet/ekle" className="flex items-center justify-center gap-2 p-3 bg-primary text-black font-bold rounded-xl shadow-lg shadow-primary/20 hover:bg-primary/90 transition-colors">
-                        <span className="material-symbols-outlined">pets</span>
-                        Pet Ekle
+                <div className="grid grid-cols-3 gap-3 w-full max-w-sm mb-8">
+                    <Link href="/pet/ekle" className="flex flex-col items-center justify-center gap-1 p-3 bg-primary text-black font-bold rounded-xl shadow-lg shadow-primary/20 hover:bg-primary/90 transition-colors text-center h-24">
+                        <span className="material-symbols-outlined text-2xl">pets</span>
+                        <span className="text-xs">Pet Ekle</span>
                     </Link>
-                    <Link href="/ilanlar/ekle" className="flex items-center justify-center gap-2 p-3 bg-white dark:bg-surface-dark text-slate-900 dark:text-white font-bold rounded-xl border border-gray-200 dark:border-gray-800 shadow-sm hover:bg-gray-50 dark:hover:bg-white/5 transition-colors">
-                        <span className="material-symbols-outlined">campaign</span>
-                        İlan Ver
+
+                    <button
+                        onClick={() => setUploadOpen(true)}
+                        className="flex flex-col items-center justify-center gap-1 p-3 bg-black text-white font-bold rounded-xl shadow-lg hover:bg-neutral-800 transition-colors text-center h-24"
+                    >
+                        <span className="material-symbols-outlined text-2xl">history_edu</span>
+                        <span className="text-xs">Story Ekle</span>
+                    </button>
+
+                    <Link href="/ilanlar/ekle" className="flex flex-col items-center justify-center gap-1 p-3 bg-white dark:bg-surface-dark text-slate-900 dark:text-white font-bold rounded-xl border border-gray-200 dark:border-gray-800 shadow-sm hover:bg-gray-50 dark:hover:bg-white/5 transition-colors text-center h-24">
+                        <span className="material-symbols-outlined text-2xl">campaign</span>
+                        <span className="text-xs">İlan Ver</span>
                     </Link>
                 </div>
                 {/* Story Uploader Modal */}
@@ -249,27 +258,7 @@ export default function ProfilPage() {
                 )}
             </div>
 
-            {/* Stories Section (Horizontal Scroll) */}
-            <div className="mb-6 border-b border-gray-100 dark:border-white/5 pb-4">
-                <div className="flex gap-4 overflow-x-auto px-4 hide-scrollbar snap-x items-center">
-                    {/* Add Story Card */}
-                    <button onClick={() => setUploadOpen(true)} className="flex flex-col items-center gap-2 snap-center shrink-0">
-                        <div className="w-16 h-16 rounded-full border-2 border-dashed border-primary/50 flex items-center justify-center text-primary bg-primary/5 hover:bg-primary/10 transition-colors">
-                            <span className="material-symbols-outlined">add</span>
-                        </div>
-                        <span className="text-xs text-gray-500">Story Ekle</span>
-                    </button>
-                    {/* User Stories (Dynamic) */}
-                    {stories.map((story) => (
-                        <div key={story.id} className="flex flex-col items-center gap-2 snap-center shrink-0">
-                            <div className="w-16 h-16 rounded-full p-[2px] bg-gradient-to-tr from-pink-500 to-orange-500">
-                                <img src={story.image_url} className="w-full h-full rounded-full object-cover border-2 border-white dark:border-black" />
-                            </div>
-                            <span className="text-xs text-slate-700 dark:text-gray-300">Hikayem</span>
-                        </div>
-                    ))}
-                </div>
-            </div>
+            {/* Stories Section Removed as requested */}
 
             {/* Content Tabs */}
             <div className="px-4">
