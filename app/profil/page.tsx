@@ -245,9 +245,11 @@ export default function ProfilPage() {
                 </div>
                 {/* Story Uploader Modal */}
                 {uploadOpen && (
-                    onUploadSuccess = {() => {
-                    alert("Hikaye başarıyla oluşturuldu! Sayfa yenileniyor...");
-                window.location.reload();
+                    <StoryUploader
+                        onClose={() => setUploadOpen(false)}
+                        onUploadSuccess={() => {
+                            alert("Hikaye başarıyla oluşturuldu! Sayfa yenileniyor...");
+                            window.location.reload();
                         }}
                     />
                 )}
