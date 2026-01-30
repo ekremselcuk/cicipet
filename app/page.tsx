@@ -59,7 +59,6 @@ export default async function Home() {
         )}
       </section>
       <StoryBar />
-      <StoryBar />
 
       <Feed />
 

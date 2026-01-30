@@ -111,7 +111,8 @@ export default function StoryBar() {
                     const mainStory = userStories[0];
                     const isSelf = currentUser && currentUser.id === userId;
 
-                    if (isSelf) return null;
+                    // Show own story as well
+                    // if (isSelf) return null;
 
                     return (
                         <div

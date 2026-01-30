@@ -16,7 +16,7 @@ export default function ProfilPage() {
     const [loading, setLoading] = useState(true);
     const [user, setUser] = useState<any>(null);
     const [userProfile, setUserProfile] = useState<any>(null);
-    const [activeTab, setActiveTab] = useState<'pets' | 'ads'>('pets');
+    const [activeTab, setActiveTab] = useState<'pets' | 'ads' | 'stories'>('pets');
 
     // UI State
     const [uploadOpen, setUploadOpen] = useState(false);
@@ -284,6 +284,12 @@ export default function ProfilPage() {
                     >
                         İlanlarım ({ads.length})
                     </button>
+                    <button
+                        onClick={() => setActiveTab('stories')}
+                        className={`pb-3 text-sm font-bold border-b-2 transition-colors ${activeTab === 'stories' ? 'border-black dark:border-white text-black dark:text-white' : 'border-transparent text-gray-400'}`}
+                    >
+                        Hikayelerim ({stories.length})
+                    </button>
                     <Link href="/favoriler" className="pb-3 text-sm font-bold border-b-2 border-transparent text-gray-400 flex items-center gap-1">
                         Favorilerim <span className="material-symbols-outlined text-[16px]">open_in_new</span>
                     </Link>
@@ -308,7 +314,7 @@ export default function ProfilPage() {
                                 </Link>
                             ) : null
                         )) : (
-                            <div className="col-span-2 text-center py-12 text-gray-400 bg-gray-50 dark:bg-white/5 rounded-xl border border-dashed border-gray-200 dark:border-white/10">
+                            <div className="col-span-3 text-center py-12 text-gray-400 bg-gray-50 dark:bg-white/5 rounded-xl border border-dashed border-gray-200 dark:border-white/10">
                                 <span className="material-symbols-outlined text-4xl mb-2">pets</span>
                                 <p>Henüz pet eklemediniz.</p>
                                 <Link href="/pet/ekle" className="text-primary font-bold hover:underline mt-2 inline-block">Şimdi Ekle</Link>
@@ -331,10 +337,42 @@ export default function ProfilPage() {
                                 </div>
                             </Link>
                         )) : (
-                            <div className="col-span-2 text-center py-12 text-gray-400 bg-gray-50 dark:bg-white/5 rounded-xl border border-dashed border-gray-200 dark:border-white/10">
+                            <div className="col-span-3 text-center py-12 text-gray-400 bg-gray-50 dark:bg-white/5 rounded-xl border border-dashed border-gray-200 dark:border-white/10">
                                 <span className="material-symbols-outlined text-4xl mb-2">campaign</span>
                                 <p>Henüz ilan vermediniz.</p>
                                 <Link href="/ilanlar/ekle" className="text-primary font-bold hover:underline mt-2 inline-block">İlan Ver</Link>
+                            </div>
+                        )
+                    )}
+
+                    {activeTab === 'stories' && (
+                        stories.length > 0 ? [...stories].sort((a, b) => new Date(a.created_at).getTime() - new Date(b.created_at).getTime()).map(story => (
+                            <div key={story.id} className="col-span-3 flex items-center gap-4 p-3 bg-white dark:bg-surface-dark rounded-xl border border-gray-100 dark:border-white/5 shadow-sm">
+                                <div className="w-16 h-16 rounded-xl overflow-hidden bg-black shrink-0 relative">
+                                    <img src={story.image_url} className="w-full h-full object-cover" />
+                                    <div className="absolute top-1 right-1 bg-primary text-[10px] font-bold px-1.5 rounded text-black">
+                                        STORY
+                                    </div>
+                                </div>
+                                <div className="flex-1 min-w-0">
+                                    <div className="flex items-center justify-between mb-1">
+                                        <h4 className="font-bold text-slate-900 dark:text-white truncate pr-2">
+                                            {story.title || 'Hikayem'}
+                                        </h4>
+                                        <span className="text-[10px] text-gray-400 shrink-0">
+                                            {new Date(story.created_at).toLocaleDateString('tr-TR')}
+                                        </span>
+                                    </div>
+                                    <p className="text-xs text-gray-500 line-clamp-2">
+                                        {story.caption || 'Açıklama yok.'}
+                                    </p>
+                                </div>
+                            </div>
+                        )) : (
+                            <div className="col-span-3 text-center py-12 text-gray-400 bg-gray-50 dark:bg-white/5 rounded-xl border border-dashed border-gray-200 dark:border-white/10">
+                                <span className="material-symbols-outlined text-4xl mb-2">history_edu</span>
+                                <p>Henüz hikaye paylaşmadınız.</p>
+                                <button onClick={() => setUploadOpen(true)} className="text-primary font-bold hover:underline mt-2 inline-block">Hikaye Ekle</button>
                             </div>
                         )
                     )}
