@@ -2,42 +2,56 @@ import MenuTrigger from "@/components/admin/MenuTrigger";
 import ModerationGrid from "@/components/admin/ModerationGrid";
 import { requireAdmin } from "@/utils/supabase/check-auth";
 import { createClient } from "@/utils/supabase/server";
+import Link from "next/link";
+import { redirect } from "next/navigation";
 
 export const dynamic = 'force-dynamic';
 
-export default async function AdminModerationPage() {
+export default async function AdminModerationPage({ searchParams }: { searchParams: { [key: string]: string | string[] | undefined } }) {
     await requireAdmin();
     const supabase = await createClient();
 
-    // Fetch Pending Pets
-    const { data: pets } = await supabase
-        .from('pets')
-        .select('*')
-        .eq('status', 'pending');
+    const searchParamsVal = await searchParams;
+    const typeFilter = searchParamsVal?.type as string; // 'pending_pets' | 'pending_ads' | undefined (all)
 
-    // Fetch Pending Ads
-    const { data: ads } = await supabase
-        .from('ads')
-        .select('*')
-        .eq('status', 'pending');
+    let pets: any[] = [];
+    let ads: any[] = [];
+
+    // Fetch Pets if needed
+    if (!typeFilter || typeFilter === 'pets') {
+        const { data } = await supabase
+            .from('pets')
+            .select('*')
+            .eq('status', 'pending');
+        pets = data || [];
+    }
+
+    // Fetch Ads if needed
+    if (!typeFilter || typeFilter === 'ads') {
+        const { data } = await supabase
+            .from('ads')
+            .select('*')
+            .eq('status', 'pending');
+        ads = data || [];
+    }
 
     // Transform to unified format directly
     const items = [
-        ...(pets || []).map((p: any) => ({
+        ...pets.map((p: any) => ({
             id: p.id,
             type: 'pet' as const,
             subType: p.type, // e.g. kedi
             title: p.name,
-            owner: p.owner_id.slice(0, 8), // shorten for UI
+            owner: p.owner_id ? p.owner_id.slice(0, 8) : 'Unknown', // shorten for UI
             image: p.image_url || 'https://via.placeholder.com/150',
             date: p.created_at || new Date().toISOString()
         })),
-        ...(ads || []).map((a: any) => ({
+        ...ads.map((a: any) => ({
             id: a.id,
             type: 'ad' as const,
             subType: a.type, // e.g. kayip
             title: `${a.type === 'kayip' ? 'Kayıp' : a.type} - ${a.category}`,
-            owner: a.user_id.slice(0, 8),
+            owner: a.user_id ? a.user_id.slice(0, 8) : 'Unknown',
             image: a.photo_url || 'https://via.placeholder.com/150',
             date: a.created_at || new Date().toISOString()
         }))
@@ -49,7 +63,15 @@ export default async function AdminModerationPage() {
             <header className="sticky top-0 z-50 border-b border-gray-200 dark:border-gray-800 backdrop-blur-[10px] bg-[rgba(245,248,248,0.8)] dark:bg-[rgba(16,31,34,0.8)]">
                 <div className="flex items-center p-4 pb-2 justify-between">
                     <div className="flex items-center gap-2">
-                        <MenuTrigger />
+                        <div className="md:hidden">
+                            <MenuTrigger />
+                        </div>
+                        <Link
+                            href="/admin"
+                            className="p-2 -ml-2 text-slate-600 dark:text-gray-300 hover:text-primary transition-colors rounded-full hover:bg-black/5 dark:hover:bg-white/5"
+                        >
+                            <span className="material-symbols-outlined text-[28px]">arrow_back</span>
+                        </Link>
                         <h1 className="text-lg font-bold leading-tight tracking-tight">Pet Moderasyonu</h1>
                     </div>
                 </div>
@@ -70,11 +92,17 @@ export default async function AdminModerationPage() {
                         </div>
                         <input className="block w-full pl-10 pr-3 py-2.5 bg-gray-100 dark:bg-gray-800 border-none rounded-xl text-sm focus:ring-2 focus:ring-[#0dccf2]/50 placeholder:text-gray-400" placeholder="Pet veya id ara..." type="text" />
                     </div>
-                    {/* Filters visual only for MVP */}
+                    {/* Filters visual only for MVP - NOW FUNCTIONAL */}
                     <div className="flex gap-2 overflow-x-auto pb-2 no-scrollbar hide-scrollbar">
-                        <button className="flex h-8 shrink-0 items-center justify-center gap-x-1 rounded-full bg-[#0dccf2] text-white px-4 text-xs font-medium">Hepsi</button>
-                        <button className="flex h-8 shrink-0 items-center justify-center gap-x-1 rounded-full bg-gray-100 dark:bg-gray-800 text-gray-600 dark:text-gray-300 px-4 text-xs font-medium">Petler</button>
-                        <button className="flex h-8 shrink-0 items-center justify-center gap-x-1 rounded-full bg-gray-100 dark:bg-gray-800 text-gray-600 dark:text-gray-300 px-4 text-xs font-medium">İlanlar</button>
+                        <Link href="/admin/moderasyon" className={`flex h-8 shrink-0 items-center justify-center gap-x-1 rounded-full px-4 text-xs font-medium transition-colors ${!typeFilter ? 'bg-[#0dccf2] text-white' : 'bg-gray-100 dark:bg-gray-800 text-gray-600 dark:text-gray-300'}`}>
+                            Hepsi
+                        </Link>
+                        <Link href="/admin/moderasyon?type=pets" className={`flex h-8 shrink-0 items-center justify-center gap-x-1 rounded-full px-4 text-xs font-medium transition-colors ${typeFilter === 'pets' ? 'bg-[#0dccf2] text-white' : 'bg-gray-100 dark:bg-gray-800 text-gray-600 dark:text-gray-300'}`}>
+                            Petler
+                        </Link>
+                        <Link href="/admin/moderasyon?type=ads" className={`flex h-8 shrink-0 items-center justify-center gap-x-1 rounded-full px-4 text-xs font-medium transition-colors ${typeFilter === 'ads' ? 'bg-[#0dccf2] text-white' : 'bg-gray-100 dark:bg-gray-800 text-gray-600 dark:text-gray-300'}`}>
+                            İlanlar
+                        </Link>
                     </div>
                 </div>
 

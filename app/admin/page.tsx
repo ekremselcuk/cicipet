@@ -2,6 +2,7 @@ import { requireAdmin } from "@/utils/supabase/check-auth";
 import MenuTrigger from "@/components/admin/MenuTrigger";
 import Link from "next/link";
 import { createClient } from "@/utils/supabase/server";
+import GlobalSearch from "@/components/admin/GlobalSearch";
 
 export default async function AdminPage() {
     await requireAdmin();
@@ -41,16 +42,7 @@ export default async function AdminPage() {
 
             {/* Search Bar */}
             <div className="px-4 py-4">
-                <div className="relative flex w-full items-center rounded-xl bg-[#362b1b] h-12">
-                    <div className="flex items-center justify-center pl-4 text-[#cbb690]">
-                        <span className="material-symbols-outlined text-2xl">search</span>
-                    </div>
-                    <input
-                        className="flex w-full flex-1 bg-transparent px-4 py-2 text-base text-white placeholder-[#cbb690] focus:outline-none focus:ring-0 border-none rounded-xl"
-                        placeholder="Kullanıcı, Pet veya Yarışma ara..."
-                        type="text"
-                    />
-                </div>
+                <GlobalSearch />
             </div>
 
             {/* Section: Genel Bakış (Stats) */}
@@ -92,7 +84,7 @@ export default async function AdminPage() {
                         </div>
                     </Link>
                     {/* Stat Card 3 - Ads */}
-                    <Link href="/admin/moderasyon" className="flex flex-col gap-2 rounded-xl bg-white dark:bg-[#362b1b] p-4 shadow-sm border border-black/5 dark:border-transparent hover:border-primary/50 transition-colors">
+                    <Link href="/admin/ilanlar" className="flex flex-col gap-2 rounded-xl bg-white dark:bg-[#362b1b] p-4 shadow-sm border border-black/5 dark:border-transparent hover:border-primary/50 transition-colors">
                         <div className="flex items-center gap-2">
                             <div className="flex h-8 w-8 items-center justify-center rounded-full bg-primary/20 text-primary">
                                 <span className="material-symbols-outlined text-lg">campaign</span>

@@ -2,15 +2,20 @@ import { requireAuth } from "@/utils/supabase/check-auth";
 import { createClient } from "@/utils/supabase/server";
 import Link from "next/link";
 import MenuTrigger from "@/components/admin/MenuTrigger";
+import Pagination from "@/components/admin/Pagination";
 
 export const dynamic = 'force-dynamic';
 
-export default async function AdminAdsPage() {
+export default async function AdminAdsPage({ searchParams }: { searchParams: { [key: string]: string | string[] | undefined } }) {
     await requireAuth();
     const supabase = await createClient();
 
-    // Fetch ads with owner profile
-    const { data: ads, error } = await supabase
+    const searchParamsVal = await searchParams;
+    const typeFilter = searchParamsVal?.type;
+    const limit = parseInt(searchParamsVal?.limit as string) || 20;
+    const offset = parseInt(searchParamsVal?.offset as string) || 0;
+
+    let query = supabase
         .from('ads')
         .select(`
             *,
@@ -19,7 +24,14 @@ export default async function AdminAdsPage() {
                 full_name,
                 email
             )
-        `)
+        `, { count: 'exact' });
+
+    if (typeFilter) {
+        query = query.eq('type', typeFilter);
+    }
+
+    const { data: ads, count, error } = await query
+        .range(offset, offset + limit - 1)
         .order('created_at', { ascending: false });
 
     if (error) {
@@ -34,6 +46,7 @@ export default async function AdminAdsPage() {
     }
 
     const adsList = ads || [];
+    const totalCount = count || 0;
 
     return (
         <div className="bg-background-light dark:bg-background-dark text-slate-900 dark:text-white font-display antialiased selection:bg-primary selection:text-black pb-24 min-h-screen">
@@ -57,27 +70,48 @@ export default async function AdminAdsPage() {
                     </h1>
                     <div className="flex gap-2 w-10 justify-end"></div>
                 </div>
-                {/* Search Bar */}
-                <div className="relative w-full mb-2">
-                    <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                        <span className="material-symbols-outlined text-gray-400">
-                            search
-                        </span>
-                    </div>
-                    <input
-                        className="block w-full pl-10 pr-3 py-3 border-none rounded-xl text-sm font-medium bg-white dark:bg-surface-dark text-slate-900 dark:text-gray-100 placeholder-gray-400 dark:placeholder-gray-500 focus:ring-2 focus:ring-primary focus:bg-white dark:focus:bg-surface-dark transition-all shadow-sm"
-                        placeholder="Başlık, ID veya Sahip ara..."
-                        type="text"
-                    />
+
+                {/* Top Level Category Filters */}
+                <div className="grid grid-cols-3 gap-2 mb-4">
+                    <Link
+                        href="/admin/ilanlar?type=es-bulma"
+                        className={`flex flex-col items-center justify-center p-2 rounded-xl border transition-all ${typeFilter === 'es-bulma' ? 'bg-pink-50 border-pink-200 dark:bg-pink-900/20 dark:border-pink-900/50' : 'bg-white dark:bg-surface-dark border-gray-200 dark:border-white/10'}`}
+                    >
+                        <span className={`material-symbols-outlined mb-1 ${typeFilter === 'es-bulma' ? 'text-pink-500' : 'text-gray-400'}`}>favorite</span>
+                        <span className={`text-[10px] font-bold ${typeFilter === 'es-bulma' ? 'text-pink-700 dark:text-pink-300' : 'text-gray-500'}`}>Eş Bulma</span>
+                    </Link>
+                    <Link
+                        href="/admin/ilanlar?type=sahiplendirme"
+                        className={`flex flex-col items-center justify-center p-2 rounded-xl border transition-all ${typeFilter === 'sahiplendirme' ? 'bg-green-50 border-green-200 dark:bg-green-900/20 dark:border-green-900/50' : 'bg-white dark:bg-surface-dark border-gray-200 dark:border-white/10'}`}
+                    >
+                        <span className={`material-symbols-outlined mb-1 ${typeFilter === 'sahiplendirme' ? 'text-green-500' : 'text-gray-400'}`}>pets</span>
+                        <span className={`text-[10px] font-bold ${typeFilter === 'sahiplendirme' ? 'text-green-700 dark:text-green-300' : 'text-gray-500'}`}>Sahiplendirme</span>
+                    </Link>
+                    <Link
+                        href="/admin/ilanlar?type=kayip"
+                        className={`flex flex-col items-center justify-center p-2 rounded-xl border transition-all ${typeFilter === 'kayip' ? 'bg-red-50 border-red-200 dark:bg-red-900/20 dark:border-red-900/50' : 'bg-white dark:bg-surface-dark border-gray-200 dark:border-white/10'}`}
+                    >
+                        <span className={`material-symbols-outlined mb-1 ${typeFilter === 'kayip' ? 'text-red-500' : 'text-gray-400'}`}>campaign</span>
+                        <span className={`text-[10px] font-bold ${typeFilter === 'kayip' ? 'text-red-700 dark:text-red-300' : 'text-gray-500'}`}>Kayıp</span>
+                    </Link>
                 </div>
+
+                {typeFilter && (
+                    <div className="flex justify-center mb-2">
+                        <Link href="/admin/ilanlar" className="text-xs text-red-500 font-bold hover:underline flex items-center gap-1">
+                            <span className="material-symbols-outlined text-[14px]">close</span>
+                            Filtreyi Temizle
+                        </Link>
+                    </div>
+                )}
             </header>
 
             {/* Main Content */}
             <main className="flex flex-col gap-6 p-4">
                 {/* Data List */}
                 <section className="flex flex-col gap-4">
-                    <h2 className="text-sm font-bold text-gray-500 uppercase tracking-widest pl-1">
-                        İlan Listesi ({adsList.length})
+                    <h2 className="text-sm font-bold text-gray-500 uppercase tracking-widest pl-1 flex justify-between items-center">
+                        <span>İlan Listesi ({totalCount})</span>
                     </h2>
 
                     {adsList.length === 0 ? (
@@ -148,6 +182,8 @@ export default async function AdminAdsPage() {
                             </div>
                         ))
                     )}
+
+                    <Pagination total={totalCount} currentLimit={limit} currentOffset={offset} />
                 </section>
             </main>
             {/* Bottom Navigation */}

@@ -69,3 +69,28 @@ export async function rejectItem(id: string, type: 'pet' | 'ad') {
         return { error: e.message || 'An unexpected error occurred' };
     }
 }
+
+export async function globalSearch(query: string) {
+    try {
+        await requireAdmin();
+        const supabase = await createClient();
+        const searchTerm = `%${query}%`;
+
+        const [users, pets, ads, contests] = await Promise.all([
+            supabase.from('profiles').select('id, full_name, email, avatar_url').ilike('full_name', searchTerm).limit(3),
+            supabase.from('pets').select('id, name, type, image_url').ilike('name', searchTerm).limit(3),
+            supabase.from('ads').select('id, title, type, photo_url').ilike('title', searchTerm).limit(3),
+            supabase.from('contests').select('id, title, image_url').ilike('title', searchTerm).limit(3)
+        ]);
+
+        return {
+            users: users.data || [],
+            pets: pets.data || [],
+            ads: ads.data || [],
+            contests: contests.data || []
+        };
+    } catch (e: any) {
+        console.error('Search Error:', e);
+        return { users: [], pets: [], ads: [], contests: [] };
+    }
+}

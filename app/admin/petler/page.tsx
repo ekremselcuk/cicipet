@@ -3,37 +3,73 @@ import { createClient } from "@/utils/supabase/server";
 import Link from "next/link";
 import { redirect } from "next/navigation";
 import MenuTrigger from "@/components/admin/MenuTrigger";
+import Pagination from "@/components/admin/Pagination";
+import PetFilters from "@/components/admin/PetFilters";
 
 export const dynamic = 'force-dynamic';
 
-export default async function PetlerPage() {
+export default async function PetlerPage({ searchParams }: { searchParams: { [key: string]: string | string[] | undefined } }) {
     await requireAuth();
     const supabase = await createClient();
 
-    // Fetch pets with owner profile
-    const { data: pets, error } = await supabase
+    const searchParamsVal = await searchParams;
+    const typeFilter = searchParamsVal?.type as string;
+    const breedFilter = searchParamsVal?.breed as string;
+    const ageFilter = searchParamsVal?.age as string;
+    const statusFilter = searchParamsVal?.status as string;
+    // City filter requires inner join which is complex, we will filter by profile city using !inner if possible, or skip for now to keep it simple and fast
+    // PostgREST 9+ supports nested filtering. Let's try simple join filtering first.
+
+    const limit = parseInt(searchParamsVal?.limit as string) || 20;
+    const offset = parseInt(searchParamsVal?.offset as string) || 0;
+
+    // 1. Fetch Stats (Parallel)
+    const [
+        { count: catCount },
+        { count: dogCount },
+        { count: birdCount },
+        { count: reptileCount },
+        { count: otherCount }
+    ] = await Promise.all([
+        supabase.from('pets').select('*', { count: 'exact', head: true }).ilike('type', 'kedi'),
+        supabase.from('pets').select('*', { count: 'exact', head: true }).ilike('type', 'köpek'),
+        supabase.from('pets').select('*', { count: 'exact', head: true }).ilike('type', 'kuş'),
+        supabase.from('pets').select('*', { count: 'exact', head: true }).ilike('type', 'sürüngen'),
+        supabase.from('pets').select('*', { count: 'exact', head: true }).not('type', 'in', '("kedi","köpek","kuş","sürüngen")') // Rough approx for 'other'
+    ]);
+
+    // 2. Build List Query
+    let query = supabase
         .from('pets')
         .select(`
             *,
-            profiles:owner_id (
+            profiles!inner (
                 id,
-                full_name
+                full_name,
+                city
             )
-        `)
+        `, { count: 'exact' });
+
+    if (typeFilter) query = query.ilike('type', `%${typeFilter}%`);
+    if (breedFilter) query = query.ilike('breed', `%${breedFilter}%`);
+    if (ageFilter) query = query.eq('age', ageFilter);
+    if (statusFilter) query = query.eq('status', statusFilter);
+
+    // City filter (if param exists)
+    if (searchParamsVal?.city) {
+        query = query.ilike('profiles.city', `%${searchParamsVal.city}%`);
+    }
+
+    const { data: pets, count, error } = await query
+        .range(offset, offset + limit - 1)
         .order('created_at', { ascending: false });
 
     if (error) {
         console.error("Error fetching pets:", error);
-        // Handle error gracefully, maybe show a message
     }
 
     const petsList = pets || [];
-
-    // Calculate stats
-    const totalPets = petsList.length;
-    const catCount = petsList.filter(p => p.type?.toLowerCase() === 'kedi').length;
-    const dogCount = petsList.filter(p => p.type?.toLowerCase() === 'köpek').length;
-    const otherCount = totalPets - catCount - dogCount;
+    const totalPets = count || 0;
 
     return (
         <div className="bg-background-light dark:bg-background-dark text-slate-900 dark:text-white font-display antialiased selection:bg-primary selection:text-black pb-24 min-h-screen">
@@ -82,101 +118,20 @@ export default async function PetlerPage() {
             <main className="flex flex-col gap-6 p-4">
                 {/* Stats Summary */}
                 <section className="flex gap-3 overflow-x-auto hide-scrollbar pb-1 -mx-4 px-4 snap-x">
-                    <div className="snap-center shrink-0 min-w-[140px] flex-1 bg-white dark:bg-surface-dark p-4 rounded-xl shadow-sm border border-gray-100 dark:border-white/5 flex flex-col gap-1">
-                        <div className="flex items-center gap-2 text-gray-500 dark:text-gray-400 mb-1">
-                            <span className="material-symbols-outlined text-[20px] text-primary">
-                                pets
-                            </span>
-                            <span className="text-xs font-semibold uppercase tracking-wider">
-                                Kedi
-                            </span>
-                        </div>
-                        <p className="text-2xl font-bold text-slate-900 dark:text-white">
-                            {catCount}
-                        </p>
-                        <p className="text-xs text-green-500 font-medium flex items-center mt-1">
-                            <span className="material-symbols-outlined text-[16px] mr-0.5">
-                                trending_up
-                            </span>{" "}
-                            {(catCount / (totalPets || 1) * 100).toFixed(0)}%
-                        </p>
-                    </div>
-                    <div className="snap-center shrink-0 min-w-[140px] flex-1 bg-white dark:bg-surface-dark p-4 rounded-xl shadow-sm border border-gray-100 dark:border-white/5 flex flex-col gap-1">
-                        <div className="flex items-center gap-2 text-gray-500 dark:text-gray-400 mb-1">
-                            <span className="material-symbols-outlined text-[20px] text-blue-400">
-                                pet_supplies
-                            </span>
-                            <span className="text-xs font-semibold uppercase tracking-wider">
-                                Köpek
-                            </span>
-                        </div>
-                        <p className="text-2xl font-bold text-slate-900 dark:text-white">
-                            {dogCount}
-                        </p>
-                        <p className="text-xs text-green-500 font-medium flex items-center mt-1">
-                            <span className="material-symbols-outlined text-[16px] mr-0.5">
-                                trending_up
-                            </span>{" "}
-                            {(dogCount / (totalPets || 1) * 100).toFixed(0)}%
-                        </p>
-                    </div>
-                    <div className="snap-center shrink-0 min-w-[140px] flex-1 bg-white dark:bg-surface-dark p-4 rounded-xl shadow-sm border border-gray-100 dark:border-white/5 flex flex-col gap-1">
-                        <div className="flex items-center gap-2 text-gray-500 dark:text-gray-400 mb-1">
-                            <span className="material-symbols-outlined text-[20px] text-purple-400">
-                                cruelty_free
-                            </span>
-                            <span className="text-xs font-semibold uppercase tracking-wider">
-                                Diğer
-                            </span>
-                        </div>
-                        <p className="text-2xl font-bold text-slate-900 dark:text-white">
-                            {otherCount}
-                        </p>
-                        <p className="text-xs text-green-500 font-medium flex items-center mt-1">
-                            <span className="material-symbols-outlined text-[16px] mr-0.5">
-                                trending_up
-                            </span>{" "}
-                            {(otherCount / (totalPets || 1) * 100).toFixed(0)}%
-                        </p>
-                    </div>
+                    <StatCard icon="pets" label="Kedi" count={catCount || 0} color="text-primary" />
+                    <StatCard icon="pet_supplies" label="Köpek" count={dogCount || 0} color="text-blue-400" />
+                    <StatCard icon="flutter_dash" label="Kuş" count={birdCount || 0} color="text-yellow-400" />
+                    <StatCard icon="pest_control" label="Sürüngen" count={reptileCount || 0} color="text-green-400" />
+                    <StatCard icon="cruelty_free" label="Diğer" count={otherCount || 0} color="text-purple-400" />
                 </section>
+
                 {/* Filters */}
-                <section className="flex gap-2 overflow-x-auto hide-scrollbar -mx-4 px-4">
-                    <button className="flex items-center gap-1.5 px-4 py-2 bg-primary text-black rounded-lg text-sm font-bold shrink-0 transition-transform active:scale-95">
-                        <span className="material-symbols-outlined text-[18px]">
-                            filter_list
-                        </span>
-                        Tümü
-                    </button>
-                    <button className="flex items-center gap-1.5 px-4 py-2 bg-white dark:bg-surface-dark border border-gray-200 dark:border-white/10 text-slate-700 dark:text-gray-300 rounded-lg text-sm font-medium shrink-0 whitespace-nowrap active:bg-gray-100 dark:active:bg-white/10">
-                        Tür
-                        <span className="material-symbols-outlined text-[18px] opacity-70">
-                            expand_more
-                        </span>
-                    </button>
-                    <button className="flex items-center gap-1.5 px-4 py-2 bg-white dark:bg-surface-dark border border-gray-200 dark:border-white/10 text-slate-700 dark:text-gray-300 rounded-lg text-sm font-medium shrink-0 whitespace-nowrap active:bg-gray-100 dark:active:bg-white/10">
-                        Irk
-                        <span className="material-symbols-outlined text-[18px] opacity-70">
-                            expand_more
-                        </span>
-                    </button>
-                    <button className="flex items-center gap-1.5 px-4 py-2 bg-white dark:bg-surface-dark border border-gray-200 dark:border-white/10 text-slate-700 dark:text-gray-300 rounded-lg text-sm font-medium shrink-0 whitespace-nowrap active:bg-gray-100 dark:active:bg-white/10">
-                        Cinsiyet
-                        <span className="material-symbols-outlined text-[18px] opacity-70">
-                            expand_more
-                        </span>
-                    </button>
-                    <button className="flex items-center gap-1.5 px-4 py-2 bg-white dark:bg-surface-dark border border-gray-200 dark:border-white/10 text-slate-700 dark:text-gray-300 rounded-lg text-sm font-medium shrink-0 whitespace-nowrap active:bg-gray-100 dark:active:bg-white/10">
-                        Durum
-                        <span className="material-symbols-outlined text-[18px] opacity-70">
-                            expand_more
-                        </span>
-                    </button>
-                </section>
+                <PetFilters />
+
                 {/* Data List */}
                 <section className="flex flex-col gap-4">
-                    <h2 className="text-sm font-bold text-gray-500 uppercase tracking-widest pl-1">
-                        Pet Listesi ({totalPets})
+                    <h2 className="text-sm font-bold text-gray-500 uppercase tracking-widest pl-1 flex justify-between items-center">
+                        <span>Pet Listesi ({totalPets})</span>
                     </h2>
 
                     {petsList.length === 0 ? (
@@ -195,7 +150,7 @@ export default async function PetlerPage() {
                                             }}
                                         ></div>
                                         <div className="absolute -bottom-1.5 -right-1.5 bg-background-light dark:bg-surface-dark p-0.5 rounded-full">
-                                            <div className="bg-emerald-500 w-3 h-3 rounded-full border-2 border-white dark:border-surface-dark"></div>
+                                            <div className={`w-3 h-3 rounded-full border-2 border-white dark:border-surface-dark ${pet.status === 'pending' ? 'bg-orange-500' : 'bg-emerald-500'}`}></div>
                                         </div>
                                     </div>
                                     <div className="flex-1 min-w-0">
@@ -213,16 +168,12 @@ export default async function PetlerPage() {
                                                     <span>•</span>
                                                     <span>{pet.age ? `${pet.age} Yaşında` : '?'}</span>
                                                 </div>
-                                            </div>
-                                            {/* Pet Score Badge - Mock Data for now as it's not in schema yet fully */}
-                                            <div className="flex items-center gap-1 bg-primary/10 px-2 py-1 rounded-full">
-                                                <span
-                                                    className="material-symbols-outlined text-[16px] text-primary"
-                                                    style={{ fontVariationSettings: "'FILL' 1" }}
-                                                >
-                                                    emoji_events
-                                                </span>
-                                                <span className="text-xs font-bold text-primary">0</span>
+                                                {pet.profiles?.city && (
+                                                    <div className="text-xs text-gray-400 mt-1 flex items-center">
+                                                        <span className="material-symbols-outlined text-[14px] mr-0.5">location_on</span>
+                                                        {pet.profiles.city}
+                                                    </div>
+                                                )}
                                             </div>
                                         </div>
                                         <Link href={pet.profiles?.id ? `/admin/kullanicilar/${pet.profiles.id}` : '#'} className="mt-2 flex items-center gap-1 text-sm text-primary hover:underline w-fit">
@@ -257,16 +208,9 @@ export default async function PetlerPage() {
                             </div>
                         ))
                     )}
+
+                    <Pagination total={totalPets} currentLimit={limit} currentOffset={offset} />
                 </section>
-                {/* Pagination */}
-                <div className="flex justify-center pt-2 pb-6">
-                    <button className="text-sm font-semibold text-gray-500 hover:text-primary transition-colors flex items-center gap-2">
-                        Daha Fazla Göster
-                        <span className="material-symbols-outlined text-[20px]">
-                            expand_more
-                        </span>
-                    </button>
-                </div>
             </main>
             {/* Floating Action Button */}
             <div className="fixed bottom-24 right-4 z-10">
@@ -319,4 +263,22 @@ export default async function PetlerPage() {
             </nav>
         </div>
     );
+}
+
+function StatCard({ icon, label, count, color }: { icon: string, label: string, count: number, color: string }) {
+    return (
+        <div className="snap-center shrink-0 min-w-[140px] flex-1 bg-white dark:bg-surface-dark p-4 rounded-xl shadow-sm border border-gray-100 dark:border-white/5 flex flex-col gap-1">
+            <div className="flex items-center gap-2 text-gray-500 dark:text-gray-400 mb-1">
+                <span className={`material-symbols-outlined text-[20px] ${color}`}>
+                    {icon}
+                </span>
+                <span className="text-xs font-semibold uppercase tracking-wider">
+                    {label}
+                </span>
+            </div>
+            <p className="text-2xl font-bold text-slate-900 dark:text-white">
+                {count}
+            </p>
+        </div>
+    )
 }
