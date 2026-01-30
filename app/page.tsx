@@ -6,6 +6,7 @@ import StoryBar from "@/components/social/StoryBar";
 import Feed from "@/components/feed/Feed";
 
 export const dynamic = "force-dynamic";
+export const revalidate = 0;
 
 export default async function Home() {
   const supabase = await createClient();

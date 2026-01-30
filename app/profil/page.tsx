@@ -1,5 +1,8 @@
 'use client';
 
+export const dynamic = "force-dynamic";
+export const revalidate = 0;
+
 import { createClient } from "@/utils/supabase/client";
 import SignOutButton from "@/components/auth/SignOutButton";
 import Link from "next/link";
