@@ -57,9 +57,7 @@ export async function getFeedItems(supabase: SupabaseClient): Promise<FeedItemTy
         .from('stories')
         .select(`
             *,
-            profiles!stories_user_id_fkey(full_name, avatar_url, id),
-            likes(count),
-            comments(count)
+            profiles(full_name, avatar_url, id)
         `)
         // .gt('expires_at', new Date().toISOString()) 
         .order('created_at', { ascending: false })
