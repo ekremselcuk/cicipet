@@ -9,6 +9,8 @@ import LikeButton from "@/components/social/LikeButton";
 import ShareButton from "@/components/social/ShareButton";
 import PhotoUploader from "@/components/form/PhotoUploader";
 import StoryUploader from "@/components/social/StoryUploader";
+import FeedItem from "@/components/feed/FeedItem";
+import { FeedItemType } from "@/utils/supabase/feed";
 
 export default function ProfilPage() {
     const supabase = createClient();
@@ -346,29 +348,36 @@ export default function ProfilPage() {
                     )}
 
                     {activeTab === 'stories' && (
-                        stories.length > 0 ? [...stories].sort((a, b) => new Date(a.created_at).getTime() - new Date(b.created_at).getTime()).map(story => (
-                            <div key={story.id} className="col-span-3 flex items-center gap-4 p-3 bg-white dark:bg-surface-dark rounded-xl border border-gray-100 dark:border-white/5 shadow-sm">
-                                <div className="w-16 h-16 rounded-xl overflow-hidden bg-black shrink-0 relative">
-                                    <img src={story.image_url} className="w-full h-full object-cover" />
-                                    <div className="absolute top-1 right-1 bg-primary text-[10px] font-bold px-1.5 rounded text-black">
-                                        STORY
-                                    </div>
-                                </div>
-                                <div className="flex-1 min-w-0">
-                                    <div className="flex items-center justify-between mb-1">
-                                        <h4 className="font-bold text-slate-900 dark:text-white truncate pr-2">
-                                            {story.title || 'Hikayem'}
-                                        </h4>
-                                        <span className="text-[10px] text-gray-400 shrink-0">
-                                            {new Date(story.created_at).toLocaleDateString('tr-TR')}
-                                        </span>
-                                    </div>
-                                    <p className="text-xs text-gray-500 line-clamp-2">
-                                        {story.caption || 'Açıklama yok.'}
-                                    </p>
-                                </div>
+                        stories.length > 0 ? (
+                            <div className="col-span-3 flex flex-col gap-6">
+                                {[...stories].sort((a, b) => new Date(b.created_at).getTime() - new Date(a.created_at).getTime()).map(story => {
+                                    // Convert story to FeedItemType on the fly
+                                    const feedItem: FeedItemType = {
+                                        id: story.id,
+                                        type: 'story',
+                                        subType: 'story',
+                                        title: story.caption ? 'Hikaye Paylaşımı' : 'Hikaye', // or story.title if exists
+                                        description: story.caption || '',
+                                        image_url: story.image_url,
+                                        created_at: story.created_at,
+                                        user_id: story.user_id,
+                                        profiles: {
+                                            id: story.user_id,
+                                            full_name: (userProfile?.full_name || user?.user_metadata?.full_name || 'Kullanıcı'),
+                                            avatar_url: (userProfile?.avatar_url || user?.user_metadata?.avatar_url || 'https://via.placeholder.com/150'),
+                                            // stories fetched in profile are owned by current user mostly, 
+                                            // but waiting... 'stories' state is fetched by .eq('user_id', currentUser.id)
+                                            // so profiles is current user.
+                                        },
+                                        likes_count: story.likes?.[0]?.count || 0,
+                                        comments_count: 0, // Story comments are separate or not fetched in basic query, defaulting 0
+                                        is_liked: false // Logic to check if self liked is complex here without extra fetch
+                                    };
+
+                                    return <FeedItem key={story.id} item={feedItem} />;
+                                })}
                             </div>
-                        )) : (
+                        ) : (
                             <div className="col-span-3 text-center py-12 text-gray-400 bg-gray-50 dark:bg-white/5 rounded-xl border border-dashed border-gray-200 dark:border-white/10">
                                 <span className="material-symbols-outlined text-4xl mb-2">history_edu</span>
                                 <p>Henüz hikaye paylaşmadınız.</p>
