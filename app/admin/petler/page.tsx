@@ -131,7 +131,7 @@ export default async function PetlerPage({ searchParams }: { searchParams: { [ke
                     <StatCardLink active={typeFilter === 'köpek'} type="köpek" icon="pet_supplies" label="Köpek" count={dogCount || 0} color="text-blue-400" />
                     <StatCardLink active={typeFilter === 'kuş'} type="kuş" icon="flutter_dash" label="Kuş" count={birdCount || 0} color="text-yellow-400" />
                     <StatCardLink active={typeFilter === 'sürüngen'} type="sürüngen" icon="pest_control" label="Sürüngen" count={reptileCount || 0} color="text-green-400" />
-                    <StatCardLink active={typeFilter && !['kedi', 'köpek', 'kuş', 'sürüngen'].includes(typeFilter)} type="other" icon="cruelty_free" label="Diğer" count={otherCount || 0} color="text-purple-400" />
+                    <StatCardLink active={!!typeFilter && !['kedi', 'köpek', 'kuş', 'sürüngen'].includes(typeFilter)} type="other" icon="cruelty_free" label="Diğer" count={otherCount || 0} color="text-purple-400" />
                 </section>
 
                 {/* Filters */}
