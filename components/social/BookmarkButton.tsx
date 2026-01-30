@@ -5,7 +5,7 @@ import { createClient } from '@/utils/supabase/client';
 
 interface BookmarkButtonProps {
     itemId: string;
-    itemType: 'pet' | 'ad';
+    itemType: 'pet' | 'ad' | 'story';
     initialBookmarked?: boolean;
 }
 
