@@ -85,11 +85,11 @@ export default async function AdminAdsPage({ searchParams }: { searchParams: { [
                 {/* Top Level Category Filters */}
                 <div className="grid grid-cols-3 gap-2 mb-4">
                     <Link
-                        href="/admin/ilanlar?type=es-bulma"
-                        className={`flex flex-col items-center justify-center p-2 rounded-xl border transition-all ${typeFilter === 'es-bulma' ? 'bg-pink-50 border-pink-200 dark:bg-pink-900/20 dark:border-pink-900/50' : 'bg-white dark:bg-surface-dark border-gray-200 dark:border-white/10'}`}
+                        href="/admin/ilanlar?type=es_bulma"
+                        className={`flex flex-col items-center justify-center p-2 rounded-xl border transition-all ${typeFilter === 'es_bulma' ? 'bg-pink-50 border-pink-200 dark:bg-pink-900/20 dark:border-pink-900/50' : 'bg-white dark:bg-surface-dark border-gray-200 dark:border-white/10'}`}
                     >
-                        <span className={`material-symbols-outlined mb-1 ${typeFilter === 'es-bulma' ? 'text-pink-500' : 'text-gray-400'}`}>favorite</span>
-                        <span className={`text-[10px] font-bold ${typeFilter === 'es-bulma' ? 'text-pink-700 dark:text-pink-300' : 'text-gray-500'}`}>Eş Bulma</span>
+                        <span className={`material-symbols-outlined mb-1 ${typeFilter === 'es_bulma' ? 'text-pink-500' : 'text-gray-400'}`}>favorite</span>
+                        <span className={`text-[10px] font-bold ${typeFilter === 'es_bulma' ? 'text-pink-700 dark:text-pink-300' : 'text-gray-500'}`}>Eş Bulma</span>
                     </Link>
                     <Link
                         href="/admin/ilanlar?type=sahiplendirme"

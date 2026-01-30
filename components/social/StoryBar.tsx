@@ -4,6 +4,7 @@ import { useEffect, useState } from 'react';
 import { createClient } from '@/utils/supabase/client';
 import StoryUploader from './StoryUploader';
 import TimeAgo from 'react-timeago';
+import LikeButton from './LikeButton';
 
 // @ts-ignore
 import trStrings from 'react-timeago/lib/language-strings/tr';
@@ -46,7 +47,7 @@ export default function StoryBar() {
 
         const { data, error } = await supabase
             .from('stories')
-            .select('*, profiles(full_name, avatar_url)')
+            .select('*, profiles(full_name, avatar_url), likes(count)')
             .gt('expires_at', now)
             .order('created_at', { ascending: false });
 
@@ -169,9 +170,13 @@ export default function StoryBar() {
                                 placeholder="Mesaj gönder..."
                                 className="flex-1 bg-white/10 border border-white/20 rounded-full px-4 py-3 text-white placeholder:text-white/60 backdrop-blur-md outline-none focus:bg-white/20"
                             />
-                            <button className="text-white hover:scale-110 transition-transform">
-                                <span className="material-symbols-outlined text-3xl">favorite</span>
-                            </button>
+                            <div className="bg-white/10 backdrop-blur-md p-2 rounded-full">
+                                <LikeButton
+                                    itemId={viewingStory.id}
+                                    itemType="story"
+                                    initialLikes={(viewingStory as any).likes?.[0]?.count || 0}
+                                />
+                            </div>
                         </div>
                     </div>
                 </div>

@@ -62,10 +62,8 @@ export default async function PetlerPage({ searchParams }: { searchParams: { [ke
     if (ageFilter) query = query.eq('age', ageFilter);
     if (statusFilter) {
         query = query.eq('status', statusFilter);
-    } else {
-        // Default: Exclude pending
-        query = query.neq('status', 'pending');
     }
+    // Default: Show all statuses so stats and list match
 
     // City filter (if param exists)
     if (searchParamsVal?.city) {
