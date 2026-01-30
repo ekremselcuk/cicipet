@@ -77,7 +77,7 @@ export default function ProfilPage() {
                     .from('stories')
                     .select('*, likes(count), comments(count)')
                     .eq('user_id', currentUser.id)
-                    .gt('expires_at', new Date().toISOString()) // Only active stories
+                    // .gt('expires_at', new Date().toISOString()) // Allow all stories for now
                     .order('created_at', { ascending: false });
                 setStories(userStories || []);
 

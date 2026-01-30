@@ -60,7 +60,7 @@ export async function getFeedItems(supabase: SupabaseClient): Promise<FeedItemTy
             profiles(full_name, avatar_url),
             likes(count)
         `)
-        .gt('expires_at', new Date().toISOString())
+        // .gt('expires_at', new Date().toISOString()) // Temporarily removed for timezone issues
         .order('created_at', { ascending: false })
         .limit(20);
 
