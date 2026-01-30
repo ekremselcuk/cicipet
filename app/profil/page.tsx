@@ -75,7 +75,7 @@ export default function ProfilPage() {
                 // 5. Fetch Stories
                 const { data: userStories } = await supabase
                     .from('stories')
-                    .select('*, likes(count), comments(count)')
+                    .select('*')
                     .eq('user_id', currentUser.id)
                     // .gt('expires_at', new Date().toISOString()) // Allow all stories for now
                     .order('created_at', { ascending: false });
