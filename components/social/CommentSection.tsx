@@ -23,7 +23,7 @@ interface Comment {
 
 interface CommentSectionProps {
     itemId: string;
-    itemType: 'pet' | 'ad';
+    itemType: 'pet' | 'ad' | 'story';
 }
 
 export default function CommentSection({ itemId, itemType }: CommentSectionProps) {
