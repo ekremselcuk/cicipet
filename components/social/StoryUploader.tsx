@@ -12,6 +12,7 @@ interface StoryUploaderProps {
 export default function StoryUploader({ onClose, onUploadSuccess }: StoryUploaderProps) {
     const [loading, setLoading] = useState(false);
     const [file, setFile] = useState<File | null>(null);
+    const [title, setTitle] = useState(''); // New Title State
     const [caption, setCaption] = useState('');
     const supabase = createClient();
 
@@ -47,6 +48,7 @@ export default function StoryUploader({ onClose, onUploadSuccess }: StoryUploade
                 user_id: user.id,
                 image_url: mockStoryUrl,
                 type: 'image',
+                title: title,     // Insert Title
                 caption: caption, // Added caption field support if DB has it, otherwise it's just local state for now
                 expires_at: expiresAt.toISOString()
             });
@@ -118,8 +120,22 @@ export default function StoryUploader({ onClose, onUploadSuccess }: StoryUploade
 
                 {/* Bottom Section - In Flow (Not Fixed) for scroll safety */}
                 {file && (
-                    <div className="z-20 bg-neutral-900 border-t border-white/10 shrink-0 shadow-[0_-10px_40px_rgba(0,0,0,0.5)] pb-20 pr-[env(safe-area-inset-right)] pl-[env(safe-area-inset-left)] pb-[env(safe-area-inset-bottom)]">
+                    // INCREASED BOTTOM PADDING TO pb-48 (approx 12rem) for extra scroll space
+                    <div className="z-20 bg-neutral-900 border-t border-white/10 shrink-0 shadow-[0_-10px_40px_rgba(0,0,0,0.5)] pb-48 pr-[env(safe-area-inset-right)] pl-[env(safe-area-inset-left)]">
                         <div className="p-4 flex flex-col gap-3">
+                            {/* Title Input */}
+                            <div className="relative">
+                                <span className="absolute left-3 top-3 material-symbols-outlined text-white/50 text-xl">title</span>
+                                <input
+                                    type="text"
+                                    value={title}
+                                    onChange={(e) => setTitle(e.target.value)}
+                                    placeholder="Bir Başlık Ekle (Opsiyonel)"
+                                    className="w-full bg-white/5 border border-white/10 rounded-xl py-3 pl-10 pr-4 text-white placeholder:text-white/40 focus:outline-none focus:bg-white/10 focus:border-white/20 transition-all text-sm font-bold"
+                                />
+                            </div>
+
+                            {/* Caption Input */}
                             <div className="relative">
                                 <span className="absolute left-3 top-3 material-symbols-outlined text-white/50 text-xl">edit_note</span>
                                 <input
