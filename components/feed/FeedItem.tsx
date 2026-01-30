@@ -52,6 +52,13 @@ export default function FeedItem({ item }: { item: FeedItemType }) {
                     </div>
                 </div>
                 <FollowButton targetUserId={item.user_id} />
+                {/* Delete Option for Owner */}
+                {/* Check functionality in client component or via prop */}
+                {/* We need a client side check for ownership. For now, simplistic check or assume parent passes canDelete. 
+                   Actually, FeedItem is client component, can check auth. But cleaner to just show delete if it is 'story' and we are owner?
+                   Let's add a simple delete button next to follow if owner.
+                   Wait, verifying owner in FeedItem requires auth check.
+                */}
             </div>
 
             {/* Content Media */}

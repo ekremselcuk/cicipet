@@ -2,8 +2,10 @@ import Header from "@/components/layout/Header";
 import { createClient } from "@/utils/supabase/server";
 import { getActiveContests, getContestDetails } from "@/utils/supabase/queries";
 import Link from "next/link";
-import StoryBar from "@/components/social/StoryBar";
+// import StoryBar from "@/components/social/StoryBar"; // Removed
 import Feed from "@/components/feed/Feed";
+import LatestStories from "@/components/feed/LatestStories";
+import ContestWidget from "@/components/feed/ContestWidget";
 
 export const dynamic = "force-dynamic";
 export const revalidate = 0;
@@ -59,8 +61,14 @@ export default async function Home() {
           </div>
         )}
       </section>
-      <StoryBar />
+      <ContestWidget />
 
+      <LatestStories />
+
+      {/* Main Feed (Pets & Ads only ideally, but currently mixed. User asked to limit stories in flow. 
+          If LatestStories handles stories, maybe we filter them out from generic Feed? 
+          For now, let's keep Feed as 'More Content' 
+      */}
       <Feed />
 
     </main>
