@@ -1,3 +1,45 @@
+-- 0. EKSİK TABLOLARI OLUŞTUR (Garantiye Al)
+
+-- Follows tablosu
+CREATE TABLE IF NOT EXISTS follows (
+    id UUID DEFAULT gen_random_uuid() PRIMARY KEY,
+    follower_id UUID REFERENCES profiles(id) ON DELETE CASCADE NOT NULL,
+    following_id UUID REFERENCES profiles(id) ON DELETE CASCADE NOT NULL,
+    created_at TIMESTAMP WITH TIME ZONE DEFAULT timezone('utc'::text, now()) NOT NULL,
+    UNIQUE(follower_id, following_id)
+);
+
+-- Likes tablosu
+CREATE TABLE IF NOT EXISTS likes (
+    id UUID DEFAULT gen_random_uuid() PRIMARY KEY,
+    user_id UUID REFERENCES profiles(id) ON DELETE CASCADE NOT NULL,
+    item_id UUID NOT NULL, -- Pet, Ad veya Story ID olabilir, dinamik olduğu için FK zorunlu değil ama iyi olurdu.
+    item_type TEXT NOT NULL CHECK (item_type IN ('pet', 'ad', 'story')),
+    created_at TIMESTAMP WITH TIME ZONE DEFAULT timezone('utc'::text, now()) NOT NULL,
+    UNIQUE(user_id, item_id, item_type)
+);
+
+-- Comments tablosu
+CREATE TABLE IF NOT EXISTS comments (
+    id UUID DEFAULT gen_random_uuid() PRIMARY KEY,
+    user_id UUID REFERENCES profiles(id) ON DELETE CASCADE NOT NULL,
+    item_id UUID NOT NULL,
+    item_type TEXT NOT NULL CHECK (item_type IN ('pet', 'ad', 'story')),
+    content TEXT NOT NULL,
+    created_at TIMESTAMP WITH TIME ZONE DEFAULT timezone('utc'::text, now()) NOT NULL
+);
+
+-- Bookmarks tablosu
+CREATE TABLE IF NOT EXISTS bookmarks (
+    id UUID DEFAULT gen_random_uuid() PRIMARY KEY,
+    user_id UUID REFERENCES profiles(id) ON DELETE CASCADE NOT NULL,
+    item_id UUID NOT NULL,
+    item_type TEXT NOT NULL CHECK (item_type IN ('pet', 'ad', 'story')),
+    created_at TIMESTAMP WITH TIME ZONE DEFAULT timezone('utc'::text, now()) NOT NULL,
+    UNIQUE(user_id, item_id, item_type)
+);
+
+
 -- 1. Foreign Key İlişkilerini Onar (Stories -> Profiles)
 -- Önce mevcut kısıtlamayı (varsa) kaldır
 ALTER TABLE stories DROP CONSTRAINT IF EXISTS stories_user_id_fkey;
@@ -7,8 +49,8 @@ ADD CONSTRAINT stories_user_id_fkey
 FOREIGN KEY (user_id) REFERENCES profiles(id)
 ON DELETE CASCADE;
 
--- 2. Likes, Comments, Bookmarks tablolarındaki 'check' kısıtlamalarını kaldır (Enum sorunları)
--- Genellikle 'item_type' bir check constraint ile korunur. Bunu kaldırıp esnek yapıyoruz.
+-- 2. Likes, Comments, Bookmarks tablolarındaki 'check' kısıtlamalarını güncelle
+-- (Tablo yeni oluşturulduysa zaten var ama güncellenmesi gerekirse diye)
 ALTER TABLE likes DROP CONSTRAINT IF EXISTS likes_item_type_check;
 ALTER TABLE likes ADD CONSTRAINT likes_item_type_check CHECK (item_type IN ('pet', 'ad', 'story'));
 
@@ -18,7 +60,8 @@ ALTER TABLE comments ADD CONSTRAINT comments_item_type_check CHECK (item_type IN
 ALTER TABLE bookmarks DROP CONSTRAINT IF EXISTS bookmarks_item_type_check;
 ALTER TABLE bookmarks ADD CONSTRAINT bookmarks_item_type_check CHECK (item_type IN ('pet', 'ad', 'story'));
 
--- 3. RLS Politikalarını Sıfırla ve Düzelt (Likes, Comments, Bookmarks, Follows)
+-- 3. RLS Politikalarını Sıfırla ve Düzelt
+
 -- Likes
 ALTER TABLE likes ENABLE ROW LEVEL SECURITY;
 DROP POLICY IF EXISTS "Likes Public Read" ON likes;
@@ -39,12 +82,11 @@ CREATE POLICY "Comments Auth Insert" ON comments FOR INSERT WITH CHECK (auth.rol
 
 -- Bookmarks
 ALTER TABLE bookmarks ENABLE ROW LEVEL SECURITY;
-DROP POLICY IF EXISTS "Bookmarks Policy" ON bookmarks; -- Eski kapsamlı policy varsa
+DROP POLICY IF EXISTS "Bookmarks Policy" ON bookmarks;
 DROP POLICY IF EXISTS "Bookmarks Owner Select" ON bookmarks;
 DROP POLICY IF EXISTS "Bookmarks Owner Insert" ON bookmarks;
 DROP POLICY IF EXISTS "Bookmarks Owner Delete" ON bookmarks;
 
--- Bookmarks genelde kişiseldir, sadece sahibi görebilir
 CREATE POLICY "Bookmarks Owner Select" ON bookmarks FOR SELECT USING (auth.uid() = user_id);
 CREATE POLICY "Bookmarks Owner Insert" ON bookmarks FOR INSERT WITH CHECK (auth.uid() = user_id);
 CREATE POLICY "Bookmarks Owner Delete" ON bookmarks FOR DELETE USING (auth.uid() = user_id);
