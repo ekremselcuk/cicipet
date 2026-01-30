@@ -4,9 +4,10 @@ import { createClient } from "@/utils/supabase/client";
 import SignOutButton from "@/components/auth/SignOutButton";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { useEffect, useState } from "react";
+import { useEffect, useState, useRef } from "react";
 import LikeButton from "@/components/social/LikeButton";
 import ShareButton from "@/components/social/ShareButton";
+import PhotoUploader from "@/components/form/PhotoUploader";
 
 export default function ProfilPage() {
     const supabase = createClient();
@@ -16,10 +17,18 @@ export default function ProfilPage() {
     const [userProfile, setUserProfile] = useState<any>(null);
     const [activeTab, setActiveTab] = useState<'pets' | 'ads'>('pets');
 
+    // Edit Mode State
+    const [isEditingPhoto, setIsEditingPhoto] = useState(false);
+    const [analyzing, setAnalyzing] = useState(false);
+
+    // Dynamic Module Import for Analysis
+    const { analyzeImage } = require('@/utils/image-analysis');
+
     // Data States
     const [pets, setPets] = useState<any[]>([]);
     const [ads, setAds] = useState<any[]>([]);
     const [stories, setStories] = useState<any[]>([]);
+    const [stats, setStats] = useState({ followers: 0, following: 0, likes: 0 });
 
     useEffect(() => {
         const loadData = async () => {
@@ -39,7 +48,7 @@ export default function ProfilPage() {
                     .select('*')
                     .eq('id', currentUser.id)
                     .single();
-                setUserProfile(profile || {}); // Handle missing profile gracefully
+                setUserProfile(profile || {});
 
                 // 3. Fetch Pets
                 const { data: userPets } = await supabase
@@ -57,9 +66,44 @@ export default function ProfilPage() {
                     .order('created_at', { ascending: false });
                 setAds(userAds || []);
 
-                // 5. Fetch Stories (Mock or Real)
-                // For now mocking or assuming empty as table might be empty
-                setStories([]);
+                // 5. Fetch Stories
+                const { data: userStories } = await supabase
+                    .from('stories')
+                    .select('*')
+                    .eq('user_id', currentUser.id)
+                    .gt('expires_at', new Date().toISOString()) // Only active stories
+                    .order('created_at', { ascending: false });
+                setStories(userStories || []);
+
+                // 6. Fetch Real Stats
+                // Followers
+                const { count: followersCount } = await supabase
+                    .from('follows')
+                    .select('*', { count: 'exact', head: true })
+                    .eq('following_id', currentUser.id);
+
+                // Following
+                const { count: followingCount } = await supabase
+                    .from('follows')
+                    .select('*', { count: 'exact', head: true })
+                    .eq('follower_id', currentUser.id);
+
+                // Likes Received (Total of user's pets + ads)
+                // This is complex to sum in one go with Supabase standard client without views.
+                // We'll trust the 'likes_count' on pets/ads if triggers existed, 
+                // OR just sum the loaded pets/ads likes_count if we select it.
+                // For now, let's query the 'likes' table directly for items owned by user.
+                // A bit heavy, but correct.
+                // Simplifying: We'll assume we iterate over pets/ads and sum their likes_count if we added that column.
+                // Checking previous schema: I added likes_count column.
+                const totalLikes = (userPets || []).reduce((acc, p) => acc + (p.likes_count || 0), 0) +
+                    (userAds || []).reduce((acc, a) => acc + (a.likes_count || 0), 0);
+
+                setStats({
+                    followers: followersCount || 0,
+                    following: followingCount || 0,
+                    likes: totalLikes
+                });
 
             } catch (err) {
                 console.error("Data load error:", err);
@@ -71,6 +115,40 @@ export default function ProfilPage() {
         loadData();
     }, [router, supabase]);
 
+    const handlePhotoUpdate = async (file: File) => {
+        setAnalyzing(true);
+        try {
+            // AI Check
+            const result = await analyzeImage(file);
+            if (!result.valid) {
+                alert(`Görsel Reddedildi: ${result.reason}`);
+                setAnalyzing(false);
+                return;
+            }
+
+            // Upload
+            // Mock URL logic again
+            const mockUrl = "https://images.unsplash.com/photo-1535713875002-d1d0cf377fde";
+
+            const { error } = await supabase
+                .from('profiles')
+                .update({ avatar_url: mockUrl })
+                .eq('id', user.id);
+
+            if (error) throw error;
+
+            setUserProfile({ ...userProfile, avatar_url: mockUrl });
+            setIsEditingPhoto(false);
+            alert("Profil fotoğrafı güncellendi!");
+
+        } catch (e) {
+            console.error(e);
+            alert("Hata oluştu");
+        } finally {
+            setAnalyzing(false);
+        }
+    };
+
     if (loading) {
         return (
             <div className="min-h-screen flex items-center justify-center bg-background-light dark:bg-background-dark">
@@ -81,16 +159,8 @@ export default function ProfilPage() {
 
     if (!user) return null;
 
-    const displayName = userProfile?.full_name || user.email?.split('@')[0] || "Kullanıcı";
-    const avatarUrl = userProfile?.avatar_url || "https://via.placeholder.com/150";
-    const ciciPoints = userProfile?.cicipoints || 0;
-
-    // Social Stats (Mocked for now until we have counters in DB populated)
-    const socialStats = {
-        followers: 120, // Example
-        following: 45,
-        likesReceived: 350
-    };
+    const displayName = userProfile?.full_name || user.user_metadata?.full_name || user.email?.split('@')[0] || "Kullanıcı";
+    const avatarUrl = userProfile?.avatar_url || user.user_metadata?.avatar_url || "https://via.placeholder.com/150";
 
     return (
         <main className="pb-24 min-h-screen bg-background-light dark:bg-background-dark font-display">
@@ -105,36 +175,49 @@ export default function ProfilPage() {
 
             {/* Profile Info */}
             <div className="px-4 -mt-16 relative z-10 flex flex-col items-center">
-                <div className="relative mb-3">
-                    <div className="w-32 h-32 p-1.5 rounded-full bg-white dark:bg-surface-dark shadow-xl">
+                <div className="relative mb-3 group">
+                    <div className="w-32 h-32 p-1.5 rounded-full bg-white dark:bg-surface-dark shadow-xl overflow-hidden cursor-pointer" onClick={() => setIsEditingPhoto(true)}>
                         <img alt="Profile" className="w-full h-full rounded-full object-cover border border-gray-100 dark:border-white/10" src={avatarUrl} />
+                        <div className="absolute inset-0 bg-black/30 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity rounded-full">
+                            <span className="material-symbols-outlined text-white">camera_enhance</span>
+                        </div>
                     </div>
-                    {/* Add Story Button (Mock) */}
-                    <button className="absolute bottom-1 right-1 bg-blue-500 text-white p-2 rounded-full border-4 border-white dark:border-surface-dark shadow-sm hover:scale-110 transition-transform" title="Story Ekle">
-                        <span className="material-symbols-outlined text-[18px]">add</span>
-                    </button>
                 </div>
+
+                {isEditingPhoto && (
+                    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/80 px-4">
+                        <div className="bg-white dark:bg-surface-dark p-6 rounded-2xl w-full max-w-sm">
+                            <h3 className="font-bold text-lg mb-4 dark:text-white">Profil Fotoğrafını Değiştir</h3>
+                            <PhotoUploader
+                                onFileSelect={handlePhotoUpdate}
+                                colorTheme="primary"
+                            />
+                            {analyzing && <p className="text-center text-sm text-primary font-bold mt-2">Görsel İnceleniyor...</p>}
+                            <button onClick={() => setIsEditingPhoto(false)} className="w-full mt-4 py-2 text-gray-500">İptal</button>
+                        </div>
+                    </div>
+                )}
 
                 <h1 className="text-2xl font-extrabold text-slate-900 dark:text-white mb-1">{displayName}</h1>
                 <p className="text-sm text-gray-500 dark:text-gray-400 mb-4">@{user.email?.split('@')[0]}</p>
 
-                {/* Social Stats Row */}
+                {/* Real Stats */}
                 <div className="flex items-center gap-8 mb-6">
                     <div className="flex flex-col items-center">
-                        <span className="font-bold text-lg text-slate-900 dark:text-white">{socialStats.followers}</span>
+                        <span className="font-bold text-lg text-slate-900 dark:text-white">{stats.followers}</span>
                         <span className="text-xs text-gray-500 uppercase tracking-wide">Takipçi</span>
                     </div>
                     <div className="flex flex-col items-center">
-                        <span className="font-bold text-lg text-slate-900 dark:text-white">{socialStats.following}</span>
+                        <span className="font-bold text-lg text-slate-900 dark:text-white">{stats.following}</span>
                         <span className="text-xs text-gray-500 uppercase tracking-wide">Takip</span>
                     </div>
                     <div className="flex flex-col items-center">
-                        <span className="font-bold text-lg text-slate-900 dark:text-white">{socialStats.likesReceived}</span>
+                        <span className="font-bold text-lg text-slate-900 dark:text-white">{stats.likes}</span>
                         <span className="text-xs text-gray-500 uppercase tracking-wide">Beğeni</span>
                     </div>
                 </div>
 
-                {/* Quick Actions */}
+                {/* Quick Actions - Updated Links */}
                 <div className="grid grid-cols-2 gap-3 w-full max-w-sm mb-8">
                     <Link href="/pet/ekle" className="flex items-center justify-center gap-2 p-3 bg-primary text-black font-bold rounded-xl shadow-lg shadow-primary/20 hover:bg-primary/90 transition-colors">
                         <span className="material-symbols-outlined">pets</span>
@@ -149,21 +232,21 @@ export default function ProfilPage() {
 
             {/* Stories Section (Horizontal Scroll) */}
             <div className="mb-6 border-b border-gray-100 dark:border-white/5 pb-4">
-                <div className="flex gap-4 overflow-x-auto px-4 hide-scrollbar snap-x">
+                <div className="flex gap-4 overflow-x-auto px-4 hide-scrollbar snap-x items-center">
                     {/* Add Story Card */}
-                    <div className="flex flex-col items-center gap-2 snap-center shrink-0">
-                        <div className="w-16 h-16 rounded-full border-2 border-dashed border-gray-300 flex items-center justify-center text-gray-400 bg-gray-50 dark:bg-white/5">
-                            <span className="material-symbols-outlined">history_edu</span>
+                    <button onClick={() => alert('Story özelliği yakında aktif!')} className="flex flex-col items-center gap-2 snap-center shrink-0">
+                        <div className="w-16 h-16 rounded-full border-2 border-dashed border-primary/50 flex items-center justify-center text-primary bg-primary/5 hover:bg-primary/10 transition-colors">
+                            <span className="material-symbols-outlined">add</span>
                         </div>
                         <span className="text-xs text-gray-500">Story Ekle</span>
-                    </div>
-                    {/* Sample Stories (Mock) */}
-                    {[1, 2, 3].map(i => (
-                        <div key={i} className="flex flex-col items-center gap-2 snap-center shrink-0">
+                    </button>
+                    {/* User Stories (Dynamic) */}
+                    {stories.map((story) => (
+                        <div key={story.id} className="flex flex-col items-center gap-2 snap-center shrink-0">
                             <div className="w-16 h-16 rounded-full p-[2px] bg-gradient-to-tr from-pink-500 to-orange-500">
-                                <img src={`https://picsum.photos/seed/${i}/100`} className="w-full h-full rounded-full object-cover border-2 border-white dark:border-black" />
+                                <img src={story.image_url} className="w-full h-full rounded-full object-cover border-2 border-white dark:border-black" />
                             </div>
-                            <span className="text-xs text-slate-700 dark:text-gray-300">Hikaye {i}</span>
+                            <span className="text-xs text-slate-700 dark:text-gray-300">Hikayem</span>
                         </div>
                     ))}
                 </div>
