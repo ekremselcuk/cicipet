@@ -245,14 +245,9 @@ export default function ProfilPage() {
                 </div>
                 {/* Story Uploader Modal */}
                 {uploadOpen && (
-                    <StoryUploader
-                        onClose={() => setUploadOpen(false)}
-                        onUploadSuccess={() => {
-                            // Re-fetch stories (simplified by forcing a reload or just append)
-                            // A reload is expensive. Ideally we add to state.
-                            // For simplicity in this edit: reload page or ignore since homepage feed has it.
-                            alert("Hikaye başarıyla oluşturuldu!");
-                            setUploadOpen(false);
+                    onUploadSuccess = {() => {
+                    alert("Hikaye başarıyla oluşturuldu! Sayfa yenileniyor...");
+                window.location.reload();
                         }}
                     />
                 )}

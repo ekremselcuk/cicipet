@@ -139,9 +139,10 @@ export default function StoryBar() {
 
             {/* Upload Modal */}
             {uploadOpen && (
-                <StoryUploader
-                    onClose={() => setUploadOpen(false)}
-                    onUploadSuccess={fetchStories}
+                onUploadSuccess = {() => {
+                alert("Hikaye başarıyla yüklendi!");
+            window.location.reload(); // Force reload to ensure cache update
+                    }}
                 />
             )}
 
