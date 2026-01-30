@@ -55,14 +55,14 @@ export default function PetFilters() {
                             defaultValue={searchParams.get('breed') || ''}
                             onChange={(e) => updateFilter('breed', e.target.value)}
                             className="w-full bg-gray-50 dark:bg-black/20 border-none rounded-lg text-sm px-3 py-2 disabled:opacity-50"
-                            disabled={!activeType || !BREEDS[activeType]}
+                            disabled={!activeType || !BREEDS[activeType.charAt(0).toUpperCase() + activeType.slice(1).toLowerCase()]}
                         >
                             {!activeType ? (
                                 <option value="">Önce Pet Türü Seçiniz</option>
                             ) : (
                                 <>
                                     <option value="">Tümü ({activeType})</option>
-                                    {BREEDS[activeType]?.map(b => (
+                                    {BREEDS[activeType.charAt(0).toUpperCase() + activeType.slice(1).toLowerCase()]?.map(b => (
                                         <option key={b} value={b}>{b}</option>
                                     ))}
                                 </>

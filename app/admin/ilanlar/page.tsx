@@ -4,6 +4,7 @@ import Link from "next/link";
 import MenuTrigger from "@/components/admin/MenuTrigger";
 import Pagination from "@/components/admin/Pagination";
 import AdFilters from "@/components/admin/AdFilters";
+import DeleteAdButton from "@/components/admin/DeleteAdButton";
 
 export const dynamic = 'force-dynamic';
 
@@ -194,11 +195,7 @@ export default async function AdminAdsPage({ searchParams }: { searchParams: { [
                                         </span>
                                         Detayı Gör
                                     </Link>
-                                    <button className="h-9 w-9 flex items-center justify-center rounded-lg bg-gray-50 dark:bg-white/5 hover:bg-red-500/20 hover:text-red-500 text-slate-600 dark:text-gray-300 transition-colors">
-                                        <span className="material-symbols-outlined text-[18px]">
-                                            delete
-                                        </span>
-                                    </button>
+                                    <DeleteAdButton id={ad.id} />
                                 </div>
                             </div>
                         ))

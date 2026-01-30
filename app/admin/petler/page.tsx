@@ -51,7 +51,13 @@ export default async function PetlerPage({ searchParams }: { searchParams: { [ke
             )
         `, { count: 'exact' });
 
-    if (typeFilter) query = query.ilike('type', `%${typeFilter}%`);
+    if (typeFilter) {
+        if (typeFilter === 'other') {
+            query = query.not('type', 'in', '("kedi","köpek","kuş","sürüngen")');
+        } else {
+            query = query.ilike('type', `%${typeFilter}%`);
+        }
+    }
     if (breedFilter) query = query.ilike('breed', `%${breedFilter}%`);
     if (ageFilter) query = query.eq('age', ageFilter);
     if (statusFilter) query = query.eq('status', statusFilter);

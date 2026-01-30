@@ -138,6 +138,10 @@ export async function createContest(formData: FormData) {
         return { success: true };
     } catch (e: any) {
         console.error('Create Contest Exception:', e);
-        return { error: e.message };
+        return {
+            error: e.message 
+export async function deleteAd(id: string) {
+            return rejectItem(id, 'ad');
+        };
     }
 }
