@@ -34,31 +34,22 @@ export default function CommentSection({ itemId, itemType }: CommentSectionProps
     const bottomRef = useRef<HTMLDivElement>(null);
 
     // Initial Fetch
+    // Initial Fetch
     useEffect(() => {
-        const fetchComments = async () => {
-            const { data } = await supabase
-                .from('comments')
-                .select('*, profiles(full_name, avatar_url)')
-                .eq('item_id', itemId)
-                .item_type(itemType) // Wait, supabase format is .eq('item_type', itemType)
-                .order('created_at', { ascending: true });
-
-            // Correction: .eq('item_type', itemType) manual check
-
-            // Re-query correctly
-            const { data: correctData, error } = await supabase
+        const fetchInitialComments = async () => {
+            const { data, error } = await supabase
                 .from('comments')
                 .select('*, profiles(full_name, avatar_url)')
                 .eq('item_id', itemId)
                 .eq('item_type', itemType)
                 .order('created_at', { ascending: true });
 
-            if (correctData) {
-                setComments(correctData as any[]);
+            if (data) {
+                setComments(data as any[]);
             }
         };
 
-        fetchComments();
+        fetchInitialComments();
 
         // Realtime Subscription
         const channel = supabase
