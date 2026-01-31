@@ -102,8 +102,8 @@ export default async function AdminPage() {
                             </p>
                         </div>
                     </Link>
-                    {/* Stat Card 4 - Contests (Static) */}
-                    <div className="flex flex-col gap-2 rounded-xl bg-white dark:bg-[#362b1b] p-4 shadow-sm border border-black/5 dark:border-transparent">
+                    {/* Stat Card 4 - Contests */}
+                    <Link href="/admin/yarisma" className="flex flex-col gap-2 rounded-xl bg-white dark:bg-[#362b1b] p-4 shadow-sm border border-black/5 dark:border-transparent hover:border-primary/50 transition-colors">
                         <div className="flex items-center gap-2">
                             <div className="flex h-8 w-8 items-center justify-center rounded-full bg-primary/20 text-primary">
                                 <span className="material-symbols-outlined text-lg">emoji_events</span>
@@ -111,10 +111,27 @@ export default async function AdminPage() {
                             <p className="text-slate-500 dark:text-[#cbb690] text-sm font-medium">Yarışmalar</p>
                         </div>
                         <div>
-                            <p className="text-slate-900 dark:text-white text-2xl font-bold">0</p>
-                            <p className="text-[#cbb690] text-xs font-medium">Yakında</p>
+                            <p className="text-slate-900 dark:text-white text-2xl font-bold">-</p>
+                            <p className="text-[#cbb690] text-xs font-medium">Yönetmek için tıkla</p>
                         </div>
-                    </div>
+                    </Link>
+
+                    {/* Stat Card 5 - Events (NEW) */}
+                    <Link href="/admin/etkinlikler" className="flex flex-col gap-2 rounded-xl bg-white dark:bg-[#362b1b] p-4 shadow-sm border border-black/5 dark:border-transparent hover:border-primary/50 transition-colors col-span-2">
+                        <div className="flex items-center gap-2">
+                            <div className="flex h-8 w-8 items-center justify-center rounded-full bg-purple-500/20 text-purple-600 dark:text-purple-400">
+                                <span className="material-symbols-outlined text-lg">celebration</span>
+                            </div>
+                            <p className="text-slate-500 dark:text-[#cbb690] text-sm font-medium">Özel Etkinlikler</p>
+                        </div>
+                        <div className="flex justify-between items-end">
+                            <div>
+                                <p className="text-slate-900 dark:text-white text-2xl font-bold">-</p>
+                                <p className="text-purple-500 dark:text-purple-400 text-xs font-medium">Yönetmek için tıkla</p>
+                            </div>
+                            <span className="material-symbols-outlined text-gray-300 dark:text-gray-600 text-4xl">arrow_forward</span>
+                        </div>
+                    </Link>
                 </div>
             </div>
 
