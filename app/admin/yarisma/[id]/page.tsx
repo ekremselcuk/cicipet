@@ -4,7 +4,8 @@ import { redirect } from "next/navigation";
 import Link from "next/link";
 import ContestEditForm from "@/components/admin/ContestEditForm";
 
-export default async function AdminContestDetailPage({ params }: { params: { id: string } }) {
+export default async function AdminContestDetailPage(props: { params: Promise<{ id: string }> }) {
+    const params = await props.params;
     await requireAdmin();
     const supabase = await createClient();
     const id = params.id;

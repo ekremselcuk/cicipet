@@ -132,9 +132,9 @@ export default async function AdminContestsPage({ searchParams }: { searchParams
                                         <span className="material-symbols-outlined text-[18px]">visibility</span>
                                         Detayı Gör
                                     </Link>
-                                    <button className="h-9 w-9 flex items-center justify-center rounded-lg bg-gray-50 dark:bg-white/5 hover:bg-primary/20 hover:text-primary text-slate-600 dark:text-gray-300 transition-colors">
+                                    <Link href={`/admin/yarisma/${contest.id}`} className="h-9 w-9 flex items-center justify-center rounded-lg bg-gray-50 dark:bg-white/5 hover:bg-primary/20 hover:text-primary text-slate-600 dark:text-gray-300 transition-colors">
                                         <span className="material-symbols-outlined text-[18px]">edit</span>
-                                    </button>
+                                    </Link>
                                 </div>
                             </div>
                         ))
