@@ -78,10 +78,15 @@ export default function ProfilPage() {
                 // 5. Fetch Stories
                 const { data: userStories } = await supabase
                     .from('stories')
-                    .select('*, likes(count), comments(count)')
+                    .select('*') // Simplify select to debug, client uses mapping anyway
                     .eq('user_id', currentUser.id)
-                    // .gt('expires_at', new Date().toISOString()) // Allow all stories for now
                     .order('created_at', { ascending: false });
+
+                // Manually fetch interaction counts locally if join fails or complicates things
+                // For profile view, exact count isn't super critical but good to have.
+                // Let's rely on RPC if possible or simple select.
+                // The previous select '*, likes(count)' works if foreign keys exist.
+                // Let's revert to simple select for stability and see if items appear.
                 setStories(userStories || []);
 
                 // 6. Fetch Real Stats

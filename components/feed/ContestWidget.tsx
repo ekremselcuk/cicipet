@@ -10,16 +10,13 @@ export default function ContestWidget() {
 
     useEffect(() => {
         const fetchContest = async () => {
-            // Fetch a separate active contest, or specifically one marked for widget
-            // For now, fetch the second active one (since first is featured) or just a random one
+            // Fetch from new 'events' table
             const { data } = await supabase
-                .from('contests')
-                .select('*')
+                .from('events')
                 .select('*')
                 .eq('status', 'active')
-                .eq('widget_placement', 'main_widget') // Only show if placed here
-                .limit(1)
-                .order('created_at', { ascending: false });
+                .order('created_at', { ascending: false })
+                .limit(1);
 
             if (data && data.length > 0) {
                 setContest(data[0]);
