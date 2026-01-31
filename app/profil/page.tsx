@@ -394,6 +394,46 @@ export default function ProfilPage() {
                             </div>
                         )
                     )}
+
+                    {activeTab === 'saved' && (
+                        savedItems.length > 0 ? (
+                            <div className="col-span-3 grid grid-cols-3 gap-3">
+                                {savedItems.map(item => (
+                                    <Link href={item.type === 'story' ? '/hikayeler' : item.type === 'pet' ? `/pet/${item.id}` : `/ilanlar/${item.id}`} key={item.id} className="group relative aspect-square rounded-xl overflow-hidden bg-gray-100 dark:bg-surface-dark">
+                                        <img src={item.type === 'ad' ? item.photo_url : item.image_url} className="w-full h-full object-cover" />
+                                        <div className="absolute top-2 right-2 px-2 py-0.5 rounded bg-black/60 text-white text-[10px] uppercase font-bold backdrop-blur-sm">
+                                            {item.type === 'pet' ? 'Pet' : item.type === 'ad' ? 'İlan' : 'Hikaye'}
+                                        </div>
+                                    </Link>
+                                ))}
+                            </div>
+                        ) : (
+                            <div className="col-span-3 text-center py-12 text-gray-400 bg-gray-50 dark:bg-white/5 rounded-xl border border-dashed border-gray-200 dark:border-white/10">
+                                <span className="material-symbols-outlined text-4xl mb-2">bookmark</span>
+                                <p>Henüz kaydedilen bir içerik yok.</p>
+                            </div>
+                        )
+                    )}
+
+                    {activeTab === 'saved' && (
+                        savedItems.length > 0 ? (
+                            <div className="col-span-3 grid grid-cols-3 gap-3">
+                                {savedItems.map(item => (
+                                    <Link href={item.type === 'story' ? '/hikayeler' : item.type === 'pet' ? `/pet/${item.id}` : `/ilanlar/${item.id}`} key={item.id} className="group relative aspect-square rounded-xl overflow-hidden bg-gray-100 dark:bg-surface-dark">
+                                        <img src={item.type === 'ad' ? item.photo_url : item.image_url} className="w-full h-full object-cover" />
+                                        <div className="absolute top-2 right-2 px-2 py-0.5 rounded bg-black/60 text-white text-[10px] uppercase font-bold backdrop-blur-sm">
+                                            {item.type === 'pet' ? 'Pet' : item.type === 'ad' ? 'İlan' : 'Hikaye'}
+                                        </div>
+                                    </Link>
+                                ))}
+                            </div>
+                        ) : (
+                            <div className="col-span-3 text-center py-12 text-gray-400 bg-gray-50 dark:bg-white/5 rounded-xl border border-dashed border-gray-200 dark:border-white/10">
+                                <span className="material-symbols-outlined text-4xl mb-2">bookmark</span>
+                                <p>Henüz kaydedilen bir içerik yok.</p>
+                            </div>
+                        )
+                    )}
                 </div>
             </div>
 

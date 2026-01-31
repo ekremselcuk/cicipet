@@ -12,17 +12,16 @@ export default function StoriesPage() {
 
     useEffect(() => {
         const fetchStories = async () => {
-            // Fetch all active stories
-            const { data, error } = await supabase
-                .from('stories')
-                .select(`
-                    *,
-                    profiles(full_name, avatar_url, id)
-                `)
-                .order('created_at', { ascending: false })
-                .limit(50); // Reasonable limit for now
+            const { data: { user } } = await supabase.auth.getUser();
+
+            // Use RPC to get interactions (likes, etc.) correct everywhere
+            const { data, error } = await supabase.rpc('get_stories_with_interactions', {
+                p_user_id: user?.id || '00000000-0000-0000-0000-000000000000',
+                p_limit: 50
+            });
 
             if (data) {
+                // Map RPC result to FeedItemType
                 const items: FeedItemType[] = data.map((s: any) => ({
                     id: s.id,
                     type: 'story',
@@ -34,15 +33,14 @@ export default function StoriesPage() {
                     user_id: s.user_id,
                     profiles: {
                         id: s.user_id,
-                        full_name: s.profiles?.full_name || 'Kullanıcı',
-                        avatar_url: s.profiles?.avatar_url || 'https://via.placeholder.com/150'
+                        full_name: s.full_name || 'Kullanıcı',
+                        avatar_url: s.avatar_url || 'https://via.placeholder.com/150'
                     },
-                    likes_count: 0, // Ideally fetch counts or use RPC if needed
-                    comments_count: 0
+                    likes_count: s.likes_count || 0,
+                    comments_count: s.comments_count || 0,
+                    is_liked: s.is_liked,
+                    is_bookmarked: s.is_bookmarked
                 }));
-                // Try to fetch interaction counts if possible, or trust client components to fetch self status
-                // For simplicity, we assume client components (LikeButton) fetch their own status.
-                // But counts might be 0 initially.
                 setStories(items);
             }
             setLoading(false);
