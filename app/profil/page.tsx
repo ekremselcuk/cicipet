@@ -120,9 +120,6 @@ export default function ProfilPage() {
                     .order('created_at', { ascending: false });
 
                 if (bookmarks && bookmarks.length > 0) {
-                    // We need to fetch details for each bookmark. This is expensive in loop.
-                    // Ideally we used a view. For now, we will just store raw bookmarks and fetch on demand or simple mock.
-                    // Actually, let's fetch details for them.
                     const enrichedBookmarks = await Promise.all(bookmarks.map(async (b) => {
                         const table = b.item_type === 'pet' ? 'pets' : b.item_type === 'ad' ? 'ads' : 'stories';
                         const { data: item } = await supabase.from(table).select('*').eq('id', b.item_id).single();
@@ -131,6 +128,8 @@ export default function ProfilPage() {
                     }));
                     setSavedItems(enrichedBookmarks.filter(Boolean));
                 }
+
+
 
             } catch (err) {
                 console.error("Data load error:", err);
