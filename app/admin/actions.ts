@@ -112,6 +112,7 @@ export async function createContest(formData: FormData) {
         const end_date = formData.get('end_date') as string;
         // Image handling would ideally go here, using a placeholder for now if not uploaded
         const image_url = 'https://images.unsplash.com/photo-1514888286974-6c03e2ca1dba';
+        const widget_placement = formData.get('widget_placement') as string || 'none';
 
         const requirements = requirementsStr ? JSON.parse(requirementsStr) : {};
 
@@ -125,7 +126,8 @@ export async function createContest(formData: FormData) {
                 start_date: new Date(start_date).toISOString(),
                 end_date: new Date(end_date).toISOString(),
                 image_url,
-                status: 'active'
+                status: 'active',
+                widget_placement
             })
             .select();
 

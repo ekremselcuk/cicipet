@@ -107,6 +107,14 @@ export default function AddContestPage() {
                     <input type="hidden" name="category" value={selectedCategory?.value || ''} required />
                 </div>
 
+                <div>
+                    <label className="block text-sm font-bold mb-1">Anasayfa Widget Yerleşimi</label>
+                    <select name="widget_placement" className="w-full bg-gray-50 dark:bg-black/20 border-none rounded-lg p-3">
+                        <option value="none">Gösterme (Sadece Liste)</option>
+                        <option value="main_widget">Anasayfa Vitrin (Hikayelerin Altı)</option>
+                    </select>
+                </div>
+
                 <div className="grid grid-cols-2 gap-4">
                     <div>
                         <label className="block text-sm font-bold mb-1">Başlangıç Tarihi</label>

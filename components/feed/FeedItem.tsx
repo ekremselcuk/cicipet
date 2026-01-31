@@ -13,6 +13,7 @@ import CommentSection from '../social/CommentSection';
 import ShareButton from '../social/ShareButton';
 import BookmarkButton from '../social/BookmarkButton';
 import FollowButton from '../social/FollowButton';
+import StoryModal from './StoryModal';
 import { createClient } from '@/utils/supabase/client';
 import { useEffect } from 'react';
 
@@ -21,6 +22,7 @@ const formatter = buildFormatter(trStrings);
 export default function FeedItem({ item }: { item: FeedItemType }) {
     const [showComments, setShowComments] = useState(false);
     const [isOwner, setIsOwner] = useState(false);
+    const [isStoryModalOpen, setStoryModalOpen] = useState(false);
 
     // Check ownership on mount
     const [supabase] = useState(() => createClient()); // Simple client init
@@ -99,7 +101,12 @@ export default function FeedItem({ item }: { item: FeedItemType }) {
 
             {/* Content Media */}
             <div className="w-full aspect-square bg-black relative flex items-center justify-center">
-                <Link href={detailLink} className="w-full h-full">
+                <Link href={detailLink} onClick={(e) => {
+                    if (item.type === 'story') {
+                        e.preventDefault();
+                        setStoryModalOpen(true);
+                    }
+                }} className="w-full h-full">
                     {/* Centered Image with Contain for stories to look better */}
                     <img
                         src={item.image_url || 'https://via.placeholder.com/600'}
@@ -132,7 +139,13 @@ export default function FeedItem({ item }: { item: FeedItemType }) {
                     // initialLiked logic handled by component or passed if we fetch it
                     />
                     <button
-                        onClick={() => setShowComments(!showComments)}
+                        onClick={() => {
+                            if (item.type === 'story') {
+                                setStoryModalOpen(true);
+                            } else {
+                                setShowComments(!showComments);
+                            }
+                        }}
                         className="group flex items-center gap-1.5 text-neutral-600 dark:text-neutral-300 hover:text-blue-500 transition-colors"
                     >
                         <span className="material-symbols-outlined text-[20px] group-hover:fill animate-pulse">chat_bubble</span>
@@ -163,6 +176,11 @@ export default function FeedItem({ item }: { item: FeedItemType }) {
                     </div>
                 </div>
             )}
+            <StoryModal
+                story={item}
+                isOpen={isStoryModalOpen}
+                onClose={() => setStoryModalOpen(false)}
+            />
         </article>
     );
 }
