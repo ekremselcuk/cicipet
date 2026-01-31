@@ -10,6 +10,7 @@ import ShareButton from "@/components/social/ShareButton";
 import PhotoUploader from "@/components/form/PhotoUploader";
 import StoryUploader from "@/components/social/StoryUploader";
 import FeedItem from "@/components/feed/FeedItem";
+import StoryModal from "@/components/feed/StoryModal";
 import { FeedItemType } from "@/utils/supabase/feed";
 
 export default function ProfilPage() {
@@ -35,6 +36,7 @@ export default function ProfilPage() {
     const [ads, setAds] = useState<any[]>([]);
     const [stories, setStories] = useState<any[]>([]);
     const [savedItems, setSavedItems] = useState<any[]>([]);
+    const [selectedStory, setSelectedStory] = useState<any>(null);
     const [stats, setStats] = useState({ followers: 0, following: 0, likes: 0 });
 
     useEffect(() => {
@@ -76,7 +78,7 @@ export default function ProfilPage() {
                 // 5. Fetch Stories
                 const { data: userStories } = await supabase
                     .from('stories')
-                    .select('*')
+                    .select('*, likes(count), comments(count)')
                     .eq('user_id', currentUser.id)
                     // .gt('expires_at', new Date().toISOString()) // Allow all stories for now
                     .order('created_at', { ascending: false });
@@ -398,14 +400,30 @@ export default function ProfilPage() {
                     {activeTab === 'saved' && (
                         savedItems.length > 0 ? (
                             <div className="col-span-3 grid grid-cols-3 gap-3">
-                                {savedItems.map(item => (
-                                    <Link href={item.type === 'story' ? '/hikayeler' : item.type === 'pet' ? `/pet/${item.id}` : `/ilanlar/${item.id}`} key={item.id} className="group relative aspect-square rounded-xl overflow-hidden bg-gray-100 dark:bg-surface-dark">
-                                        <img src={item.type === 'ad' ? item.photo_url : item.image_url} className="w-full h-full object-cover" />
-                                        <div className="absolute top-2 right-2 px-2 py-0.5 rounded bg-black/60 text-white text-[10px] uppercase font-bold backdrop-blur-sm">
-                                            {item.type === 'pet' ? 'Pet' : item.type === 'ad' ? 'İlan' : 'Hikaye'}
-                                        </div>
-                                    </Link>
-                                ))}
+                                {savedItems.map(item => {
+                                    if (item.type === 'story') {
+                                        return (
+                                            <div
+                                                key={item.id}
+                                                onClick={() => setSelectedStory(item)}
+                                                className="group relative aspect-square rounded-xl overflow-hidden bg-gray-100 dark:bg-surface-dark cursor-pointer"
+                                            >
+                                                <img src={item.image_url} className="w-full h-full object-cover" />
+                                                <div className="absolute top-2 right-2 px-2 py-0.5 rounded bg-black/60 text-white text-[10px] uppercase font-bold backdrop-blur-sm">
+                                                    Hikaye
+                                                </div>
+                                            </div>
+                                        );
+                                    }
+                                    return (
+                                        <Link href={item.type === 'pet' ? `/pet/${item.id}` : `/ilanlar/${item.id}`} key={item.id} className="group relative aspect-square rounded-xl overflow-hidden bg-gray-100 dark:bg-surface-dark">
+                                            <img src={item.type === 'ad' ? item.photo_url : item.image_url} className="w-full h-full object-cover" />
+                                            <div className="absolute top-2 right-2 px-2 py-0.5 rounded bg-black/60 text-white text-[10px] uppercase font-bold backdrop-blur-sm">
+                                                {item.type === 'pet' ? 'Pet' : 'İlan'}
+                                            </div>
+                                        </Link>
+                                    );
+                                })}
                             </div>
                         ) : (
                             <div className="col-span-3 text-center py-12 text-gray-400 bg-gray-50 dark:bg-white/5 rounded-xl border border-dashed border-gray-200 dark:border-white/10">
@@ -415,25 +433,7 @@ export default function ProfilPage() {
                         )
                     )}
 
-                    {activeTab === 'saved' && (
-                        savedItems.length > 0 ? (
-                            <div className="col-span-3 grid grid-cols-3 gap-3">
-                                {savedItems.map(item => (
-                                    <Link href={item.type === 'story' ? '/hikayeler' : item.type === 'pet' ? `/pet/${item.id}` : `/ilanlar/${item.id}`} key={item.id} className="group relative aspect-square rounded-xl overflow-hidden bg-gray-100 dark:bg-surface-dark">
-                                        <img src={item.type === 'ad' ? item.photo_url : item.image_url} className="w-full h-full object-cover" />
-                                        <div className="absolute top-2 right-2 px-2 py-0.5 rounded bg-black/60 text-white text-[10px] uppercase font-bold backdrop-blur-sm">
-                                            {item.type === 'pet' ? 'Pet' : item.type === 'ad' ? 'İlan' : 'Hikaye'}
-                                        </div>
-                                    </Link>
-                                ))}
-                            </div>
-                        ) : (
-                            <div className="col-span-3 text-center py-12 text-gray-400 bg-gray-50 dark:bg-white/5 rounded-xl border border-dashed border-gray-200 dark:border-white/10">
-                                <span className="material-symbols-outlined text-4xl mb-2">bookmark</span>
-                                <p>Henüz kaydedilen bir içerik yok.</p>
-                            </div>
-                        )
-                    )}
+
                 </div>
             </div>
 
@@ -459,6 +459,13 @@ export default function ProfilPage() {
                     </Link>
                 </div>
             </nav>
-        </main>
+            </nav>
+
+            <StoryModal 
+                story={selectedStory} 
+                isOpen={!!selectedStory} 
+                onClose={() => setSelectedStory(null)} 
+            />
+        </main >
     );
 }
