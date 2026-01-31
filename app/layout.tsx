@@ -14,6 +14,10 @@ export const metadata: Metadata = {
   title: "CiciPet",
   description: "Evcil hayvan sahipleri için topluluk uygulaması",
   manifest: "/manifest.json",
+  icons: {
+    icon: "/icons/icon-192x192.png",
+    apple: "/icons/icon-192x192.png",
+  },
 };
 
 export default function RootLayout({

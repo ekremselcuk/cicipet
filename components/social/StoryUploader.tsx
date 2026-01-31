@@ -29,31 +29,55 @@ export default function StoryUploader({ onClose, onUploadSuccess }: StoryUploade
             const result = await analyzeImage(file);
             if (!result.valid) {
                 alert(`Hikaye Paylaşılamadı: ${result.reason}`);
+                setLoading(false);
                 return;
             }
 
-            // 1. Upload Image (Real Storage - if bucket exists, otherwise mock)
-            // Ideally: const { data, error } = await supabase.storage.from('stories').upload(...)
-            // For now, consistent with other parts, sticking to mock URL or implementing real upload if bucket known.
-            // User didn't specify bucket, but I should try to support text at least.
+            // 1. Upload Image
+            const fileExt = file.name.split('.').pop();
+            const fileName = `${user.id}-${Date.now()}.${fileExt}`;
+            const filePath = `${fileName}`;
 
-            // Mock URL for demo (or real upload logic if we could verify bucket)
-            const mockStoryUrl = "https://images.unsplash.com/photo-1543466835-00a7907e9de1?auto=format&fit=crop&q=80";
+            // Try uploading to 'stories' bucket
+            let { error: uploadError } = await supabase.storage
+                .from('stories')
+                .upload(filePath, file);
+
+            if (uploadError) {
+                // If stories bucket doesn't exist, try 'public' or 'images'
+                // This is a last resort fallback attempt
+                console.warn("Stories bucket upload failed, trying 'images'...", uploadError);
+                const { error: fallbackError } = await supabase.storage
+                    .from('images')
+                    .upload(`stories/${filePath}`, file);
+
+                if (fallbackError) {
+                    console.error("Upload failed:", fallbackError);
+                    throw new Error("Görsel yüklenemedi. Lütfen 'stories' depolama alanının oluşturulduğundan emin olun.");
+                }
+
+                // If fallback worked, get URL
+                const { data: { publicUrl } } = supabase.storage.from('images').getPublicUrl(`stories/${filePath}`);
+                var finalUrl = publicUrl;
+            } else {
+                const { data: { publicUrl } } = supabase.storage.from('stories').getPublicUrl(filePath);
+                var finalUrl = publicUrl;
+            }
 
             // 2. Insert into Stories
             const expiresAt = new Date();
             expiresAt.setHours(expiresAt.getHours() + 24);
 
-            const { error } = await supabase.from('stories').insert({
+            const { error: insertError } = await supabase.from('stories').insert({
                 user_id: user.id,
-                image_url: mockStoryUrl,
+                image_url: finalUrl,
                 type: 'image',
-                title: title,     // Insert Title
-                caption: caption, // Added caption field support if DB has it, otherwise it's just local state for now
+                title: title,
+                caption: caption,
                 expires_at: expiresAt.toISOString()
             });
 
-            if (error) throw error;
+            if (insertError) throw insertError;
 
             onUploadSuccess();
             onClose();
