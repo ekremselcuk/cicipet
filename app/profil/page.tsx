@@ -459,12 +459,12 @@ export default function ProfilPage() {
                     </Link>
                 </div>
             </nav>
-            </nav>
 
-            <StoryModal 
-                story={selectedStory} 
-                isOpen={!!selectedStory} 
-                onClose={() => setSelectedStory(null)} 
+
+            <StoryModal
+                story={selectedStory}
+                isOpen={!!selectedStory}
+                onClose={() => setSelectedStory(null)}
             />
         </main >
     );
