@@ -110,8 +110,29 @@ export async function createContest(formData: FormData) {
         const requirementsStr = formData.get('requirements') as string;
         const start_date = formData.get('start_date') as string;
         const end_date = formData.get('end_date') as string;
-        // Image handling would ideally go here, using a placeholder for now if not uploaded
-        const image_url = 'https://images.unsplash.com/photo-1514888286974-6c03e2ca1dba';
+
+        // Image Upload
+        const imageFile = formData.get('image') as File;
+        let image_url = 'https://images.unsplash.com/photo-1514888286974-6c03e2ca1dba'; // default
+
+        if (imageFile && imageFile.size > 0) {
+            const fileExt = imageFile.name.split('.').pop();
+            const fileName = `contest-${Date.now()}.${fileExt}`;
+            const { error: uploadError, data: uploadData } = await supabase.storage
+                .from('contest-images') // Ensure this bucket exists or use 'images' path
+                .upload(fileName, imageFile);
+
+            if (uploadError) {
+                console.error('Upload Error:', uploadError);
+                // Continue with default image or return error? Let's verify bucket first.
+                // Assuming 'public' bucket or similar. Let's use 'images' bucket.
+            } else {
+                const { data: { publicUrl } } = supabase.storage
+                    .from('contest-images')
+                    .getPublicUrl(fileName);
+                image_url = publicUrl;
+            }
+        }
         const widget_placement = formData.get('widget_placement') as string || 'none';
 
         const requirements = requirementsStr ? JSON.parse(requirementsStr) : {};

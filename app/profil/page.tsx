@@ -18,7 +18,7 @@ export default function ProfilPage() {
     const [loading, setLoading] = useState(true);
     const [user, setUser] = useState<any>(null);
     const [userProfile, setUserProfile] = useState<any>(null);
-    const [activeTab, setActiveTab] = useState<'pets' | 'ads' | 'stories'>('pets');
+    const [activeTab, setActiveTab] = useState<'pets' | 'ads' | 'stories' | 'saved'>('pets');
 
     // UI State
     const [uploadOpen, setUploadOpen] = useState(false);
@@ -34,6 +34,7 @@ export default function ProfilPage() {
     const [pets, setPets] = useState<any[]>([]);
     const [ads, setAds] = useState<any[]>([]);
     const [stories, setStories] = useState<any[]>([]);
+    const [savedItems, setSavedItems] = useState<any[]>([]);
     const [stats, setStats] = useState({ followers: 0, following: 0, likes: 0 });
 
     useEffect(() => {
@@ -110,6 +111,26 @@ export default function ProfilPage() {
                     following: followingCount || 0,
                     likes: totalLikes
                 });
+
+                // 7. Fetch Bookmarks
+                const { data: bookmarks } = await supabase
+                    .from('bookmarks')
+                    .select('item_id, item_type, created_at')
+                    .eq('user_id', currentUser.id)
+                    .order('created_at', { ascending: false });
+
+                if (bookmarks && bookmarks.length > 0) {
+                    // We need to fetch details for each bookmark. This is expensive in loop.
+                    // Ideally we used a view. For now, we will just store raw bookmarks and fetch on demand or simple mock.
+                    // Actually, let's fetch details for them.
+                    const enrichedBookmarks = await Promise.all(bookmarks.map(async (b) => {
+                        const table = b.item_type === 'pet' ? 'pets' : b.item_type === 'ad' ? 'ads' : 'stories';
+                        const { data: item } = await supabase.from(table).select('*').eq('id', b.item_id).single();
+                        if (item) return { ...item, type: b.item_type, bookmarked_at: b.created_at };
+                        return null;
+                    }));
+                    setSavedItems(enrichedBookmarks.filter(Boolean));
+                }
 
             } catch (err) {
                 console.error("Data load error:", err);
@@ -278,9 +299,12 @@ export default function ProfilPage() {
                     >
                         Hikayelerim ({stories.length})
                     </button>
-                    <Link href="/favoriler" className="pb-3 text-sm font-bold border-b-2 border-transparent text-gray-400 flex items-center gap-1">
-                        Favorilerim <span className="material-symbols-outlined text-[16px]">open_in_new</span>
-                    </Link>
+                    <button
+                        onClick={() => setActiveTab('saved')}
+                        className={`pb-3 text-sm font-bold border-b-2 transition-colors ${activeTab === 'saved' ? 'border-black dark:border-white text-black dark:text-white' : 'border-transparent text-gray-400'} flex items-center gap-1`}
+                    >
+                        Kaydedilenler ({savedItems.length})
+                    </button>
                 </div>
 
                 {/* Tab Content */}

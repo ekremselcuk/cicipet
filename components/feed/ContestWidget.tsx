@@ -15,9 +15,11 @@ export default function ContestWidget() {
             const { data } = await supabase
                 .from('contests')
                 .select('*')
-                .eq('is_active', true)
+                .select('*')
+                .eq('status', 'active')
+                .eq('widget_placement', 'main_widget') // Only show if placed here
                 .limit(1)
-                .order('created_at', { ascending: true }); // Get an older active one maybe?
+                .order('created_at', { ascending: false });
 
             if (data && data.length > 0) {
                 setContest(data[0]);

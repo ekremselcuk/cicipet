@@ -79,6 +79,13 @@ export default function AddContestPage() {
                 </div>
 
                 <div>
+                    <label className="block text-sm font-bold mb-1">Yarışma Görseli</label>
+                    {/* @ts-ignore */}
+                    <input type="file" name="image" accept="image/*" className="w-full bg-gray-50 dark:bg-black/20 border-none rounded-lg p-3" />
+                    <p className="text-xs text-gray-400 mt-1">Önerilen: 1200x600px, max 5MB</p>
+                </div>
+
+                <div>
                     <label className="block text-sm font-bold mb-1">Açıklama</label>
                     <textarea name="description" rows={3} placeholder="Yarışma detayları..." className="w-full bg-gray-50 dark:bg-black/20 border-none rounded-lg p-3" />
                 </div>

@@ -55,7 +55,9 @@ export default function LatestStories() {
                         .limit(3);
 
                     if (simpleData) {
-                        const simpleMapped: FeedItemType[] = simpleData.map((s: any) => ({
+                        // Force slice to be sure
+                        const limitedData = simpleData.slice(0, 3);
+                        const simpleMapped: FeedItemType[] = limitedData.map((s: any) => ({
                             id: s.id, type: 'story', subType: 'story', title: s.title, description: s.caption,
                             image_url: s.image_url, created_at: s.created_at, user_id: s.user_id,
                             profiles: s.profiles, likes_count: 0, comments_count: 0, is_liked: false
@@ -84,7 +86,7 @@ export default function LatestStories() {
                     <span className="material-symbols-outlined text-primary">history_edu</span>
                     Son Hikayeler
                 </h3>
-                <Link href="/profil?tab=stories" className="text-xs font-bold text-primary hover:underline">
+                <Link href="/hikayeler" className="text-xs font-bold text-primary hover:underline">
                     Tümünü Gör
                 </Link>
             </div>
@@ -95,7 +97,7 @@ export default function LatestStories() {
                 ))}
             </div>
 
-            <Link href="/profil?tab=stories" className="block text-center text-sm font-bold text-gray-500 hover:text-primary py-2 border-t border-gray-100 dark:border-white/5">
+            <Link href="/hikayeler" className="block text-center text-sm font-bold text-gray-500 hover:text-primary py-2 border-t border-gray-100 dark:border-white/5">
                 Tümünü Gör
             </Link>
         </section>

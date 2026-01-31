@@ -61,7 +61,7 @@ export async function getFeedItems(supabase: SupabaseClient): Promise<FeedItemTy
         `)
         // .gt('expires_at', new Date().toISOString()) 
         .order('created_at', { ascending: false })
-        .limit(20);
+        .limit(0); // Don't fetch stories for main feed for now, as they are in top widget
 
     if (storiesError) console.error('Error fetching stories for feed:', storiesError);
 
