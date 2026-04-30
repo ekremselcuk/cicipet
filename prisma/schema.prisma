@@ -1,0 +1,287 @@
+generator client {
+  provider = "prisma-client"
+  output   = "../src/generated/prisma"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+// ─── Enums ───────────────────────────────────────────────────────────────────
+
+enum UserRole {
+  USER
+  MODERATOR
+  ADMIN
+}
+
+enum PetSpecies {
+  DOG
+  CAT
+  BIRD
+  RABBIT
+  FISH
+  REPTILE
+  OTHER
+}
+
+enum PetGender {
+  MALE
+  FEMALE
+  UNKNOWN
+}
+
+enum ListingType {
+  ADOPTION
+  LOST
+  FOUND
+  MATING
+  SALE
+}
+
+enum ListingStatus {
+  ACTIVE
+  CLOSED
+  EXPIRED
+}
+
+enum ContestStatus {
+  UPCOMING
+  ACTIVE
+  ENDED
+}
+
+enum MatchStatus {
+  PENDING
+  MATCHED
+  REJECTED
+}
+
+enum NotificationType {
+  MATCH
+  MESSAGE
+  CONTEST_RESULT
+  LISTING_INQUIRY
+  SYSTEM
+}
+
+enum ModerationAction {
+  WARNING
+  CONTENT_REMOVED
+  USER_SUSPENDED
+  USER_BANNED
+}
+
+// ─── Models ──────────────────────────────────────────────────────────────────
+
+model User {
+  id            String   @id @default(cuid())
+  email         String   @unique
+  username      String   @unique
+  name          String?
+  avatarUrl     String?
+  bio           String?
+  phone         String?
+  city          String?
+  country       String?
+  role          UserRole @default(USER)
+  emailVerified Boolean  @default(false)
+  isActive      Boolean  @default(true)
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+
+  pets              Pet[]
+  listings          Listing[]
+  contestEntries    ContestEntry[]
+  contestVotes      ContestVote[]
+  petMatchesAsUser1 PetMatch[]                @relation("MatchUser1")
+  petMatchesAsUser2 PetMatch[]                @relation("MatchUser2")
+  conversations     ConversationParticipant[]
+  messages          Message[]
+  notifications     Notification[]
+  moderationLogs    ModerationLog[]           @relation("ModeratedUser")
+  moderatorActions  ModerationLog[]           @relation("Moderator")
+}
+
+model Pet {
+  id           String     @id @default(cuid())
+  ownerId      String
+  name         String
+  species      PetSpecies
+  breed        String?
+  gender       PetGender  @default(UNKNOWN)
+  birthDate    DateTime?
+  weight       Float?
+  color        String?
+  bio          String?
+  isVaccinated Boolean    @default(false)
+  isNeutered   Boolean    @default(false)
+  city         String?
+  country      String?
+  isActive     Boolean    @default(true)
+  createdAt    DateTime   @default(now())
+  updatedAt    DateTime   @updatedAt
+
+  owner          User           @relation(fields: [ownerId], references: [id], onDelete: Cascade)
+  photos         PetPhoto[]
+  listings       Listing[]
+  contestEntries ContestEntry[]
+  matchesAsA     PetMatch[]     @relation("MatchPetA")
+  matchesAsB     PetMatch[]     @relation("MatchPetB")
+}
+
+model PetPhoto {
+  id        String   @id @default(cuid())
+  petId     String
+  url       String
+  caption   String?
+  isMain    Boolean  @default(false)
+  order     Int      @default(0)
+  createdAt DateTime @default(now())
+
+  pet Pet @relation(fields: [petId], references: [id], onDelete: Cascade)
+}
+
+model Listing {
+  id          String        @id @default(cuid())
+  userId      String
+  petId       String?
+  type        ListingType
+  status      ListingStatus @default(ACTIVE)
+  title       String
+  description String
+  city        String?
+  country     String?
+  price       Float?
+  contactInfo String?
+  expiresAt   DateTime?
+  createdAt   DateTime      @default(now())
+  updatedAt   DateTime      @updatedAt
+
+  user User  @relation(fields: [userId], references: [id], onDelete: Cascade)
+  pet  Pet?  @relation(fields: [petId], references: [id], onDelete: SetNull)
+}
+
+model Contest {
+  id          String        @id @default(cuid())
+  title       String
+  description String
+  status      ContestStatus @default(UPCOMING)
+  startDate   DateTime
+  endDate     DateTime
+  prize       String?
+  coverImage  String?
+  createdAt   DateTime      @default(now())
+  updatedAt   DateTime      @updatedAt
+
+  entries ContestEntry[]
+}
+
+model ContestEntry {
+  id          String   @id @default(cuid())
+  contestId   String
+  petId       String
+  userId      String
+  photoUrl    String
+  description String?
+  createdAt   DateTime @default(now())
+
+  contest Contest       @relation(fields: [contestId], references: [id], onDelete: Cascade)
+  pet     Pet           @relation(fields: [petId], references: [id], onDelete: Cascade)
+  user    User          @relation(fields: [userId], references: [id], onDelete: Cascade)
+  votes   ContestVote[]
+
+  @@unique([contestId, petId])
+}
+
+model ContestVote {
+  id        String   @id @default(cuid())
+  entryId   String
+  userId    String
+  createdAt DateTime @default(now())
+
+  entry ContestEntry @relation(fields: [entryId], references: [id], onDelete: Cascade)
+  user  User         @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([entryId, userId])
+}
+
+model PetMatch {
+  id        String      @id @default(cuid())
+  petAId    String
+  petBId    String
+  user1Id   String
+  user2Id   String
+  status    MatchStatus @default(PENDING)
+  createdAt DateTime    @default(now())
+  updatedAt DateTime    @updatedAt
+
+  petA  Pet  @relation("MatchPetA", fields: [petAId], references: [id], onDelete: Cascade)
+  petB  Pet  @relation("MatchPetB", fields: [petBId], references: [id], onDelete: Cascade)
+  user1 User @relation("MatchUser1", fields: [user1Id], references: [id], onDelete: Cascade)
+  user2 User @relation("MatchUser2", fields: [user2Id], references: [id], onDelete: Cascade)
+
+  conversation Conversation?
+}
+
+model Conversation {
+  id        String   @id @default(cuid())
+  matchId   String?  @unique
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  match        PetMatch?                @relation(fields: [matchId], references: [id], onDelete: SetNull)
+  participants ConversationParticipant[]
+  messages     Message[]
+}
+
+model ConversationParticipant {
+  conversationId String
+  userId         String
+  joinedAt       DateTime  @default(now())
+  lastReadAt     DateTime?
+
+  conversation Conversation @relation(fields: [conversationId], references: [id], onDelete: Cascade)
+  user         User         @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@id([conversationId, userId])
+}
+
+model Message {
+  id             String   @id @default(cuid())
+  conversationId String
+  senderId       String
+  content        String
+  isDeleted      Boolean  @default(false)
+  createdAt      DateTime @default(now())
+  updatedAt      DateTime @updatedAt
+
+  conversation Conversation @relation(fields: [conversationId], references: [id], onDelete: Cascade)
+  sender       User         @relation(fields: [senderId], references: [id], onDelete: Cascade)
+}
+
+model Notification {
+  id        String           @id @default(cuid())
+  userId    String
+  type      NotificationType
+  title     String
+  body      String?
+  isRead    Boolean          @default(false)
+  data      Json?
+  createdAt DateTime         @default(now())
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+}
+
+model ModerationLog {
+  id           String           @id @default(cuid())
+  moderatorId  String
+  targetUserId String
+  action       ModerationAction
+  reason       String
+  details      String?
+  createdAt    DateTime         @default(now())
+
+  moderator  User @relation("Moderator", fields: [moderatorId], references: [id])
+  targetUser User @relation("ModeratedUser", fields: [targetUserId], references: [id])
+}
