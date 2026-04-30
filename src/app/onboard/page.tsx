@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
+import { signIn } from "next-auth/react";
 
 const PET_TYPES = [
   { id: "cat",     emoji: "🐱", label: "Kedi" },
@@ -24,8 +25,14 @@ const BREEDS: Record<PetTypeId, string[]> = {
   hamster: ["Suriye Hamsteri", "Dwarf Campbell", "Roborovski", "Çin Hamsteri", "Winter White", "Teddy Bear", "Panda Hamster", "Black Bear", "Avrupa Hamsteri", "Angora Hamster", "Diğer"],
   fish:    ["Japon Balığı", "Koi", "Betta", "Guppy", "Melek Balığı", "Diskus", "Oscar", "Neon Tetra", "Cichlid", "Bıyıklı Balık", "Diğer"],
   reptile: ["Leopar Gekko", "Yeşil İguana", "Çöl İguanası", "Kaplumbağa", "Su Kaplumbağası", "Kral Yılanı", "Corn Snake", "Mavi Dilli Skink", "Kameleon", "Sakal Ejderi", "Diğer"],
-  other:   ["Kirpi", "Şeker Planeri", "Degu", "Çin Faresi", "Kobay", "Ferret", "Mini Domuz", "Iguana", "Akıncı Kuş", "Gecko", "Diğer"],
+  other:   ["Kirpi", "Şeker Planeri", "Degu", "Kobay", "Ferret", "Mini Domuz", "Gecko", "Yılan", "Akbaba Papağanı", "Chinchilla", "Diğer"],
 };
+
+const GENDERS = [
+  { value: "Erkek",    icon: "male" },
+  { value: "Dişi",     icon: "female" },
+  { value: "Bilinmiyor", icon: "question_mark" },
+] as const;
 
 export default function OnboardPage() {
   const router = useRouter();
@@ -50,29 +57,52 @@ export default function OnboardPage() {
   }
 
   return (
-    <main className="min-h-screen bg-gradient-to-br from-orange-50 to-pink-50 py-12 px-4">
-      <div className="max-w-lg mx-auto">
-        {/* Header */}
-        <div className="text-center mb-8">
-          <div className="text-4xl mb-2">🐾</div>
-          <h1 className="text-2xl font-black text-gray-900">Petini Tanıtalım!</h1>
-          <p className="text-gray-500 text-sm mt-1">Birkaç bilgi gir, yarışmaya hazır ol.</p>
+    <div className="min-h-screen bg-surface font-body text-on-surface">
+      {/* Header */}
+      <header className="sticky top-0 z-50 bg-surface/80 backdrop-blur-xl border-b border-outline-variant/20 px-6 py-4 flex items-center gap-4">
+        <button onClick={() => router.back()} className="text-on-surface-variant hover:text-primary transition-colors">
+          <span className="material-symbols-outlined">arrow_back</span>
+        </button>
+        <h1 className="text-xl font-headline italic text-primary tracking-tight">CiciPet</h1>
+        <div className="ml-auto">
+          <div className="inline-flex items-center gap-2 px-3 py-1 bg-primary-fixed text-on-primary-fixed rounded-full">
+            <span className="material-symbols-outlined text-[14px]" style={{ fontVariationSettings: "'FILL' 1" }}>stars</span>
+            <span className="text-xs font-bold uppercase tracking-widest">Arena Kaydı</span>
+          </div>
+        </div>
+      </header>
+
+      <main className="max-w-2xl mx-auto px-6 py-12">
+        {/* Title */}
+        <div className="mb-10">
+          <h2 className="font-headline text-4xl font-bold italic text-on-surface mb-3">
+            Petini <span className="text-primary">Tanıtalım!</span>
+          </h2>
+          <p className="text-on-surface-variant leading-relaxed">
+            Birkaç bilgi gir, podyuma hazır ol.
+          </p>
+          <div className="w-16 h-1 bg-primary rounded-full mt-4" />
         </div>
 
         <form onSubmit={handleSubmit} className="space-y-6">
           {/* Pet Type */}
-          <div className="bg-white rounded-3xl p-6 shadow-sm">
-            <label className="block font-bold text-gray-800 mb-4">Evcil Hayvan Türü</label>
+          <div className="bg-surface-container-lowest rounded-2xl p-6 border border-outline-variant/20">
+            <div className="flex items-center gap-3 mb-5">
+              <div className="w-8 h-8 bg-primary-fixed rounded-full flex items-center justify-center">
+                <span className="material-symbols-outlined text-on-primary-fixed text-sm" style={{ fontVariationSettings: "'FILL' 1" }}>pets</span>
+              </div>
+              <h3 className="font-headline text-lg font-bold italic text-on-surface">Evcil Hayvan Türü</h3>
+            </div>
             <div className="grid grid-cols-4 gap-2">
               {PET_TYPES.map((t) => (
                 <button
                   key={t.id}
                   type="button"
                   onClick={() => handleTypeSelect(t.id)}
-                  className={`flex flex-col items-center gap-1 rounded-2xl p-3 text-xs font-semibold transition-all border-2 ${
+                  className={`flex flex-col items-center gap-1.5 rounded-2xl p-3 text-xs font-semibold transition-all border-2 ${
                     petType === t.id
-                      ? "border-orange-500 bg-orange-50 text-orange-700"
-                      : "border-transparent bg-gray-50 text-gray-600 hover:bg-orange-50"
+                      ? "border-primary bg-primary-fixed/40 text-primary"
+                      : "border-outline-variant/20 bg-surface-container-low text-on-surface-variant hover:border-primary/40 hover:bg-primary-fixed/20"
                   }`}
                 >
                   <span className="text-2xl">{t.emoji}</span>
@@ -84,45 +114,56 @@ export default function OnboardPage() {
 
           {/* Breed */}
           {petType && (
-            <div className="bg-white rounded-3xl p-6 shadow-sm">
-              <label className="block font-bold text-gray-800 mb-3" htmlFor="breed">
-                Cins
-              </label>
-              <select
-                id="breed"
-                value={breed}
-                onChange={(e) => setBreed(e.target.value)}
-                required
-                className="w-full rounded-xl border border-gray-200 px-4 py-3 text-gray-800 bg-gray-50 focus:outline-none focus:ring-2 focus:ring-orange-400"
-              >
-                <option value="">Cins seçin...</option>
-                {BREEDS[petType].map((b) => (
-                  <option key={b} value={b}>{b}</option>
-                ))}
-              </select>
+            <div className="bg-surface-container-lowest rounded-2xl p-6 border border-outline-variant/20">
+              <div className="flex items-center gap-3 mb-5">
+                <div className="w-8 h-8 bg-primary-fixed rounded-full flex items-center justify-center">
+                  <span className="material-symbols-outlined text-on-primary-fixed text-sm" style={{ fontVariationSettings: "'FILL' 1" }}>category</span>
+                </div>
+                <h3 className="font-headline text-lg font-bold italic text-on-surface">Cins</h3>
+              </div>
+              <div className="relative">
+                <select
+                  value={breed}
+                  onChange={(e) => setBreed(e.target.value)}
+                  required
+                  className="w-full appearance-none rounded-xl border border-outline-variant/40 px-4 py-3 pr-10 bg-surface-container-low text-on-surface focus:outline-none focus:ring-2 focus:ring-primary/40 focus:border-primary transition-colors"
+                >
+                  <option value="">Cins seçin...</option>
+                  {BREEDS[petType].map((b) => (
+                    <option key={b} value={b}>{b}</option>
+                  ))}
+                </select>
+                <span className="material-symbols-outlined absolute right-3 top-1/2 -translate-y-1/2 text-on-surface-variant pointer-events-none">expand_more</span>
+              </div>
             </div>
           )}
 
           {/* Details */}
-          <div className="bg-white rounded-3xl p-6 shadow-sm space-y-4">
-            <label className="block font-bold text-gray-800 mb-1">Detaylar</label>
+          <div className="bg-surface-container-lowest rounded-2xl p-6 border border-outline-variant/20 space-y-6">
+            <div className="flex items-center gap-3 mb-1">
+              <div className="w-8 h-8 bg-primary-fixed rounded-full flex items-center justify-center">
+                <span className="material-symbols-outlined text-on-primary-fixed text-sm" style={{ fontVariationSettings: "'FILL' 1" }}>info</span>
+              </div>
+              <h3 className="font-headline text-lg font-bold italic text-on-surface">Detaylar</h3>
+            </div>
 
             {/* Gender */}
             <div>
-              <p className="text-sm text-gray-600 mb-2">Cinsiyet</p>
+              <p className="text-sm font-semibold text-on-surface-variant mb-3">Cinsiyet</p>
               <div className="flex gap-3">
-                {["Erkek", "Dişi", "Bilinmiyor"].map((g) => (
+                {GENDERS.map((g) => (
                   <button
-                    key={g}
+                    key={g.value}
                     type="button"
-                    onClick={() => setGender(g)}
-                    className={`flex-1 rounded-xl py-2 text-sm font-semibold border-2 transition-all ${
-                      gender === g
-                        ? "border-orange-500 bg-orange-50 text-orange-700"
-                        : "border-gray-200 text-gray-600 hover:bg-orange-50"
+                    onClick={() => setGender(g.value)}
+                    className={`flex-1 flex flex-col items-center gap-1.5 rounded-xl py-3 text-sm font-semibold border-2 transition-all ${
+                      gender === g.value
+                        ? "border-primary bg-primary-fixed/40 text-primary"
+                        : "border-outline-variant/20 text-on-surface-variant hover:border-primary/40 hover:bg-primary-fixed/20"
                     }`}
                   >
-                    {g}
+                    <span className="material-symbols-outlined text-xl">{g.icon}</span>
+                    {g.value}
                   </button>
                 ))}
               </div>
@@ -130,63 +171,80 @@ export default function OnboardPage() {
 
             {/* Age */}
             <div>
-              <label htmlFor="age" className="text-sm text-gray-600 block mb-1">
-                Yaş (yıl olarak)
+              <label htmlFor="age" className="text-sm font-semibold text-on-surface-variant block mb-2">
+                Yaş <span className="font-normal">(yıl)</span>
               </label>
-              <input
-                id="age"
-                type="number"
-                min="0"
-                max="30"
-                value={age}
-                onChange={(e) => setAge(e.target.value)}
-                placeholder="ör. 2"
-                required
-                className="w-full rounded-xl border border-gray-200 px-4 py-3 bg-gray-50 focus:outline-none focus:ring-2 focus:ring-orange-400"
-              />
+              <div className="relative">
+                <span className="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-on-surface-variant text-xl">cake</span>
+                <input
+                  id="age"
+                  type="number"
+                  min="0"
+                  max="30"
+                  value={age}
+                  onChange={(e) => setAge(e.target.value)}
+                  placeholder="ör. 2"
+                  required
+                  className="w-full rounded-xl border border-outline-variant/40 pl-10 pr-4 py-3 bg-surface-container-low text-on-surface focus:outline-none focus:ring-2 focus:ring-primary/40 focus:border-primary transition-colors"
+                />
+              </div>
             </div>
 
             {/* Phone */}
             <div>
-              <label htmlFor="phone" className="text-sm text-gray-600 block mb-1">
+              <label htmlFor="phone" className="text-sm font-semibold text-on-surface-variant block mb-2">
                 Telefon Numarası
               </label>
-              <input
-                id="phone"
-                type="tel"
-                value={phone}
-                onChange={(e) => setPhone(e.target.value)}
-                placeholder="05XX XXX XX XX"
-                required
-                className="w-full rounded-xl border border-gray-200 px-4 py-3 bg-gray-50 focus:outline-none focus:ring-2 focus:ring-orange-400"
-              />
+              <div className="relative">
+                <span className="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-on-surface-variant text-xl">phone</span>
+                <input
+                  id="phone"
+                  type="tel"
+                  value={phone}
+                  onChange={(e) => setPhone(e.target.value)}
+                  placeholder="05XX XXX XX XX"
+                  required
+                  className="w-full rounded-xl border border-outline-variant/40 pl-10 pr-4 py-3 bg-surface-container-low text-on-surface focus:outline-none focus:ring-2 focus:ring-primary/40 focus:border-primary transition-colors"
+                />
+              </div>
             </div>
 
             {/* Bio */}
             <div>
-              <label htmlFor="bio" className="text-sm text-gray-600 block mb-1">
-                Kısa Bilgi <span className="text-gray-400">(isteğe bağlı)</span>
+              <label htmlFor="bio" className="text-sm font-semibold text-on-surface-variant block mb-2">
+                Kısa Bilgi{" "}
+                <span className="font-normal text-on-surface-variant/60">(isteğe bağlı)</span>
               </label>
-              <textarea
-                id="bio"
-                value={bio}
-                onChange={(e) => setBio(e.target.value)}
-                placeholder="Petinle ilgili eğlenceli bir şey yaz..."
-                rows={3}
-                className="w-full rounded-xl border border-gray-200 px-4 py-3 bg-gray-50 focus:outline-none focus:ring-2 focus:ring-orange-400 resize-none"
-              />
+              <div className="relative">
+                <span className="material-symbols-outlined absolute left-3 top-3.5 text-on-surface-variant text-xl">edit_note</span>
+                <textarea
+                  id="bio"
+                  value={bio}
+                  onChange={(e) => setBio(e.target.value)}
+                  placeholder="Petinle ilgili eğlenceli bir şey yaz..."
+                  rows={3}
+                  className="w-full rounded-xl border border-outline-variant/40 pl-10 pr-4 py-3 bg-surface-container-low text-on-surface focus:outline-none focus:ring-2 focus:ring-primary/40 focus:border-primary transition-colors resize-none"
+                />
+              </div>
             </div>
           </div>
 
+          {/* Submit */}
           <button
             type="submit"
             disabled={!isValid}
-            className="w-full rounded-full bg-orange-500 py-4 text-white font-black text-lg shadow-md hover:bg-orange-600 transition-all disabled:opacity-40 disabled:cursor-not-allowed"
+            className="w-full gala-gradient-gold text-on-primary rounded-full py-5 font-bold text-lg editorial-shadow active:scale-95 transition-all disabled:opacity-40 disabled:cursor-not-allowed disabled:active:scale-100 flex items-center justify-center gap-2"
           >
-            Devam Et →
+            <span>Devam Et</span>
+            <span className="material-symbols-outlined">arrow_forward</span>
           </button>
+
+          <p className="text-center text-xs text-on-surface-variant">
+            Devam ederek{" "}
+            <span className="underline cursor-pointer hover:text-primary transition-colors">Kullanım Koşulları</span>&apos;nı kabul etmiş olursunuz.
+          </p>
         </form>
-      </div>
-    </main>
+      </main>
+    </div>
   );
 }

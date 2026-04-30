@@ -1,9 +1,29 @@
 "use client";
 
 import Image from "next/image";
-import Link from "next/link";
+import { useEffect } from "react";
+import { useSession, signIn } from "next-auth/react";
+import { useRouter } from "next/navigation";
+
+function JoinButton({ label }: { label: string }) {
+  return (
+    <button
+      onClick={() => signIn("google", { callbackUrl: "/onboard" })}
+      className="gala-gradient-gold text-on-primary px-10 py-5 rounded-full font-bold text-lg editorial-shadow active:scale-95 transition-transform"
+    >
+      {label}
+    </button>
+  );
+}
 
 export default function LandingPage() {
+  const { status } = useSession();
+  const router = useRouter();
+
+  useEffect(() => {
+    if (status === "authenticated") router.push("/onboard");
+  }, [status, router]);
+
   return (
     <div className="bg-surface font-body text-on-surface selection:bg-primary-fixed selection:text-on-primary-fixed">
       {/* ── TopAppBar ── */}
@@ -53,18 +73,13 @@ export default function LandingPage() {
                 Petinizin zarafetini ve yeteneklerini sergileyin. CiciPet Arenası, en seçkin dostlarımızı podyuma davet ediyor.
               </p>
               <div className="flex flex-col sm:flex-row gap-6">
-                <Link
-                  href="/auth"
-                  className="gala-gradient-gold text-on-primary px-10 py-5 rounded-full font-bold text-lg editorial-shadow active:scale-95 transition-transform text-center"
-                >
-                  Adaylığınızı Başlatın
-                </Link>
-                <Link
-                  href="/auth"
-                  className="border border-outline-variant bg-transparent px-10 py-5 rounded-full font-bold text-lg active:scale-95 transition-transform hover:bg-surface-container-low text-center"
+                <JoinButton label="Adaylığınızı Başlatın" />
+                <button
+                  onClick={() => signIn("google", { callbackUrl: "/onboard" })}
+                  className="border border-outline-variant bg-transparent px-10 py-5 rounded-full font-bold text-lg active:scale-95 transition-transform hover:bg-surface-container-low"
                 >
                   Galeriyi Keşfet
-                </Link>
+                </button>
               </div>
             </div>
 
@@ -72,7 +87,6 @@ export default function LandingPage() {
             <div className="relative flex justify-center items-center">
               <div className="absolute -top-24 -right-24 w-64 h-64 bg-primary-fixed rounded-full opacity-10 blur-[100px]" />
               <div className="absolute -bottom-24 -left-24 w-80 h-80 bg-primary rounded-full opacity-5 blur-[120px]" />
-
               <div className="relative w-full max-w-[420px] p-6 bg-surface-container-lowest rounded-2xl frame-glow border border-outline-variant/30">
                 <div className="relative aspect-[3/4] overflow-hidden rounded-lg bg-surface-container">
                   <Image
@@ -83,7 +97,6 @@ export default function LandingPage() {
                   />
                   <div className="absolute inset-0 bg-gradient-to-t from-black/40 via-transparent to-transparent" />
                 </div>
-
                 <div className="absolute -right-8 top-12 bg-white/95 backdrop-blur-md p-4 rounded-xl shadow-xl border border-primary/10 max-w-[160px] animate-bounce-slow">
                   <div className="flex items-center gap-2 mb-1">
                     <span
@@ -98,11 +111,9 @@ export default function LandingPage() {
                     Haftanın Şampiyonu: Buddy
                   </p>
                 </div>
-
                 <div className="absolute -left-6 bottom-20 bg-primary text-on-primary w-14 h-14 rounded-full flex items-center justify-center shadow-2xl rotate-[-12deg]">
                   <span className="material-symbols-outlined text-3xl">military_tech</span>
                 </div>
-
                 <div className="mt-6 text-center">
                   <p className="font-headline text-sm italic text-on-surface-variant">
                     &ldquo;Zarafetin ve Sevginin En Saf Hali&rdquo;
@@ -122,67 +133,50 @@ export default function LandingPage() {
               <p className="text-on-surface-variant text-lg">3 Kolay Adımda Eğlenceye Katıl</p>
             </div>
             <div className="space-y-12">
-              {/* Step 1 */}
               <div className="relative group p-8 bg-surface-container-lowest rounded-2xl border border-outline-variant/20 hover:shadow-xl transition-all duration-500">
                 <div className="flex items-start gap-6">
-                  <div className="flex-shrink-0 w-16 h-16 bg-primary-container text-on-primary-container rounded-2xl flex items-center justify-center font-headline text-3xl font-bold shadow-inner">
-                    01
-                  </div>
+                  <div className="flex-shrink-0 w-16 h-16 bg-primary-container text-on-primary-container rounded-2xl flex items-center justify-center font-headline text-3xl font-bold shadow-inner">01</div>
                   <div>
                     <h4 className="font-headline text-2xl font-bold mb-3 italic">Hemen Kaydol ve Petini Ekle</h4>
-                    <p className="text-on-surface-variant leading-relaxed">
-                      Google Auth ile saniyeler içinde hızlı giriş yap ve patili dostunu sisteme kaydet.
-                    </p>
+                    <p className="text-on-surface-variant leading-relaxed">Google Auth ile saniyeler içinde hızlı giriş yap ve patili dostunu sisteme kaydet.</p>
                   </div>
                 </div>
                 <div className="absolute -top-4 -right-4 w-12 h-12 bg-primary-fixed rounded-full flex items-center justify-center text-on-primary-fixed shadow-md">
                   <span className="material-symbols-outlined text-2xl">person_add</span>
                 </div>
               </div>
-
-              {/* Step 2 */}
               <div className="relative group p-8 bg-secondary-container/30 rounded-2xl border border-outline-variant/20 hover:shadow-xl transition-all duration-500">
                 <div className="flex items-start gap-6">
-                  <div className="flex-shrink-0 w-16 h-16 bg-primary text-on-primary rounded-2xl flex items-center justify-center font-headline text-3xl font-bold shadow-inner">
-                    02
-                  </div>
+                  <div className="flex-shrink-0 w-16 h-16 bg-primary text-on-primary rounded-2xl flex items-center justify-center font-headline text-3xl font-bold shadow-inner">02</div>
                   <div>
                     <h4 className="font-headline text-2xl font-bold mb-3 italic">Fotoğrafları Yükle ve Beğeni Topla</h4>
-                    <p className="text-on-surface-variant leading-relaxed">
-                      Petin en güzel, en neşeli anlarını paylaş. Topluluktan sevgi ve beğeni toplayarak öne çık.
-                    </p>
+                    <p className="text-on-surface-variant leading-relaxed">Petin en güzel, en neşeli anlarını paylaş. Topluluktan sevgi ve beğeni toplayarak öne çık.</p>
                   </div>
                 </div>
                 <div className="absolute -top-4 -right-4 w-12 h-12 bg-secondary rounded-full flex items-center justify-center text-on-secondary shadow-md">
                   <span className="material-symbols-outlined text-2xl">photo_camera</span>
                 </div>
               </div>
-
-              {/* Step 3 */}
               <div className="relative group p-8 bg-surface-container-high rounded-2xl border border-outline-variant/20 hover:shadow-xl transition-all duration-500">
                 <div className="flex items-start gap-6">
-                  <div className="flex-shrink-0 w-16 h-16 bg-tertiary text-on-tertiary rounded-2xl flex items-center justify-center font-headline text-3xl font-bold shadow-inner">
-                    03
-                  </div>
+                  <div className="flex-shrink-0 w-16 h-16 bg-tertiary text-on-tertiary rounded-2xl flex items-center justify-center font-headline text-3xl font-bold shadow-inner">03</div>
                   <div>
                     <h4 className="font-headline text-2xl font-bold mb-3 italic">Büyük Yarışmayı Bekle</h4>
-                    <p className="text-on-surface-variant leading-relaxed">
-                      10.000 katılımcıya ulaşıldığında arena kapıları büyük final için açılır. Muhteşem ödüller seni bekliyor!
-                    </p>
+                    <p className="text-on-surface-variant leading-relaxed">10.000 katılımcıya ulaşıldığında arena kapıları büyük final için açılır. Muhteşem ödüller seni bekliyor!</p>
                   </div>
                 </div>
                 <div className="absolute -top-4 -right-4 w-12 h-12 bg-tertiary-container text-on-tertiary-container rounded-full flex items-center justify-center shadow-md">
-                  <span
-                    className="material-symbols-outlined text-2xl"
-                    style={{ fontVariationSettings: "'FILL' 1" }}
-                  >
-                    emoji_events
-                  </span>
+                  <span className="material-symbols-outlined text-2xl" style={{ fontVariationSettings: "'FILL' 1" }}>emoji_events</span>
                 </div>
               </div>
             </div>
           </div>
         </section>
+
+        {/* ── CTA 1: "Şimdi Katıl" ── */}
+        <div className="flex justify-center py-12 bg-surface-container-low">
+          <JoinButton label="Şimdi Katıl" />
+        </div>
 
         {/* ── Neden CiciPet Arenası ── */}
         <section className="px-6 py-20 bg-surface-container-low">
@@ -196,29 +190,23 @@ export default function LandingPage() {
                 {
                   src: "https://lh3.googleusercontent.com/aida-public/AB6AXuAUjPXdtk3K_3Of0kb-tsshdIPOEq10CMDQ37E5meMI1045SiomC-MfPn605cb9ce_-jgpz_JbOCsU6brs7I2eqHhvv0Ku_CgodRPupYA4E6JRi15h7keJE7vJX_JI8f0BsZMq6-2jG46CAk6pnhxE8DjaszEO9UanTg9pFQPrxEe8WnHy1pprYTuSTrALA219kcIxzvIjlMUWMc-Z9hSbxhkOozxTGJkVh-g0Bs_BjWh2Nvzn2ymBLVJ88rEcZRfSHsYt-vrG0tQ",
                   alt: "Büyük altın şampiyonluk madalyası takan gururlu kedi",
-                  icon: "emoji_events",
-                  title: "Puan Topla",
+                  icon: "emoji_events", title: "Puan Topla",
                   desc: "Yarışmalara katıl, yeteneklerini sergile ve puanları toplayarak zirveye yerleş.",
                 },
                 {
                   src: "https://lh3.googleusercontent.com/aida-public/AB6AXuDPKp6nGfyKvG9QSD9c2luqcRpP0Kb31AUG-5VoHECzFZH6tsU9YvgkRONavrG6p0zEhpJ0dnbWgvQ6HrSq_Gxb-xI1ro88ijANOqP6oma1RXatdI7eB62M7G2SoFAhlOPyZBe2bdAfJqETLMp_4PUAV0JCUj8ESwsVdW_0oZMEbVa0NwIlKOlkN0lp2p8ej_9oIZBjB9gK94thI2u93MXYwwn2B683nLbnN0Ic4s9-ieP9VN3uX4zJwowvfnYLL_SsRMZ8r1Hamg",
                   alt: "Parlak altın taç takan şık pug köpeği",
-                  icon: "workspace_premium",
-                  title: "Ünvan Kazan",
+                  icon: "workspace_premium", title: "Ünvan Kazan",
                   desc: "Şehrin en popüler peti ol. Ayın peti seçilerek özel rozetlerin sahibi ol.",
                 },
                 {
                   src: "https://lh3.googleusercontent.com/aida-public/AB6AXuD8R5tcmJPayD5RFxUyc-IDB1uwLK0UMqb5qPwg_nhiYOyniZMNAu8-dYN0J2M82WX-llgsyR3GWc5CABA8By5xlYdH3Od9z_5IXSEfuJMtknoWF8L_zYrVjkay3-erWB2uGyX94zwIRaGXyYkUgx2sktwOQ7rA2YoLpko_hKRUrpFq6htPAFE8PvVXavlLcPFlTXjeVGoX0IkCL_qSAg7pQNXBBK1hRC74KY4_JS62DLAFBCAC1ihOvLBNUSY373dDB_HLw2SQLA",
                   alt: "Altın hediye çeki tutan mutlu kadın köpeğiyle",
-                  icon: "redeem",
-                  title: "Ödülleri Yakala",
+                  icon: "redeem", title: "Ödülleri Yakala",
                   desc: "Partner mağazalarımızdan sürpriz hediyeler ve indirim çekleri seni bekliyor.",
                 },
               ].map((card) => (
-                <div
-                  key={card.title}
-                  className="bg-surface-container-lowest rounded-xl overflow-hidden hover:translate-y-[-8px] transition-transform duration-500"
-                >
+                <div key={card.title} className="bg-surface-container-lowest rounded-xl overflow-hidden hover:translate-y-[-8px] transition-transform duration-500">
                   <div className="h-80 relative overflow-hidden">
                     <Image fill className="object-cover" src={card.src} alt={card.alt} />
                     <div className="absolute top-4 right-4 bg-primary text-on-primary w-12 h-12 rounded-full flex items-center justify-center">
@@ -235,6 +223,11 @@ export default function LandingPage() {
           </div>
         </section>
 
+        {/* ── CTA 2: "Yarışmalara Katıl, Ödülleri Kap" ── */}
+        <div className="flex justify-center py-12 bg-surface">
+          <JoinButton label="Yarışmalara Katıl, Ödülleri Kap" />
+        </div>
+
         {/* ── Ödüller ── */}
         <section className="px-6 py-20 bg-surface">
           <div className="max-w-7xl mx-auto">
@@ -245,22 +238,14 @@ export default function LandingPage() {
             </div>
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8">
               {[
-                { icon: "pets",                label: "Mama Ödülü",       desc: "En kaliteli ve besleyici mamalarla dolu paketler." },
-                { icon: "apparel",             label: "Aksesuar Ödülü",   desc: "Şık tasmalar ve gala kostümleriyle petiniz parlasın." },
-                { icon: "confirmation_number", label: "Hediye Çeki Ödülü",desc: "Seçkin pet mağazalarında geçerli alışveriş çekleri." },
-                { icon: "card_giftcard",       label: "Sürpriz Hediyeler",desc: "Arena sponsorlarından her hafta yenilenen hediyeler." },
+                { icon: "pets",                label: "Mama Ödülü",        desc: "En kaliteli ve besleyici mamalarla dolu paketler." },
+                { icon: "apparel",             label: "Aksesuar Ödülü",    desc: "Şık tasmalar ve gala kostümleriyle petiniz parlasın." },
+                { icon: "confirmation_number", label: "Hediye Çeki Ödülü", desc: "Seçkin pet mağazalarında geçerli alışveriş çekleri." },
+                { icon: "card_giftcard",       label: "Sürpriz Hediyeler", desc: "Arena sponsorlarından her hafta yenilenen hediyeler." },
               ].map((prize) => (
-                <div
-                  key={prize.label}
-                  className="bg-surface-container-lowest p-8 rounded-full border border-primary/10 flex flex-col items-center text-center hover:shadow-lg transition-all duration-300 group"
-                >
+                <div key={prize.label} className="bg-surface-container-lowest p-8 rounded-full border border-primary/10 flex flex-col items-center text-center hover:shadow-lg transition-all duration-300 group">
                   <div className="w-20 h-20 bg-primary-fixed rounded-full flex items-center justify-center mb-6 group-hover:scale-110 transition-transform">
-                    <span
-                      className="material-symbols-outlined text-4xl text-on-primary-fixed"
-                      style={{ fontVariationSettings: "'FILL' 1" }}
-                    >
-                      {prize.icon}
-                    </span>
+                    <span className="material-symbols-outlined text-4xl text-on-primary-fixed" style={{ fontVariationSettings: "'FILL' 1" }}>{prize.icon}</span>
                   </div>
                   <h4 className="font-headline text-xl font-bold mb-2 italic">{prize.label}</h4>
                   <p className="text-sm text-on-surface-variant">{prize.desc}</p>
@@ -277,6 +262,11 @@ export default function LandingPage() {
           </h5>
           <div className="w-24 h-1 bg-primary mx-auto rounded-full" />
         </section>
+
+        {/* ── CTA 3: "Haydi Şimdi Katıl" ── */}
+        <div className="flex justify-center pb-12">
+          <JoinButton label="Haydi Şimdi Katıl" />
+        </div>
       </main>
 
       {/* ── Bottom Nav (mobile) ── */}
@@ -290,10 +280,7 @@ export default function LandingPage() {
           { icon: "military_tech", label: "Ödüller" },
           { icon: "person", label: "Profil" },
         ].map((item) => (
-          <div
-            key={item.label}
-            className="flex flex-col items-center justify-center text-stone-400 hover:text-primary transition-colors active:scale-90 duration-300 ease-out"
-          >
+          <div key={item.label} className="flex flex-col items-center justify-center text-stone-400 hover:text-primary transition-colors active:scale-90 duration-300 ease-out">
             <span className="material-symbols-outlined">{item.icon}</span>
             <span className="text-[10px] font-semibold tracking-wide uppercase">{item.label}</span>
           </div>
@@ -301,12 +288,12 @@ export default function LandingPage() {
       </nav>
 
       {/* ── FAB ── */}
-      <Link
-        href="/auth"
+      <button
+        onClick={() => signIn("google", { callbackUrl: "/onboard" })}
         className="fixed right-6 bottom-32 md:bottom-12 z-40 w-16 h-16 rounded-full gala-gradient-gold text-on-primary flex items-center justify-center shadow-xl active:scale-95 transition-transform"
       >
         <span className="material-symbols-outlined text-3xl">add</span>
-      </Link>
+      </button>
     </div>
   );
 }
