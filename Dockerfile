@@ -7,13 +7,12 @@ WORKDIR /app
 COPY package.json package-lock.json* ./
 RUN npm ci --include=dev
 
-# ── builder: generate Prisma client + build Next.js ──────────────────────────
+# ── builder: build Next.js (prisma generate içinde) ──────────────────────────
 FROM base AS builder
 RUN apk add --no-cache openssl
 WORKDIR /app
 COPY --from=deps /app/node_modules ./node_modules
 COPY . .
-RUN npx prisma generate
 ENV NEXT_TELEMETRY_DISABLED=1
 RUN npm run build
 
