@@ -34,22 +34,6 @@ export default function LandingPage() {
           </span>
           <h1 className="text-2xl font-headline italic text-primary tracking-tight">CiciPet</h1>
         </div>
-        <div className="flex items-center gap-6">
-          <nav className="hidden md:flex gap-8 text-stone-500 font-medium">
-            <a className="text-primary font-bold hover:opacity-80 transition-opacity" href="#">Keşfet</a>
-            <a className="hover:opacity-80 transition-opacity" href="#">Yarışma</a>
-            <a className="hover:opacity-80 transition-opacity" href="#">Ödüller</a>
-          </nav>
-          <div className="w-10 h-10 rounded-full overflow-hidden border-2 border-primary-container">
-            <Image
-              className="w-full h-full object-cover"
-              src="https://lh3.googleusercontent.com/aida-public/AB6AXuDw301IXK_kFv_bZiBRVmdNtNpNEMrvEb9NceUdeD7YRIZNt7fqaKSKg9n8aoQjAGjN5uU3Y4FOB1wgctbCjyAvAfIO5jIHI2cTvQPy1FDeo22kV_qMCaFBGpGdINskJ7Ap9ntnukZ8ItQixXnsWTB_0bfvNaZct2wO8v0Mn-RXmdHbdEJERqqYCCd0bax08k-753i-85eYz4vfp43rsBZRlrXTHTGJ92E4cxGiDePsMANEY3fTIXyJyN5BbiRyThpPThxEDO6CEA"
-              alt="Kullanıcı profil fotoğrafı"
-              width={40}
-              height={40}
-            />
-          </div>
-        </div>
       </header>
 
       <main className="pt-24 pb-32">
@@ -70,7 +54,7 @@ export default function LandingPage() {
                 Şampiyonluk <span className="italic text-primary">Heyecanı</span> Başlıyor!
               </h2>
               <p className="text-lg md:text-xl text-on-surface-variant max-w-xl mb-12 leading-relaxed">
-                Petinizin zarafetini ve yeteneklerini sergileyin. CiciPet Arenası, en seçkin dostlarımızı podyuma davet ediyor.
+                Türkiye&apos;nin en sevimli evcil hayvanları burada! Petini kaydet, yarışmalara katıl, harika ödüller kazan.
               </p>
               <div className="flex flex-col sm:flex-row gap-6">
                 <JoinButton label="Adaylığınızı Başlatın" />
