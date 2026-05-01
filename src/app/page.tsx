@@ -153,10 +153,6 @@ export default function LandingPage() {
           <JoinButton label="Şimdi Katıl" />
         </div>
 
-        {/* ── CTA 2: "Yarışmalara Katıl, Ödülleri Kap" ── */}
-        <div className="flex justify-center py-12 bg-surface">
-          <JoinButton label="Yarışmalara Katıl, Ödülleri Kap" />
-        </div>
 
         {/* ── Ödüller ── */}
         <section className="px-6 py-20 bg-surface">
