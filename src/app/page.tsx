@@ -232,6 +232,15 @@ export default function LandingPage() {
           </div>
         </section>
 
+        {/* ── Cat Hero Image ── */}
+        <div style={{ display: "flex", justifyContent: "center", padding: "40px 20px 0px 20px" }}>
+          <img
+            src="/cat_king_hero.png"
+            alt="Kazanan için ücretsiz mama"
+            style={{ maxWidth: "400px", width: "100%", borderRadius: "24px" }}
+          />
+        </div>
+
         {/* ── CTA 1 ── */}
         <div style={{ display: "flex", justifyContent: "center", padding: "3rem 1.5rem", backgroundColor: C.surfaceContainerLow }}>
           <JoinButton label="Şimdi Katıl" />
@@ -287,46 +296,6 @@ export default function LandingPage() {
         </div>
       </main>
 
-      {/* ── Bottom Nav ── */}
-      <nav style={{
-        position: "fixed", bottom: 0, left: 0, right: 0, zIndex: 50,
-        display: "flex", justifyContent: "space-around", alignItems: "center",
-        padding: "0.5rem 1rem 1.5rem",
-        backgroundColor: "rgba(250,249,246,0.85)",
-        backdropFilter: "blur(24px)",
-        borderTopLeftRadius: "3rem", borderTopRightRadius: "3rem",
-        boxShadow: "0 -4px 40px rgba(26,28,26,0.06)",
-      }}>
-        <div style={{ display: "flex", flexDirection: "column", alignItems: "center", gap: "2px", color: C.primary, backgroundColor: "#fff", borderRadius: "9999px", padding: "0.5rem 1rem" }}>
-          <span className="material-symbols-outlined" style={{ fontVariationSettings: "'FILL' 1" }}>explore</span>
-          <span style={{ fontSize: "0.625rem", fontWeight: 600, textTransform: "uppercase", letterSpacing: "0.05em" }}>Keşfet</span>
-        </div>
-        {[
-          { icon: "emoji_events", label: "Yarışma" },
-          { icon: "military_tech", label: "Ödüller" },
-          { icon: "person", label: "Profil" },
-        ].map((item) => (
-          <div key={item.label} style={{ display: "flex", flexDirection: "column", alignItems: "center", gap: "2px", color: "#a8a29e" }}>
-            <span className="material-symbols-outlined">{item.icon}</span>
-            <span style={{ fontSize: "0.625rem", fontWeight: 600, textTransform: "uppercase", letterSpacing: "0.05em" }}>{item.label}</span>
-          </div>
-        ))}
-      </nav>
-
-      {/* ── FAB ── */}
-      <button
-        onClick={() => signIn("google", { callbackUrl: "/onboard" })}
-        style={{
-          position: "fixed", right: "1.5rem", bottom: "8rem", zIndex: 40,
-          width: "4rem", height: "4rem", borderRadius: "9999px",
-          background: "linear-gradient(135deg, #775a19 0%, #d4ad65 100%)",
-          color: "#ffffff", border: "none", cursor: "pointer",
-          display: "flex", alignItems: "center", justifyContent: "center",
-          boxShadow: "0 40px 80px -20px rgba(119, 90, 25, 0.15)",
-        }}
-      >
-        <span className="material-symbols-outlined" style={{ fontSize: "1.75rem" }}>add</span>
-      </button>
     </div>
   );
 }
