@@ -235,7 +235,7 @@ export default function LandingPage() {
         {/* ── Cat Hero Image ── */}
         <div style={{ display: "flex", justifyContent: "center", padding: "40px 20px 0px 20px" }}>
           <Image
-            src="/cat_king_hero.png"
+            src="https://res.cloudinary.com/de0s8ggmk/image/upload/fl_preserve_transparency/v1778703357/cat_king_hero_uqqh35.jpg"
             alt="Kazanan için ücretsiz mama"
             width={400}
             height={500}
