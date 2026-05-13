@@ -24,7 +24,7 @@ export default function RootLayout({
           rel="stylesheet"
         />
       </head>
-      <body className="min-h-full flex flex-col">
+      <body className="min-h-full flex flex-col" style={{ backgroundColor: "#faf9f6", minHeight: "100vh" }}>
         <Providers>{children}</Providers>
       </body>
     </html>

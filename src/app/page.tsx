@@ -37,18 +37,7 @@ function JoinButton({ label }: { label: string }) {
   return (
     <button
       onClick={() => signIn("google", { callbackUrl: "/onboard" })}
-      className="gala-gradient-gold editorial-shadow"
-      style={{
-        color: C.onPrimary,
-        padding: "1.25rem 2.5rem",
-        borderRadius: "9999px",
-        fontWeight: 700,
-        fontSize: "1.125rem",
-        fontFamily: FONT_BODY,
-        border: "none",
-        cursor: "pointer",
-        display: "inline-block",
-      }}
+      style={{ background: "linear-gradient(135deg, #775a19 0%, #d4ad65 100%)", color: "#ffffff", padding: "20px 40px", borderRadius: "9999px", fontWeight: "bold", fontSize: "18px", border: "none", cursor: "pointer", boxShadow: "0 40px 80px -20px rgba(119, 90, 25, 0.15)" }}
     >
       {label}
     </button>
@@ -104,7 +93,7 @@ export default function LandingPage() {
               }}>
                 <span className="material-symbols-outlined" style={{ fontSize: "18px", fontVariationSettings: "'FILL' 1" }}>stars</span>
                 <span style={{ fontSize: "0.75rem", fontWeight: 700, textTransform: "uppercase", letterSpacing: "0.2em" }}>
-                  Prestijli Arena Açılıyor
+                  Ödüllü Yarışmalar Başlıyor
                 </span>
               </div>
 
@@ -327,13 +316,13 @@ export default function LandingPage() {
       {/* ── FAB ── */}
       <button
         onClick={() => signIn("google", { callbackUrl: "/onboard" })}
-        className="gala-gradient-gold"
         style={{
           position: "fixed", right: "1.5rem", bottom: "8rem", zIndex: 40,
           width: "4rem", height: "4rem", borderRadius: "9999px",
-          color: C.onPrimary, border: "none", cursor: "pointer",
+          background: "linear-gradient(135deg, #775a19 0%, #d4ad65 100%)",
+          color: "#ffffff", border: "none", cursor: "pointer",
           display: "flex", alignItems: "center", justifyContent: "center",
-          boxShadow: "0 20px 25px -5px rgba(0,0,0,0.15)",
+          boxShadow: "0 40px 80px -20px rgba(119, 90, 25, 0.15)",
         }}
       >
         <span className="material-symbols-outlined" style={{ fontSize: "1.75rem" }}>add</span>
