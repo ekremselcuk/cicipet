@@ -234,10 +234,12 @@ export default function LandingPage() {
 
         {/* ── Cat Hero Image ── */}
         <div style={{ display: "flex", justifyContent: "center", padding: "40px 20px 0px 20px" }}>
-          <img
+          <Image
             src="/cat_king_hero.png"
             alt="Kazanan için ücretsiz mama"
-            style={{ maxWidth: "400px", width: "100%", borderRadius: "24px" }}
+            width={400}
+            height={500}
+            style={{ borderRadius: "24px", width: "100%", maxWidth: "400px", height: "auto" }}
           />
         </div>
 
