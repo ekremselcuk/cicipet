@@ -5,17 +5,57 @@ import { useEffect } from "react";
 import { useSession, signIn } from "next-auth/react";
 import { useRouter } from "next/navigation";
 
+// ── Renk sabitleri ────────────────────────────────────────────────────────────
+const C = {
+  primary:                "#775a19",
+  onPrimary:              "#ffffff",
+  primaryContainer:       "#d4ad65",
+  primaryFixed:           "#ffdea5",
+  onPrimaryFixed:         "#261900",
+  surface:                "#faf9f6",
+  onSurface:              "#1a1c1a",
+  onSurfaceVariant:       "#4d4635",
+  surfaceContainer:       "#efeeeb",
+  surfaceContainerLow:    "#f4f3f1",
+  surfaceContainerHigh:   "#e9e8e5",
+  surfaceContainerLowest: "#ffffff",
+  secondary:              "#625e51",
+  onSecondary:            "#ffffff",
+  secondaryContainer:     "#e6dfce",
+  tertiary:               "#5f5e5a",
+  onTertiary:             "#ffffff",
+  tertiaryContainer:      "#b5b3ae",
+  onTertiaryContainer:    "#464541",
+  outlineVariant:         "#d0c5af",
+} as const;
+
+const FONT_HEADLINE = '"Noto Serif", serif';
+const FONT_BODY     = '"Plus Jakarta Sans", sans-serif';
+
+// ── JoinButton ────────────────────────────────────────────────────────────────
 function JoinButton({ label }: { label: string }) {
   return (
     <button
       onClick={() => signIn("google", { callbackUrl: "/onboard" })}
-      className="gala-gradient-gold text-on-primary px-10 py-5 rounded-full font-bold text-lg editorial-shadow active:scale-95 transition-transform"
+      className="gala-gradient-gold editorial-shadow"
+      style={{
+        color: C.onPrimary,
+        padding: "1.25rem 2.5rem",
+        borderRadius: "9999px",
+        fontWeight: 700,
+        fontSize: "1.125rem",
+        fontFamily: FONT_BODY,
+        border: "none",
+        cursor: "pointer",
+        display: "inline-block",
+      }}
     >
       {label}
     </button>
   );
 }
 
+// ── Ana bileşen ───────────────────────────────────────────────────────────────
 export default function LandingPage() {
   const { status } = useSession();
   const router = useRouter();
@@ -25,58 +65,121 @@ export default function LandingPage() {
   }, [status, router]);
 
   return (
-    <div className="bg-surface font-body text-on-surface selection:bg-primary-fixed selection:text-on-primary-fixed">
-      {/* ── TopAppBar ── */}
-      <header className="fixed top-0 w-full z-50 bg-[#faf9f6]/70 backdrop-blur-xl flex justify-between items-center px-6 py-4">
-        <div className="flex items-center gap-4">
-          <span className="material-symbols-outlined text-primary hover:opacity-80 transition-opacity cursor-pointer">
-            menu
-          </span>
-          <h1 className="text-2xl font-headline italic text-primary tracking-tight">CiciPet</h1>
+    <div style={{ backgroundColor: C.surface, fontFamily: FONT_BODY, color: C.onSurface, minHeight: "100dvh" }}>
+
+      {/* ── Header ── */}
+      <header style={{
+        position: "fixed", top: 0, left: 0, right: 0, zIndex: 50,
+        backgroundColor: "rgba(250,249,246,0.75)",
+        backdropFilter: "blur(20px)",
+        display: "flex", justifyContent: "space-between", alignItems: "center",
+        padding: "1rem 1.5rem",
+      }}>
+        <div style={{ display: "flex", alignItems: "center", gap: "1rem" }}>
+          <span className="material-symbols-outlined" style={{ color: C.primary, cursor: "pointer" }}>menu</span>
+          <h1 style={{ fontFamily: FONT_HEADLINE, fontStyle: "italic", color: C.primary, fontSize: "1.5rem", margin: 0, letterSpacing: "-0.02em" }}>
+            CiciPet
+          </h1>
         </div>
       </header>
 
-      <main className="pt-24 pb-32">
+      <main style={{ paddingTop: "6rem", paddingBottom: "8rem" }}>
+
         {/* ── Hero ── */}
-        <section className="relative px-6 py-12 md:py-24 overflow-hidden">
-          <div className="max-w-7xl mx-auto grid lg:grid-cols-2 gap-16 items-center">
-            <div className="z-10">
-              <div className="inline-flex items-center gap-2 px-4 py-2 bg-primary-fixed text-on-primary-fixed rounded-full mb-8">
-                <span
-                  className="material-symbols-outlined text-[18px]"
-                  style={{ fontVariationSettings: "'FILL' 1" }}
-                >
-                  stars
+        <section style={{ position: "relative", padding: "3rem 1.5rem", overflow: "hidden" }}>
+          <div style={{
+            maxWidth: "80rem", margin: "0 auto",
+            display: "grid",
+            gridTemplateColumns: "repeat(auto-fit, minmax(min(100%, 340px), 1fr))",
+            gap: "4rem",
+            alignItems: "center",
+          }}>
+            {/* Sol: Metin */}
+            <div style={{ position: "relative", zIndex: 1 }}>
+              <div style={{
+                display: "inline-flex", alignItems: "center", gap: "0.5rem",
+                padding: "0.5rem 1rem",
+                backgroundColor: C.primaryFixed, color: C.onPrimaryFixed,
+                borderRadius: "9999px", marginBottom: "2rem",
+              }}>
+                <span className="material-symbols-outlined" style={{ fontSize: "18px", fontVariationSettings: "'FILL' 1" }}>stars</span>
+                <span style={{ fontSize: "0.75rem", fontWeight: 700, textTransform: "uppercase", letterSpacing: "0.2em" }}>
+                  Prestijli Arena Açılıyor
                 </span>
-                <span className="text-xs font-bold uppercase tracking-[0.2em]">Prestijli Arena Açılıyor</span>
               </div>
-              <h2 className="font-headline text-5xl md:text-7xl font-bold text-on-surface leading-[1.1] mb-8">
-                Şampiyonluk <span className="italic text-primary">Heyecanı</span> Başlıyor!
+
+              <h2 style={{
+                fontFamily: FONT_HEADLINE, fontWeight: 700, color: C.onSurface,
+                fontSize: "clamp(2.5rem, 6vw, 4.5rem)",
+                lineHeight: 1.1, marginBottom: "2rem", margin: "0 0 2rem",
+              }}>
+                Şampiyonluk{" "}
+                <span style={{ fontStyle: "italic", color: C.primary }}>Heyecanı</span>{" "}
+                Başlıyor!
               </h2>
-              <p className="text-lg md:text-xl text-on-surface-variant max-w-xl mb-12 leading-relaxed">
+
+              <p style={{
+                fontSize: "1.125rem", color: C.onSurfaceVariant,
+                lineHeight: 1.75, maxWidth: "36rem",
+                margin: "0 0 3rem",
+              }}>
                 Türkiye&apos;nin en sevimli evcil hayvanları burada! Petini kaydet, yarışmalara katıl, harika ödüller kazan.
               </p>
-              <div className="flex flex-col sm:flex-row gap-6">
-                <JoinButton label="Adaylığınızı Başlatın" />
-              </div>
+
+              <JoinButton label="Adaylığınızı Başlatın" />
             </div>
 
-            {/* Champion Showcase Frame */}
-            <div className="relative flex justify-center items-center">
-              <div className="absolute -top-24 -right-24 w-64 h-64 bg-primary-fixed rounded-full opacity-10 blur-[100px]" />
-              <div className="absolute -bottom-24 -left-24 w-80 h-80 bg-primary rounded-full opacity-5 blur-[120px]" />
-              <div className="relative w-full max-w-[420px] p-6 bg-surface-container-lowest rounded-2xl frame-glow border border-outline-variant/30">
-                <div className="relative aspect-[3/4] overflow-hidden rounded-lg bg-surface-container">
+            {/* Sağ: Showcase Frame */}
+            <div style={{ display: "flex", justifyContent: "center", alignItems: "center", position: "relative" }}>
+              {/* Arka plan ışıkları */}
+              <div style={{
+                position: "absolute", top: "-6rem", right: "-6rem",
+                width: "16rem", height: "16rem",
+                backgroundColor: C.primaryFixed, borderRadius: "9999px",
+                opacity: 0.1, filter: "blur(100px)", pointerEvents: "none",
+              }} />
+              <div style={{
+                position: "absolute", bottom: "-6rem", left: "-6rem",
+                width: "20rem", height: "20rem",
+                backgroundColor: C.primary, borderRadius: "9999px",
+                opacity: 0.05, filter: "blur(120px)", pointerEvents: "none",
+              }} />
+
+              {/* Kart */}
+              <div className="frame-glow" style={{
+                position: "relative", width: "100%", maxWidth: "420px",
+                padding: "1.5rem",
+                backgroundColor: C.surfaceContainerLowest,
+                borderRadius: "1rem",
+                border: `1px solid ${C.outlineVariant}`,
+              }}>
+                <div style={{
+                  position: "relative", aspectRatio: "3/4",
+                  overflow: "hidden", borderRadius: "0.5rem",
+                  backgroundColor: C.surfaceContainer,
+                }}>
                   <Image
                     fill
-                    className="object-cover"
+                    style={{ objectFit: "cover" }}
                     src="https://lh3.googleusercontent.com/aida-public/AB6AXuDPKp6nGfyKvG9QSD9c2luqcRpP0Kb31AUG-5VoHECzFZH6tsU9YvgkRONavrG6p0zEhpJ0dnbWgvQ6HrSq_Gxb-xI1ro88ijANOqP6oma1RXatdI7eB62M7G2SoFAhlOPyZBe2bdAfJqETLMp_4PUAV0JCUj8ESwsVdW_0oZMEbVa0NwIlKOlkN0lp2p8ej_9oIZBjB9gK94thI2u93MXYwwn2B683nLbnN0Ic4s9-ieP9VN3uX4zJwowvfnYLL_SsRMZ8r1Hamg"
-                    alt="Altın taç takan şık küçük köpek, zarifçe poz veriyor"
+                    alt="Altın taç takan şık küçük köpek"
                   />
-                  <div className="absolute inset-0 bg-gradient-to-t from-black/40 via-transparent to-transparent" />
+                  <div style={{
+                    position: "absolute", inset: 0,
+                    background: "linear-gradient(to top, rgba(0,0,0,0.4), transparent)",
+                  }} />
                 </div>
-                <div className="absolute -left-6 bottom-20 bg-primary text-on-primary w-14 h-14 rounded-full flex items-center justify-center shadow-2xl rotate-[-12deg]">
-                  <span className="material-symbols-outlined text-3xl">military_tech</span>
+
+                {/* Rozet */}
+                <div style={{
+                  position: "absolute", left: "-1.5rem", bottom: "5rem",
+                  backgroundColor: C.primary, color: C.onPrimary,
+                  width: "3.5rem", height: "3.5rem", borderRadius: "9999px",
+                  display: "flex", alignItems: "center", justifyContent: "center",
+                  boxShadow: "0 25px 50px -12px rgba(0,0,0,0.25)",
+                  transform: "rotate(-12deg)",
+                }}>
+                  <span className="material-symbols-outlined" style={{ fontSize: "1.75rem" }}>military_tech</span>
                 </div>
               </div>
             </div>
@@ -84,81 +187,97 @@ export default function LandingPage() {
         </section>
 
         {/* ── Nasıl Çalışır ── */}
-        <section className="px-6 py-20 bg-surface">
-          <div className="max-w-4xl mx-auto">
-            <div className="text-center mb-16">
-              <h3 className="font-headline text-4xl font-bold mb-4 italic text-primary">Nasıl Çalışır?</h3>
-              <div className="w-24 h-1 bg-primary mx-auto rounded-full mb-6" />
-              <p className="text-on-surface-variant text-lg">3 Kolay Adımda Eğlenceye Katıl</p>
+        <section style={{ padding: "5rem 1.5rem", backgroundColor: C.surface }}>
+          <div style={{ maxWidth: "56rem", margin: "0 auto" }}>
+            <div style={{ textAlign: "center", marginBottom: "4rem" }}>
+              <h3 style={{ fontFamily: FONT_HEADLINE, fontSize: "2.25rem", fontWeight: 700, fontStyle: "italic", color: C.primary, margin: "0 0 1rem" }}>
+                Nasıl Çalışır?
+              </h3>
+              <div style={{ width: "6rem", height: "4px", backgroundColor: C.primary, margin: "0 auto 1.5rem", borderRadius: "9999px" }} />
+              <p style={{ color: C.onSurfaceVariant, fontSize: "1.125rem", margin: 0 }}>3 Kolay Adımda Eğlenceye Katıl</p>
             </div>
-            <div className="space-y-12">
-              <div className="relative group p-8 bg-surface-container-lowest rounded-2xl border border-outline-variant/20 hover:shadow-xl transition-all duration-500">
-                <div className="flex items-start gap-6">
-                  <div className="flex-shrink-0 w-16 h-16 bg-primary-container text-on-primary-container rounded-2xl flex items-center justify-center font-headline text-3xl font-bold shadow-inner">01</div>
+
+            <div style={{ display: "flex", flexDirection: "column", gap: "3rem" }}>
+              {/* Adım 1 */}
+              <div style={{ position: "relative", padding: "2rem", backgroundColor: C.surfaceContainerLowest, borderRadius: "1rem", border: `1px solid ${C.outlineVariant}` }}>
+                <div style={{ display: "flex", alignItems: "flex-start", gap: "1.5rem" }}>
+                  <div style={{ flexShrink: 0, width: "4rem", height: "4rem", backgroundColor: C.primaryContainer, color: C.onPrimaryFixed, borderRadius: "0.75rem", display: "flex", alignItems: "center", justifyContent: "center", fontFamily: FONT_HEADLINE, fontSize: "1.875rem", fontWeight: 700 }}>01</div>
                   <div>
-                    <h4 className="font-headline text-2xl font-bold mb-3 italic">Hemen Kaydol ve Petini Ekle</h4>
-                    <p className="text-on-surface-variant leading-relaxed">Google hesabınızla saniyeler içinde giriş yapın ve patili dostunuzu sisteme kaydedin.</p>
+                    <h4 style={{ fontFamily: FONT_HEADLINE, fontSize: "1.5rem", fontWeight: 700, fontStyle: "italic", margin: "0 0 0.75rem" }}>Hemen Kaydol ve Petini Ekle</h4>
+                    <p style={{ color: C.onSurfaceVariant, lineHeight: 1.75, margin: 0 }}>Google hesabınızla saniyeler içinde giriş yapın ve patili dostunuzu sisteme kaydedin.</p>
                   </div>
                 </div>
-                <div className="absolute -top-4 -right-4 w-12 h-12 bg-primary-fixed rounded-full flex items-center justify-center text-on-primary-fixed shadow-md">
-                  <span className="material-symbols-outlined text-2xl">person_add</span>
+                <div style={{ position: "absolute", top: "-1rem", right: "-1rem", width: "3rem", height: "3rem", backgroundColor: C.primaryFixed, color: C.onPrimaryFixed, borderRadius: "9999px", display: "flex", alignItems: "center", justifyContent: "center", boxShadow: "0 4px 6px -1px rgba(0,0,0,0.1)" }}>
+                  <span className="material-symbols-outlined" style={{ fontSize: "1.25rem" }}>person_add</span>
                 </div>
               </div>
-              <div className="relative group p-8 bg-secondary-container/30 rounded-2xl border border-outline-variant/20 hover:shadow-xl transition-all duration-500">
-                <div className="flex items-start gap-6">
-                  <div className="flex-shrink-0 w-16 h-16 bg-primary text-on-primary rounded-2xl flex items-center justify-center font-headline text-3xl font-bold shadow-inner">02</div>
+
+              {/* Adım 2 */}
+              <div style={{ position: "relative", padding: "2rem", backgroundColor: `${C.secondaryContainer}4D`, borderRadius: "1rem", border: `1px solid ${C.outlineVariant}` }}>
+                <div style={{ display: "flex", alignItems: "flex-start", gap: "1.5rem" }}>
+                  <div style={{ flexShrink: 0, width: "4rem", height: "4rem", backgroundColor: C.primary, color: C.onPrimary, borderRadius: "0.75rem", display: "flex", alignItems: "center", justifyContent: "center", fontFamily: FONT_HEADLINE, fontSize: "1.875rem", fontWeight: 700 }}>02</div>
                   <div>
-                    <h4 className="font-headline text-2xl font-bold mb-3 italic">Fotoğrafları Yükle ve Beğeni Topla</h4>
-                    <p className="text-on-surface-variant leading-relaxed">Evcil hayvanının en güzel fotoğrafını paylaş, yarışmalara katıl ve beğeni topla.</p>
+                    <h4 style={{ fontFamily: FONT_HEADLINE, fontSize: "1.5rem", fontWeight: 700, fontStyle: "italic", margin: "0 0 0.75rem" }}>Fotoğrafları Yükle ve Beğeni Topla</h4>
+                    <p style={{ color: C.onSurfaceVariant, lineHeight: 1.75, margin: 0 }}>Evcil hayvanının en güzel fotoğrafını paylaş, yarışmalara katıl ve beğeni topla.</p>
                   </div>
                 </div>
-                <div className="absolute -top-4 -right-4 w-12 h-12 bg-secondary rounded-full flex items-center justify-center text-on-secondary shadow-md">
-                  <span className="material-symbols-outlined text-2xl">photo_camera</span>
+                <div style={{ position: "absolute", top: "-1rem", right: "-1rem", width: "3rem", height: "3rem", backgroundColor: C.secondary, color: C.onSecondary, borderRadius: "9999px", display: "flex", alignItems: "center", justifyContent: "center", boxShadow: "0 4px 6px -1px rgba(0,0,0,0.1)" }}>
+                  <span className="material-symbols-outlined" style={{ fontSize: "1.25rem" }}>photo_camera</span>
                 </div>
               </div>
-              <div className="relative group p-8 bg-surface-container-high rounded-2xl border border-outline-variant/20 hover:shadow-xl transition-all duration-500">
-                <div className="flex items-start gap-6">
-                  <div className="flex-shrink-0 w-16 h-16 bg-tertiary text-on-tertiary rounded-2xl flex items-center justify-center font-headline text-3xl font-bold shadow-inner">03</div>
+
+              {/* Adım 3 */}
+              <div style={{ position: "relative", padding: "2rem", backgroundColor: C.surfaceContainerHigh, borderRadius: "1rem", border: `1px solid ${C.outlineVariant}` }}>
+                <div style={{ display: "flex", alignItems: "flex-start", gap: "1.5rem" }}>
+                  <div style={{ flexShrink: 0, width: "4rem", height: "4rem", backgroundColor: C.tertiary, color: C.onTertiary, borderRadius: "0.75rem", display: "flex", alignItems: "center", justifyContent: "center", fontFamily: FONT_HEADLINE, fontSize: "1.875rem", fontWeight: 700 }}>03</div>
                   <div>
-                    <h4 className="font-headline text-2xl font-bold mb-3 italic">Ödülleri Kap!</h4>
-                    <p className="text-on-surface-variant leading-relaxed">Kazandığın puanlarla mama, aksesuar, tasma ve hediye çeki ödüllerini kap!</p>
+                    <h4 style={{ fontFamily: FONT_HEADLINE, fontSize: "1.5rem", fontWeight: 700, fontStyle: "italic", margin: "0 0 0.75rem" }}>Ödülleri Kap!</h4>
+                    <p style={{ color: C.onSurfaceVariant, lineHeight: 1.75, margin: 0 }}>Kazandığın puanlarla mama, aksesuar, tasma ve hediye çeki ödüllerini kap!</p>
                   </div>
                 </div>
-                <div className="absolute -top-4 -right-4 w-12 h-12 bg-tertiary-container text-on-tertiary-container rounded-full flex items-center justify-center shadow-md">
-                  <span className="material-symbols-outlined text-2xl" style={{ fontVariationSettings: "'FILL' 1" }}>emoji_events</span>
+                <div style={{ position: "absolute", top: "-1rem", right: "-1rem", width: "3rem", height: "3rem", backgroundColor: C.tertiaryContainer, color: C.onTertiaryContainer, borderRadius: "9999px", display: "flex", alignItems: "center", justifyContent: "center", boxShadow: "0 4px 6px -1px rgba(0,0,0,0.1)" }}>
+                  <span className="material-symbols-outlined" style={{ fontSize: "1.25rem", fontVariationSettings: "'FILL' 1" }}>emoji_events</span>
                 </div>
               </div>
             </div>
           </div>
         </section>
 
-        {/* ── CTA 1: "Şimdi Katıl" ── */}
-        <div className="flex justify-center py-12 bg-surface-container-low">
+        {/* ── CTA 1 ── */}
+        <div style={{ display: "flex", justifyContent: "center", padding: "3rem 1.5rem", backgroundColor: C.surfaceContainerLow }}>
           <JoinButton label="Şimdi Katıl" />
         </div>
 
-
         {/* ── Ödüller ── */}
-        <section className="px-6 py-20 bg-surface">
-          <div className="max-w-7xl mx-auto">
-            <div className="text-center mb-16">
-              <h3 className="font-headline text-4xl font-bold mb-4 italic text-primary">Ödüllerimiz</h3>
-              <div className="w-24 h-1 bg-primary mx-auto rounded-full mb-6" />
-              <p className="text-on-surface-variant text-lg">Finalistleri Bekleyen Eşsiz Hediyeler</p>
+        <section style={{ padding: "5rem 1.5rem", backgroundColor: C.surface }}>
+          <div style={{ maxWidth: "80rem", margin: "0 auto" }}>
+            <div style={{ textAlign: "center", marginBottom: "4rem" }}>
+              <h3 style={{ fontFamily: FONT_HEADLINE, fontSize: "2.25rem", fontWeight: 700, fontStyle: "italic", color: C.primary, margin: "0 0 1rem" }}>
+                Ödüllerimiz
+              </h3>
+              <div style={{ width: "6rem", height: "4px", backgroundColor: C.primary, margin: "0 auto 1.5rem", borderRadius: "9999px" }} />
+              <p style={{ color: C.onSurfaceVariant, fontSize: "1.125rem", margin: 0 }}>Finalistleri Bekleyen Eşsiz Hediyeler</p>
             </div>
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8">
+
+            <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(180px, 1fr))", gap: "2rem" }}>
               {[
                 { icon: "pets",                label: "Mama Ödülü",        desc: "En kaliteli ve besleyici mamalarla dolu paketler." },
                 { icon: "apparel",             label: "Aksesuar Ödülü",    desc: "Şık tasmalar ve gala kostümleriyle petiniz parlasın." },
                 { icon: "confirmation_number", label: "Hediye Çeki Ödülü", desc: "Seçkin pet mağazalarında geçerli alışveriş çekleri." },
                 { icon: "card_giftcard",       label: "Sürpriz Hediyeler", desc: "Arena sponsorlarından her hafta yenilenen hediyeler." },
               ].map((prize) => (
-                <div key={prize.label} className="bg-surface-container-lowest p-8 rounded-full border border-primary/10 flex flex-col items-center text-center hover:shadow-lg transition-all duration-300 group">
-                  <div className="w-20 h-20 bg-primary-fixed rounded-full flex items-center justify-center mb-6 group-hover:scale-110 transition-transform">
-                    <span className="material-symbols-outlined text-4xl text-on-primary-fixed" style={{ fontVariationSettings: "'FILL' 1" }}>{prize.icon}</span>
+                <div key={prize.label} style={{
+                  backgroundColor: C.surfaceContainerLowest,
+                  padding: "2rem", borderRadius: "9999px",
+                  border: `1px solid ${C.primaryFixed}`,
+                  display: "flex", flexDirection: "column", alignItems: "center", textAlign: "center",
+                  boxShadow: "0 1px 3px rgba(0,0,0,0.05)",
+                }}>
+                  <div style={{ width: "5rem", height: "5rem", backgroundColor: C.primaryFixed, borderRadius: "9999px", display: "flex", alignItems: "center", justifyContent: "center", marginBottom: "1.5rem" }}>
+                    <span className="material-symbols-outlined" style={{ fontSize: "2.5rem", color: C.onPrimaryFixed, fontVariationSettings: "'FILL' 1" }}>{prize.icon}</span>
                   </div>
-                  <h4 className="font-headline text-xl font-bold mb-2 italic">{prize.label}</h4>
-                  <p className="text-sm text-on-surface-variant">{prize.desc}</p>
+                  <h4 style={{ fontFamily: FONT_HEADLINE, fontSize: "1.25rem", fontWeight: 700, fontStyle: "italic", margin: "0 0 0.5rem" }}>{prize.label}</h4>
+                  <p style={{ fontSize: "0.875rem", color: C.onSurfaceVariant, margin: 0, lineHeight: 1.6 }}>{prize.desc}</p>
                 </div>
               ))}
             </div>
@@ -166,33 +285,41 @@ export default function LandingPage() {
         </section>
 
         {/* ── Slogan ── */}
-        <section className="py-24 text-center px-6">
-          <h5 className="font-headline text-4xl md:text-6xl text-primary-container font-light tracking-[0.2em] mb-4 uppercase">
+        <section style={{ padding: "6rem 1.5rem", textAlign: "center" }}>
+          <h5 style={{ fontFamily: FONT_HEADLINE, fontSize: "clamp(2rem, 5vw, 3.75rem)", color: C.primaryContainer, fontWeight: 300, letterSpacing: "0.2em", textTransform: "uppercase", margin: "0 0 1rem" }}>
             Sevgiyi Hisset!
           </h5>
-          <div className="w-24 h-1 bg-primary mx-auto rounded-full" />
+          <div style={{ width: "6rem", height: "4px", backgroundColor: C.primary, margin: "0 auto", borderRadius: "9999px" }} />
         </section>
 
-        {/* ── CTA 3: "Haydi Şimdi Katıl" ── */}
-        <div className="flex justify-center pb-12">
+        {/* ── CTA 3 ── */}
+        <div style={{ display: "flex", justifyContent: "center", paddingBottom: "3rem" }}>
           <JoinButton label="Haydi Şimdi Katıl" />
         </div>
       </main>
 
-      {/* ── Bottom Nav (mobile) ── */}
-      <nav className="fixed bottom-0 left-0 w-full z-50 flex justify-around items-center px-4 pb-6 pt-2 bg-[#faf9f6]/80 backdrop-blur-2xl rounded-t-[3rem] shadow-[0_-4px_40px_rgba(26,28,26,0.06)] md:hidden">
-        <div className="flex flex-col items-center justify-center text-primary bg-white rounded-full px-4 py-2 transition-all active:scale-90 duration-300 ease-out">
+      {/* ── Bottom Nav ── */}
+      <nav style={{
+        position: "fixed", bottom: 0, left: 0, right: 0, zIndex: 50,
+        display: "flex", justifyContent: "space-around", alignItems: "center",
+        padding: "0.5rem 1rem 1.5rem",
+        backgroundColor: "rgba(250,249,246,0.85)",
+        backdropFilter: "blur(24px)",
+        borderTopLeftRadius: "3rem", borderTopRightRadius: "3rem",
+        boxShadow: "0 -4px 40px rgba(26,28,26,0.06)",
+      }}>
+        <div style={{ display: "flex", flexDirection: "column", alignItems: "center", gap: "2px", color: C.primary, backgroundColor: "#fff", borderRadius: "9999px", padding: "0.5rem 1rem" }}>
           <span className="material-symbols-outlined" style={{ fontVariationSettings: "'FILL' 1" }}>explore</span>
-          <span className="text-[10px] font-semibold tracking-wide uppercase">Keşfet</span>
+          <span style={{ fontSize: "0.625rem", fontWeight: 600, textTransform: "uppercase", letterSpacing: "0.05em" }}>Keşfet</span>
         </div>
         {[
           { icon: "emoji_events", label: "Yarışma" },
           { icon: "military_tech", label: "Ödüller" },
           { icon: "person", label: "Profil" },
         ].map((item) => (
-          <div key={item.label} className="flex flex-col items-center justify-center text-stone-400 hover:text-primary transition-colors active:scale-90 duration-300 ease-out">
+          <div key={item.label} style={{ display: "flex", flexDirection: "column", alignItems: "center", gap: "2px", color: "#a8a29e" }}>
             <span className="material-symbols-outlined">{item.icon}</span>
-            <span className="text-[10px] font-semibold tracking-wide uppercase">{item.label}</span>
+            <span style={{ fontSize: "0.625rem", fontWeight: 600, textTransform: "uppercase", letterSpacing: "0.05em" }}>{item.label}</span>
           </div>
         ))}
       </nav>
@@ -200,9 +327,16 @@ export default function LandingPage() {
       {/* ── FAB ── */}
       <button
         onClick={() => signIn("google", { callbackUrl: "/onboard" })}
-        className="fixed right-6 bottom-32 md:bottom-12 z-40 w-16 h-16 rounded-full gala-gradient-gold text-on-primary flex items-center justify-center shadow-xl active:scale-95 transition-transform"
+        className="gala-gradient-gold"
+        style={{
+          position: "fixed", right: "1.5rem", bottom: "8rem", zIndex: 40,
+          width: "4rem", height: "4rem", borderRadius: "9999px",
+          color: C.onPrimary, border: "none", cursor: "pointer",
+          display: "flex", alignItems: "center", justifyContent: "center",
+          boxShadow: "0 20px 25px -5px rgba(0,0,0,0.15)",
+        }}
       >
-        <span className="material-symbols-outlined text-3xl">add</span>
+        <span className="material-symbols-outlined" style={{ fontSize: "1.75rem" }}>add</span>
       </button>
     </div>
   );
