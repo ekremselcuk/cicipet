@@ -46,12 +46,12 @@ function JoinButton({ label }: { label: string }) {
 
 // ── Ana bileşen ───────────────────────────────────────────────────────────────
 export default function LandingPage() {
-  const { status } = useSession();
+  const { data: session } = useSession();
   const router = useRouter();
 
   useEffect(() => {
-    if (status === "authenticated") router.push("/onboard");
-  }, [status, router]);
+    if (session) router.push("/onboard");
+  }, [session, router]);
 
   return (
     <div style={{ backgroundColor: C.surface, fontFamily: FONT_BODY, color: C.onSurface, minHeight: "100dvh" }}>
