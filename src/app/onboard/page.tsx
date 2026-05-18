@@ -368,7 +368,7 @@ export default function OnboardPage() {
                     onClick={() => setSelectedGender(g.value)}
                     style={{
                       padding: "15px", borderRadius: 12, cursor: "pointer",
-                      fontWeight: 700, fontSize: 15, border: "none",
+                      fontWeight: 700, fontSize: 15,
                       background: active ? GOLD : "#ffffff",
                       color: active ? "#ffffff" : "#5c4a2a",
                       boxShadow: active
