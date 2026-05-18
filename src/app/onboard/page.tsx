@@ -487,7 +487,7 @@ export default function OnboardPage() {
                 links: [{ text: "KVKK Aydınlatma Metni", href: "/legal/kvkk" }],
               },
             ].map((item) => (
-              <label key={item.href ?? item.label} style={{
+              <label key={item.label} style={{
                 display: "flex", alignItems: "flex-start", gap: 12,
                 cursor: "pointer",
               }}>
