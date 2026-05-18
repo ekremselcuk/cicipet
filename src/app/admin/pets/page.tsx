@@ -1,0 +1,438 @@
+"use client";
+
+import { useEffect, useState, useCallback } from "react";
+import { useRouter } from "next/navigation";
+import { checkAdminAuth } from "@/lib/adminAuth";
+import AdminLayout from "@/components/admin/AdminLayout";
+
+interface Pet {
+  id: string;
+  name: string;
+  species: string;
+  breed: string | null;
+  gender: string;
+  isVaccinated: boolean;
+  isNeutered: boolean;
+  city: string | null;
+  isActive: boolean;
+  createdAt: string;
+  owner: { name: string | null; email: string };
+  photos: { url: string; isMain: boolean }[];
+}
+
+const speciesMap: Record<string, string> = {
+  DOG: "Köpek",
+  CAT: "Kedi",
+  BIRD: "Kuş",
+  RABBIT: "Tavşan",
+  FISH: "Balık",
+  REPTILE: "Sürüngen",
+  OTHER: "Diğer",
+};
+
+const genderMap: Record<string, string> = {
+  MALE: "Erkek",
+  FEMALE: "Dişi",
+  UNKNOWN: "Bilinmiyor",
+};
+
+export default function PetsPage() {
+  const router = useRouter();
+  const [pets, setPets] = useState<Pet[]>([]);
+  const [total, setTotal] = useState(0);
+  const [page, setPage] = useState(1);
+  const [limit, setLimit] = useState(25);
+  const [search, setSearch] = useState("");
+  const [speciesFilter, setSpeciesFilter] = useState("");
+  const [genderFilter, setGenderFilter] = useState("");
+  const [statusFilter, setStatusFilter] = useState("");
+  const [sortBy, setSortBy] = useState("createdAt");
+  const [sortDir, setSortDir] = useState("desc");
+  const [loading, setLoading] = useState(true);
+  const [showModal, setShowModal] = useState<null | "view" | "edit">(null);
+  const [selectedPet, setSelectedPet] = useState<Pet | null>(null);
+  const [editForm, setEditForm] = useState({ name: "", breed: "", city: "" });
+
+  const totalPages = Math.ceil(total / limit);
+
+  const fetchPets = useCallback(() => {
+    setLoading(true);
+    const params = new URLSearchParams({
+      search,
+      species: speciesFilter,
+      gender: genderFilter,
+      status: statusFilter,
+      sortBy,
+      sortDir,
+      page: String(page),
+      limit: String(limit),
+    });
+    fetch(`/api/admin/pets?${params}`)
+      .then((r) => r.json())
+      .then((data) => {
+        setPets(data.pets || []);
+        setTotal(data.total || 0);
+        setLoading(false);
+      })
+      .catch(() => setLoading(false));
+  }, [search, speciesFilter, genderFilter, statusFilter, sortBy, sortDir, page, limit]);
+
+  useEffect(() => {
+    if (!checkAdminAuth()) {
+      router.push("/admin");
+      return;
+    }
+    fetchPets();
+  }, [fetchPets, router]);
+
+  function handleApprove(petId: string) {
+    fetch("/api/admin/pets", {
+      method: "PATCH",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ action: "approve", petId }),
+    }).then(() => fetchPets());
+  }
+
+  function handleReject(petId: string) {
+    fetch("/api/admin/pets", {
+      method: "PATCH",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ action: "reject", petId }),
+    }).then(() => fetchPets());
+  }
+
+  function handleDelete(petId: string) {
+    if (!confirm("Bu peti silmek istediğinizden emin misiniz?")) return;
+    fetch(`/api/admin/pets?id=${petId}`, { method: "DELETE" }).then(() => fetchPets());
+  }
+
+  function handleEdit() {
+    if (!selectedPet) return;
+    fetch("/api/admin/pets", {
+      method: "PATCH",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ action: "edit", petId: selectedPet.id, ...editForm }),
+    }).then(() => {
+      setShowModal(null);
+      fetchPets();
+    });
+  }
+
+  function openEdit(pet: Pet) {
+    setSelectedPet(pet);
+    setEditForm({ name: pet.name, breed: pet.breed || "", city: pet.city || "" });
+    setShowModal("edit");
+  }
+
+  return (
+    <AdminLayout>
+      <div>
+        <h1 style={{ fontSize: 24, fontWeight: 700, color: "#1a1a2e", marginBottom: 20, marginTop: 0 }}>
+          Petler
+        </h1>
+
+        {/* Filter bar */}
+        <div
+          style={{
+            backgroundColor: "#fff",
+            borderRadius: 10,
+            padding: "14px 16px",
+            marginBottom: 16,
+            display: "flex",
+            gap: 10,
+            flexWrap: "wrap",
+            alignItems: "center",
+            boxShadow: "0 1px 4px rgba(0,0,0,0.06)",
+          }}
+        >
+          <input
+            placeholder="Ara (pet adı, cins...)"
+            value={search}
+            onChange={(e) => { setSearch(e.target.value); setPage(1); }}
+            style={{ padding: "7px 12px", border: "1px solid #ddd", borderRadius: 6, fontSize: 13, width: 180 }}
+          />
+          <select
+            value={speciesFilter}
+            onChange={(e) => { setSpeciesFilter(e.target.value); setPage(1); }}
+            style={{ padding: "7px 10px", border: "1px solid #ddd", borderRadius: 6, fontSize: 13 }}
+          >
+            <option value="">Tüm Türler</option>
+            {Object.entries(speciesMap).map(([k, v]) => (
+              <option key={k} value={k}>{v}</option>
+            ))}
+          </select>
+          <select
+            value={genderFilter}
+            onChange={(e) => { setGenderFilter(e.target.value); setPage(1); }}
+            style={{ padding: "7px 10px", border: "1px solid #ddd", borderRadius: 6, fontSize: 13 }}
+          >
+            <option value="">Tüm Cinsiyetler</option>
+            {Object.entries(genderMap).map(([k, v]) => (
+              <option key={k} value={k}>{v}</option>
+            ))}
+          </select>
+          <select
+            value={statusFilter}
+            onChange={(e) => { setStatusFilter(e.target.value); setPage(1); }}
+            style={{ padding: "7px 10px", border: "1px solid #ddd", borderRadius: 6, fontSize: 13 }}
+          >
+            <option value="">Tüm Durumlar</option>
+            <option value="active">Aktif</option>
+            <option value="inactive">Pasif</option>
+          </select>
+          <select
+            value={sortDir}
+            onChange={(e) => setSortDir(e.target.value)}
+            style={{ padding: "7px 10px", border: "1px solid #ddd", borderRadius: 6, fontSize: 13 }}
+          >
+            <option value="desc">En Yeni</option>
+            <option value="asc">En Eski</option>
+          </select>
+          <select
+            value={limit}
+            onChange={(e) => { setLimit(Number(e.target.value)); setPage(1); }}
+            style={{ padding: "7px 10px", border: "1px solid #ddd", borderRadius: 6, fontSize: 13 }}
+          >
+            <option value={10}>10</option>
+            <option value={25}>25</option>
+            <option value={50}>50</option>
+            <option value={100}>100</option>
+          </select>
+        </div>
+
+        {/* Table */}
+        <div
+          style={{
+            backgroundColor: "#fff",
+            borderRadius: 10,
+            boxShadow: "0 1px 4px rgba(0,0,0,0.06)",
+            overflow: "hidden",
+          }}
+        >
+          {loading ? (
+            <div style={{ padding: 40, textAlign: "center", color: "#888" }}>Yükleniyor...</div>
+          ) : (
+            <table style={{ width: "100%", borderCollapse: "collapse", fontSize: 13 }}>
+              <thead>
+                <tr style={{ backgroundColor: "#f8f7f5", borderBottom: "1px solid #eee" }}>
+                  <th style={{ padding: "10px 12px", textAlign: "left" }}>Fotoğraf</th>
+                  <th style={{ padding: "10px 12px", textAlign: "left" }}>Pet Adı</th>
+                  <th style={{ padding: "10px 12px", textAlign: "left" }}>Tür</th>
+                  <th style={{ padding: "10px 12px", textAlign: "left" }}>Cins</th>
+                  <th style={{ padding: "10px 12px", textAlign: "left" }}>Cinsiyet</th>
+                  <th style={{ padding: "10px 12px", textAlign: "left" }}>Sahibi</th>
+                  <th style={{ padding: "10px 12px", textAlign: "left" }}>Şehir</th>
+                  <th style={{ padding: "10px 12px", textAlign: "left" }}>Durum</th>
+                  <th style={{ padding: "10px 12px", textAlign: "left" }}>Tarih</th>
+                  <th style={{ padding: "10px 12px", textAlign: "left" }}>İşlemler</th>
+                </tr>
+              </thead>
+              <tbody>
+                {pets.map((pet) => {
+                  const mainPhoto = pet.photos?.find((p) => p.isMain) || pet.photos?.[0];
+                  return (
+                    <tr key={pet.id} style={{ borderBottom: "1px solid #f0ede8" }}>
+                      <td style={{ padding: "8px 12px" }}>
+                        {mainPhoto ? (
+                          <img
+                            src={mainPhoto.url}
+                            alt=""
+                            style={{ width: 40, height: 40, borderRadius: 6, objectFit: "cover" }}
+                          />
+                        ) : (
+                          <div
+                            style={{
+                              width: 40,
+                              height: 40,
+                              borderRadius: 6,
+                              backgroundColor: "#f0ede8",
+                              display: "flex",
+                              alignItems: "center",
+                              justifyContent: "center",
+                              fontSize: 18,
+                            }}
+                          >
+                            🐾
+                          </div>
+                        )}
+                      </td>
+                      <td style={{ padding: "8px 12px", fontWeight: 500 }}>{pet.name}</td>
+                      <td style={{ padding: "8px 12px" }}>{speciesMap[pet.species] || pet.species}</td>
+                      <td style={{ padding: "8px 12px", color: "#777" }}>{pet.breed || "—"}</td>
+                      <td style={{ padding: "8px 12px" }}>{genderMap[pet.gender] || pet.gender}</td>
+                      <td style={{ padding: "8px 12px", color: "#555" }}>{pet.owner?.name || "—"}</td>
+                      <td style={{ padding: "8px 12px", color: "#777" }}>{pet.city || "—"}</td>
+                      <td style={{ padding: "8px 12px" }}>
+                        <span
+                          style={{
+                            padding: "2px 8px",
+                            borderRadius: 10,
+                            fontSize: 11,
+                            fontWeight: 600,
+                            backgroundColor: pet.isActive ? "#e0f5e9" : "#ffe0e0",
+                            color: pet.isActive ? "#1a7a3a" : "#cc0000",
+                          }}
+                        >
+                          {pet.isActive ? "Aktif" : "Pasif"}
+                        </span>
+                      </td>
+                      <td style={{ padding: "8px 12px", color: "#999", fontSize: 12 }}>
+                        {new Date(pet.createdAt).toLocaleDateString("tr-TR")}
+                      </td>
+                      <td style={{ padding: "8px 12px" }}>
+                        <div style={{ display: "flex", gap: 4 }}>
+                          <button
+                            onClick={() => { setSelectedPet(pet); setShowModal("view"); }}
+                            title="Görüntüle"
+                            style={{ padding: "3px 7px", border: "1px solid #ddd", borderRadius: 4, background: "#fff", cursor: "pointer", fontSize: 12 }}
+                          >
+                            👁️
+                          </button>
+                          <button
+                            onClick={() => openEdit(pet)}
+                            title="Düzenle"
+                            style={{ padding: "3px 7px", border: "1px solid #ddd", borderRadius: 4, background: "#fff", cursor: "pointer", fontSize: 12 }}
+                          >
+                            ✏️
+                          </button>
+                          <button
+                            onClick={() => handleApprove(pet.id)}
+                            title="Onayla"
+                            style={{ padding: "3px 7px", border: "1px solid #ccffdd", borderRadius: 4, background: "#f5fff8", cursor: "pointer", fontSize: 12 }}
+                          >
+                            ✅
+                          </button>
+                          <button
+                            onClick={() => handleReject(pet.id)}
+                            title="Reddet"
+                            style={{ padding: "3px 7px", border: "1px solid #ffcccc", borderRadius: 4, background: "#fff5f5", cursor: "pointer", fontSize: 12 }}
+                          >
+                            ❌
+                          </button>
+                          <button
+                            onClick={() => handleDelete(pet.id)}
+                            title="Sil"
+                            style={{ padding: "3px 7px", border: "1px solid #ffcccc", borderRadius: 4, background: "#fff5f5", cursor: "pointer", fontSize: 12 }}
+                          >
+                            🗑️
+                          </button>
+                        </div>
+                      </td>
+                    </tr>
+                  );
+                })}
+              </tbody>
+            </table>
+          )}
+        </div>
+
+        {/* Pagination */}
+        <div
+          style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginTop: 16, fontSize: 13, color: "#666" }}
+        >
+          <span>Toplam {total} pet · Sayfa {page} / {totalPages || 1}</span>
+          <div style={{ display: "flex", gap: 8 }}>
+            <button
+              onClick={() => setPage((p) => Math.max(1, p - 1))}
+              disabled={page <= 1}
+              style={{ padding: "6px 14px", border: "1px solid #ddd", borderRadius: 6, background: "#fff", cursor: page <= 1 ? "not-allowed" : "pointer", opacity: page <= 1 ? 0.5 : 1 }}
+            >
+              ← Önceki
+            </button>
+            <button
+              onClick={() => setPage((p) => Math.min(totalPages, p + 1))}
+              disabled={page >= totalPages}
+              style={{ padding: "6px 14px", border: "1px solid #ddd", borderRadius: 6, background: "#fff", cursor: page >= totalPages ? "not-allowed" : "pointer", opacity: page >= totalPages ? 0.5 : 1 }}
+            >
+              Sonraki →
+            </button>
+          </div>
+        </div>
+      </div>
+
+      {/* View Modal */}
+      {showModal === "view" && selectedPet && (
+        <div
+          style={{ position: "fixed", inset: 0, background: "rgba(0,0,0,0.5)", display: "flex", alignItems: "center", justifyContent: "center", zIndex: 1000 }}
+          onClick={() => setShowModal(null)}
+        >
+          <div
+            style={{ background: "#fff", borderRadius: 12, padding: 32, width: 440, maxWidth: "90%" }}
+            onClick={(e) => e.stopPropagation()}
+          >
+            <h3 style={{ marginTop: 0, marginBottom: 20 }}>Pet Detayı</h3>
+            <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 12, fontSize: 14 }}>
+              <div><span style={{ color: "#888" }}>Ad:</span> <strong>{selectedPet.name}</strong></div>
+              <div><span style={{ color: "#888" }}>Tür:</span> <strong>{speciesMap[selectedPet.species] || selectedPet.species}</strong></div>
+              <div><span style={{ color: "#888" }}>Cins:</span> <strong>{selectedPet.breed || "—"}</strong></div>
+              <div><span style={{ color: "#888" }}>Cinsiyet:</span> <strong>{genderMap[selectedPet.gender] || selectedPet.gender}</strong></div>
+              <div><span style={{ color: "#888" }}>Şehir:</span> <strong>{selectedPet.city || "—"}</strong></div>
+              <div><span style={{ color: "#888" }}>Aşılı:</span> <strong>{selectedPet.isVaccinated ? "Evet" : "Hayır"}</strong></div>
+              <div><span style={{ color: "#888" }}>Kısırlaştırılmış:</span> <strong>{selectedPet.isNeutered ? "Evet" : "Hayır"}</strong></div>
+              <div><span style={{ color: "#888" }}>Sahibi:</span> <strong>{selectedPet.owner?.name || "—"}</strong></div>
+            </div>
+            <button
+              onClick={() => setShowModal(null)}
+              style={{ marginTop: 24, padding: "8px 20px", border: "1px solid #ddd", borderRadius: 6, cursor: "pointer", background: "#fff" }}
+            >
+              Kapat
+            </button>
+          </div>
+        </div>
+      )}
+
+      {/* Edit Modal */}
+      {showModal === "edit" && selectedPet && (
+        <div
+          style={{ position: "fixed", inset: 0, background: "rgba(0,0,0,0.5)", display: "flex", alignItems: "center", justifyContent: "center", zIndex: 1000 }}
+          onClick={() => setShowModal(null)}
+        >
+          <div
+            style={{ background: "#fff", borderRadius: 12, padding: 32, width: 400, maxWidth: "90%" }}
+            onClick={(e) => e.stopPropagation()}
+          >
+            <h3 style={{ marginTop: 0, marginBottom: 20 }}>Peti Düzenle</h3>
+            <div style={{ marginBottom: 14 }}>
+              <label style={{ display: "block", fontSize: 13, color: "#555", marginBottom: 4 }}>Ad</label>
+              <input
+                value={editForm.name}
+                onChange={(e) => setEditForm((f) => ({ ...f, name: e.target.value }))}
+                style={{ width: "100%", padding: "8px 10px", border: "1px solid #ddd", borderRadius: 6, fontSize: 13, boxSizing: "border-box" }}
+              />
+            </div>
+            <div style={{ marginBottom: 14 }}>
+              <label style={{ display: "block", fontSize: 13, color: "#555", marginBottom: 4 }}>Cins</label>
+              <input
+                value={editForm.breed}
+                onChange={(e) => setEditForm((f) => ({ ...f, breed: e.target.value }))}
+                style={{ width: "100%", padding: "8px 10px", border: "1px solid #ddd", borderRadius: 6, fontSize: 13, boxSizing: "border-box" }}
+              />
+            </div>
+            <div style={{ marginBottom: 20 }}>
+              <label style={{ display: "block", fontSize: 13, color: "#555", marginBottom: 4 }}>Şehir</label>
+              <input
+                value={editForm.city}
+                onChange={(e) => setEditForm((f) => ({ ...f, city: e.target.value }))}
+                style={{ width: "100%", padding: "8px 10px", border: "1px solid #ddd", borderRadius: 6, fontSize: 13, boxSizing: "border-box" }}
+              />
+            </div>
+            <div style={{ display: "flex", gap: 10 }}>
+              <button
+                onClick={handleEdit}
+                style={{ padding: "8px 20px", background: "linear-gradient(135deg,#775a19 0%,#d4ad65 100%)", border: "none", borderRadius: 6, color: "#fff", cursor: "pointer", fontSize: 13 }}
+              >
+                Kaydet
+              </button>
+              <button
+                onClick={() => setShowModal(null)}
+                style={{ padding: "8px 20px", border: "1px solid #ddd", borderRadius: 6, cursor: "pointer", background: "#fff", fontSize: 13 }}
+              >
+                İptal
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+    </AdminLayout>
+  );
+}
