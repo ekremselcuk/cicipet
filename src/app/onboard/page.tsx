@@ -1,421 +1,366 @@
 "use client";
 
-import { useState, useRef, useCallback } from "react";
+import { useState, useRef } from "react";
 import { useRouter } from "next/navigation";
-import { containsProfanity } from "@/lib/textModeration";
+import { useSession, signOut } from "next-auth/react";
+import Image from "next/image";
 
-// ── Sabit veriler ─────────────────────────────────────────────────────────────
-
-const PET_TYPES = [
-  { id: "cat",     emoji: "🐱", label: "Kedi" },
-  { id: "dog",     emoji: "🐶", label: "Köpek" },
-  { id: "bird",    emoji: "🐦", label: "Kuş" },
-  { id: "rabbit",  emoji: "🐰", label: "Tavşan" },
+const SPECIES = [
+  { id: "kedi",     emoji: "🐱", label: "Kedi" },
+  { id: "köpek",   emoji: "🐶", label: "Köpek" },
+  { id: "kuş",     emoji: "🐦", label: "Kuş" },
+  { id: "tavşan",  emoji: "🐰", label: "Tavşan" },
   { id: "hamster", emoji: "🐹", label: "Hamster" },
-  { id: "fish",    emoji: "🐟", label: "Balık" },
-  { id: "reptile", emoji: "🦎", label: "Sürüngen" },
-  { id: "other",   emoji: "🐾", label: "Diğer" },
-] as const;
+  { id: "balık",   emoji: "🐟", label: "Balık" },
+  { id: "sürüngen",emoji: "🦎", label: "Sürüngen" },
+  { id: "diğer",   emoji: "🐾", label: "Diğer" },
+];
 
-type PetTypeId = (typeof PET_TYPES)[number]["id"];
-
-const BREEDS: Record<PetTypeId, string[]> = {
-  cat:     ["Van Kedisi","Ankara Kedisi","British Shorthair","Persian","Maine Coon","Ragdoll","Scottish Fold","Siyam","Bengal","Sphynx","Diğer"],
-  dog:     ["Golden Retriever","Labrador","Alman Çoban Köpeği","Husky","Poodle","Beagle","Bulldog","Rottweiler","Chihuahua","Border Collie","Diğer"],
-  bird:    ["Muhabbet Kuşu","Papağan","Kanarya","Cennet Papağanı","Kakadu","Macaw","Amazon Papağanı","Afrika Gri Papağanı","Forpus","Sultan Papağanı","Diğer"],
-  rabbit:  ["Holland Lop","Mini Rex","Angora","Lionhead","Dutch","Flemish Giant","Rex","Netherland Dwarf","English Spot","Mini Lop","Diğer"],
-  hamster: ["Suriye Hamsteri","Dwarf Campbell","Roborovski","Çin Hamsteri","Winter White","Teddy Bear","Panda Hamster","Black Bear","Avrupa Hamsteri","Angora Hamster","Diğer"],
-  fish:    ["Japon Balığı","Koi","Betta","Guppy","Melek Balığı","Diskus","Oscar","Neon Tetra","Cichlid","Bıyıklı Balık","Diğer"],
-  reptile: ["Leopar Gekko","Yeşil İguana","Çöl İguanası","Kaplumbağa","Su Kaplumbağası","Kral Yılanı","Corn Snake","Mavi Dilli Skink","Kameleon","Sakal Ejderi","Diğer"],
-  other:   ["Kirpi","Şeker Planeri","Degu","Kobay","Ferret","Mini Domuz","Gecko","Yılan","Chinchilla","Akbaba Papağanı","Diğer"],
+const BREEDS: Record<string, string[]> = {
+  kedi:      ["Van Kedisi","Ankara Kedisi","British Shorthair","Persian","Scottish Fold","Ragdoll","Siamese","Maine Coon","Sphynx","Diğer"],
+  köpek:     ["Golden Retriever","Labrador","Alman Çoban","Bulldog","Poodle","Chihuahua","Husky","Beagle","Rottweiler","Diğer"],
+  kuş:       ["Muhabbet Kuşu","Papağan","Kanarya","Sultan Papağanı","Cennet Papağanı","Jako","Amazon","Macaw","Finch","Diğer"],
+  tavşan:    ["Holland Lop","Mini Rex","Angora","Lionhead","Dutch","Rex","Flemish Giant","Himalayan","Polish","Diğer"],
+  hamster:   ["Suriye","Dwarf","Roborovski","Chinese","Campbell","Winter White","Hybrid","Teddy Bear","Black Bear","Diğer"],
+  balık:     ["Japon Balığı","Betta","Guppy","Oscar","Diskus","Neon Tetra","Koi","Melek Balığı","Cichlid","Diğer"],
+  sürüngen:  ["Kaplumbağa","Leopar Gekko","Kınkanatlı","İguana","Kral Yılanı","Korn Yılanı","Sakal Ejderi","Bukalemun","Skink","Diğer"],
+  diğer:     ["Diğer"],
 };
 
-const ACCEPTED_TYPES = ["image/jpeg", "image/png", "image/webp"];
-const MAX_SIZE_MB = 5;
-
-// ── Yardımcı bileşenler ───────────────────────────────────────────────────────
-
-function SectionCard({ icon, title, children }: { icon: string; title: string; children: React.ReactNode }) {
-  return (
-    <div className="bg-surface-container-lowest rounded-2xl p-6 border border-outline-variant/20">
-      <div className="flex items-center gap-3 mb-5">
-        <div className="w-8 h-8 bg-primary-fixed rounded-full flex items-center justify-center flex-shrink-0">
-          <span className="material-symbols-outlined text-on-primary-fixed text-sm" style={{ fontVariationSettings: "'FILL' 1" }}>{icon}</span>
-        </div>
-        <h3 className="font-headline text-lg font-bold italic text-on-surface">{title}</h3>
-      </div>
-      {children}
-    </div>
-  );
-}
-
-function FieldInput({ id, label, icon, optional, ...props }: React.InputHTMLAttributes<HTMLInputElement> & { id: string; label: string; icon: string; optional?: boolean }) {
-  return (
-    <div>
-      <label htmlFor={id} className="text-sm font-semibold text-on-surface-variant block mb-2">
-        {label}{optional && <span className="font-normal text-on-surface-variant/60 ml-1">(isteğe bağlı)</span>}
-      </label>
-      <div className="relative">
-        <span className="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-on-surface-variant text-xl pointer-events-none">{icon}</span>
-        <input
-          id={id}
-          className="w-full rounded-xl border border-outline-variant/40 pl-10 pr-4 py-3 bg-surface-container-low text-on-surface focus:outline-none focus:ring-2 focus:ring-primary/40 focus:border-primary transition-colors"
-          {...props}
-        />
-      </div>
-    </div>
-  );
-}
-
-// ── Ana bileşen ───────────────────────────────────────────────────────────────
+const GOLD = "linear-gradient(135deg, #775a19 0%, #d4ad65 100%)";
+const PRIMARY = "#775a19";
 
 export default function OnboardPage() {
   const router = useRouter();
+  const { data: session } = useSession();
   const fileInputRef = useRef<HTMLInputElement>(null);
 
-  // Form state
-  const [petType, setPetType]   = useState<PetTypeId | null>(null);
-  const [breed, setBreed]       = useState("");
-  const [petName, setPetName]   = useState("");
-  const [phone, setPhone]       = useState("");
-  const [age, setAge]           = useState("");
-  const [gender, setGender]     = useState("");
-  const [bio, setBio]           = useState("");
+  const [selectedSpecies, setSelectedSpecies] = useState("");
+  const [selectedBreed, setSelectedBreed]     = useState("");
+  const [selectedGender, setSelectedGender]   = useState("");
+  const [petName, setPetName]                 = useState("");
+  const [petAge, setPetAge]                   = useState("");
+  const [phone, setPhone]                     = useState("");
+  const [bio, setBio]                         = useState("");
+  const [photo, setPhoto]                     = useState<File | null>(null);
+  const [photoPreview, setPhotoPreview]       = useState("");
+  const [loading, setLoading]                 = useState(false);
+  const [error, setError]                     = useState("");
 
-  // Photo state
-  const [file, setFile]         = useState<File | null>(null);
-  const [preview, setPreview]   = useState<string | null>(null);
-  const [dragActive, setDragActive] = useState(false);
-  const [fileError, setFileError]   = useState<string | null>(null);
-
-  // UI state
-  const [bioError, setBioError]         = useState<string | null>(null);
-  const [submitError, setSubmitError]   = useState<string | null>(null);
-  const [isSubmitting, setIsSubmitting] = useState(false);
-
-  // ── Dosya işleme ────────────────────────────────────────────────────────────
-
-  const handleFile = useCallback((f: File) => {
-    setFileError(null);
-    if (!ACCEPTED_TYPES.includes(f.type)) {
-      setFileError("Sadece JPG, PNG veya WEBP dosyaları kabul edilir.");
+  function handleFileChange(file: File) {
+    if (!["image/jpeg","image/png","image/webp"].includes(file.type)) {
+      setError("Sadece JPG, PNG veya WEBP dosyaları kabul edilir.");
       return;
     }
-    if (f.size > MAX_SIZE_MB * 1024 * 1024) {
-      setFileError(`Dosya boyutu en fazla ${MAX_SIZE_MB}MB olabilir.`);
+    if (file.size > 5 * 1024 * 1024) {
+      setError("Dosya boyutu en fazla 5MB olabilir.");
       return;
     }
-    setFile(f);
+    setError("");
+    setPhoto(file);
     const reader = new FileReader();
-    reader.onload = (e) => setPreview(e.target?.result as string);
-    reader.readAsDataURL(f);
-  }, []);
+    reader.onload = (e) => setPhotoPreview(e.target?.result as string);
+    reader.readAsDataURL(file);
+  }
 
   function handleDrop(e: React.DragEvent) {
     e.preventDefault();
-    setDragActive(false);
-    const dropped = e.dataTransfer.files[0];
-    if (dropped) handleFile(dropped);
+    const f = e.dataTransfer.files[0];
+    if (f) handleFileChange(f);
   }
-
-  function handleDragOver(e: React.DragEvent) {
-    e.preventDefault();
-    setDragActive(true);
-  }
-
-  // ── Küfür kontrolü ──────────────────────────────────────────────────────────
-
-  function handleBioBlur() {
-    if (bio && containsProfanity(bio)) {
-      setBioError("Uygunsuz içerik tespit edildi. Lütfen açıklamanızı düzenleyin.");
-    } else {
-      setBioError(null);
-    }
-  }
-
-  // ── Submit ───────────────────────────────────────────────────────────────────
 
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
-    setSubmitError(null);
+    if (!photo) { setError("Lütfen bir fotoğraf yükleyin."); return; }
+    if (!selectedSpecies) { setError("Lütfen hayvan türü seçin."); return; }
+    if (!selectedGender) { setError("Lütfen cinsiyet seçin."); return; }
 
-    if (bio && containsProfanity(bio)) {
-      setBioError("Uygunsuz içerik tespit edildi.");
-      return;
-    }
-    if (!file) {
-      setFileError("Lütfen bir fotoğraf yükleyin.");
-      return;
-    }
-
-    setIsSubmitting(true);
+    setLoading(true);
+    setError("");
     try {
       const body = new FormData();
-      body.append("petType",  petType!);
-      body.append("breed",    breed);
+      body.append("petType",  selectedSpecies);
+      body.append("breed",    selectedBreed);
       body.append("petName",  petName);
       body.append("phone",    phone);
-      body.append("age",      age);
-      body.append("gender",   gender);
+      body.append("age",      petAge);
+      body.append("gender",   selectedGender);
       body.append("bio",      bio);
-      body.append("photo",    file);
+      body.append("photo",    photo);
 
       const res = await fetch("/api/pets", { method: "POST", body });
       const data = await res.json();
-
-      if (!res.ok) {
-        setSubmitError(data.error ?? "Bir hata oluştu. Lütfen tekrar deneyin.");
-        return;
-      }
+      if (!res.ok) { setError(data.error ?? "Bir hata oluştu."); return; }
       router.push("/welcome");
     } catch {
-      setSubmitError("Bağlantı hatası. Lütfen tekrar deneyin.");
+      setError("Bağlantı hatası. Lütfen tekrar deneyin.");
     } finally {
-      setIsSubmitting(false);
+      setLoading(false);
     }
   }
 
-  const isValid = petType && breed && petName && phone && age && gender && file && !bioError;
+  const cardStyle = {
+    backgroundColor: "#ffffff",
+    borderRadius: 16,
+    padding: 24,
+    boxShadow: "0 2px 12px rgba(119,90,25,0.08)",
+    marginBottom: 16,
+  };
 
-  // ── Render ──────────────────────────────────────────────────────────────────
+  const inputStyle = {
+    width: "100%",
+    padding: "12px 16px",
+    borderRadius: 12,
+    border: "1.5px solid #e2d9c8",
+    fontSize: 16,
+    backgroundColor: "#faf9f6",
+    outline: "none",
+    boxSizing: "border-box" as const,
+  };
+
+  const labelStyle = {
+    display: "block",
+    fontSize: 13,
+    fontWeight: 600,
+    color: "#4d4635",
+    marginBottom: 8,
+  };
 
   return (
-    <div className="min-h-screen bg-surface font-body text-on-surface">
+    <div style={{ backgroundColor: "#faf9f6", minHeight: "100vh", fontFamily: "system-ui, sans-serif" }}>
 
       {/* Header */}
-      <header className="sticky top-0 z-50 bg-surface/80 backdrop-blur-xl border-b border-outline-variant/20 px-6 py-4 flex items-center gap-3">
-        <button type="button" onClick={() => router.back()} className="text-on-surface-variant hover:text-primary transition-colors">
-          <span className="material-symbols-outlined">arrow_back</span>
-        </button>
-        <h1 className="text-xl font-headline italic text-primary tracking-tight">CiciPet</h1>
-        <div className="ml-auto">
-          <div className="inline-flex items-center gap-2 px-3 py-1 bg-primary-fixed text-on-primary-fixed rounded-full">
-            <span className="material-symbols-outlined text-[14px]" style={{ fontVariationSettings: "'FILL' 1" }}>stars</span>
-            <span className="text-xs font-bold uppercase tracking-widest">Arena Kaydı</span>
-          </div>
-        </div>
+      <header style={{
+        position: "sticky", top: 0, zIndex: 50,
+        backgroundColor: "rgba(250,249,246,0.9)",
+        backdropFilter: "blur(16px)",
+        borderBottom: "1px solid #e2d9c8",
+        padding: "16px 24px",
+        display: "flex", alignItems: "center", justifyContent: "space-between",
+      }}>
+        <h1 style={{ fontFamily: "Georgia, serif", fontStyle: "italic", color: PRIMARY, fontSize: 24, margin: 0 }}>
+          CiciPet
+        </h1>
+        {session && (
+          <button
+            onClick={() => signOut({ callbackUrl: "/" })}
+            style={{ fontSize: 13, color: "#4d4635", background: "none", border: "none", cursor: "pointer" }}
+          >
+            Çıkış
+          </button>
+        )}
       </header>
 
-      <main className="max-w-2xl mx-auto px-6 py-12">
+      <main style={{ maxWidth: 600, margin: "0 auto", padding: "32px 16px 64px" }}>
 
-        {/* Başlık */}
-        <div className="mb-10">
-          <h2 className="font-headline text-4xl font-bold italic text-on-surface mb-3">
-            Petini <span className="text-primary">Tanıtalım!</span>
-          </h2>
-          <p className="text-on-surface-variant leading-relaxed">Birkaç bilgi gir, podyuma hazır ol.</p>
-          <div className="w-16 h-1 bg-primary rounded-full mt-4" />
-        </div>
+        <h2 style={{ fontFamily: "Georgia, serif", fontStyle: "italic", fontSize: 32, color: "#1a1c1a", marginBottom: 8 }}>
+          Petini <span style={{ color: PRIMARY }}>Tanıtalım!</span>
+        </h2>
+        <p style={{ color: "#4d4635", marginBottom: 32 }}>Birkaç bilgi gir, podyuma hazır ol.</p>
 
-        <form onSubmit={handleSubmit} className="space-y-6">
+        <form onSubmit={handleSubmit}>
 
-          {/* 1 — Fotoğraf */}
-          <SectionCard icon="photo_camera" title="Fotoğraf Yükle">
-            {preview ? (
-              <div className="relative">
-                {/* Önizleme */}
-                <div className="relative aspect-square max-h-72 overflow-hidden rounded-xl bg-surface-container">
-                  {/* eslint-disable-next-line @next/next/no-img-element */}
-                  <img src={preview} alt="Önizleme" className="w-full h-full object-cover" />
-                  <div className="absolute inset-0 bg-gradient-to-t from-black/30 to-transparent" />
-                  <div className="absolute bottom-3 left-3 right-3 flex items-center justify-between">
-                    <span className="text-white text-sm font-semibold bg-black/40 backdrop-blur-sm px-3 py-1 rounded-full">
-                      {file?.name}
-                    </span>
-                    <button
-                      type="button"
-                      onClick={() => { setFile(null); setPreview(null); setFileError(null); }}
-                      className="bg-black/50 backdrop-blur-sm text-white rounded-full p-1.5 hover:bg-black/70 transition-colors"
-                    >
-                      <span className="material-symbols-outlined text-lg">close</span>
-                    </button>
-                  </div>
-                </div>
-                <div className="flex items-center gap-2 mt-3 text-sm text-on-surface-variant">
-                  <span className="material-symbols-outlined text-base text-primary" style={{ fontVariationSettings: "'FILL' 1" }}>check_circle</span>
-                  Fotoğraf hazır
-                </div>
+          {/* Fotoğraf */}
+          <div style={cardStyle}>
+            <p style={{ ...labelStyle, fontSize: 15, marginBottom: 16 }}>📷 Fotoğraf Yükle</p>
+            {photoPreview ? (
+              <div style={{ position: "relative" }}>
+                <Image
+                  src={photoPreview}
+                  alt="Önizleme"
+                  width={560}
+                  height={320}
+                  style={{ width: "100%", height: 220, objectFit: "cover", borderRadius: 12 }}
+                />
+                <button
+                  type="button"
+                  onClick={() => { setPhoto(null); setPhotoPreview(""); }}
+                  style={{
+                    position: "absolute", top: 8, right: 8,
+                    background: "rgba(0,0,0,0.5)", color: "#fff",
+                    border: "none", borderRadius: 9999, width: 32, height: 32,
+                    cursor: "pointer", fontSize: 16, display: "flex", alignItems: "center", justifyContent: "center",
+                  }}
+                >✕</button>
               </div>
             ) : (
               <div
                 onDrop={handleDrop}
-                onDragOver={handleDragOver}
-                onDragLeave={() => setDragActive(false)}
+                onDragOver={(e) => e.preventDefault()}
                 onClick={() => fileInputRef.current?.click()}
-                className={`relative flex flex-col items-center justify-center gap-4 rounded-2xl border-2 border-dashed p-10 cursor-pointer transition-all ${
-                  dragActive
-                    ? "border-primary bg-primary-fixed/20 scale-[1.01]"
-                    : "border-outline-variant/40 hover:border-primary/60 hover:bg-primary-fixed/10"
-                }`}
+                style={{
+                  border: "2px dashed #d0c5af",
+                  borderRadius: 12, padding: "40px 24px",
+                  textAlign: "center", cursor: "pointer",
+                  backgroundColor: "#faf9f6",
+                }}
               >
-                <div className="w-16 h-16 bg-primary-fixed rounded-full flex items-center justify-center">
-                  <span className="material-symbols-outlined text-on-primary-fixed text-3xl" style={{ fontVariationSettings: "'FILL' 1" }}>upload</span>
-                </div>
-                <div className="text-center">
-                  <p className="font-headline text-lg italic text-on-surface mb-1">Fotoğrafını Sürükle</p>
-                  <p className="text-on-surface-variant text-sm">veya tıkla, galerinden seç</p>
-                </div>
-                <div className="flex items-center gap-4 text-xs text-on-surface-variant">
-                  <span className="flex items-center gap-1">
-                    <span className="material-symbols-outlined text-sm">image</span>JPG, PNG, WEBP
-                  </span>
-                  <span className="w-1 h-1 rounded-full bg-outline-variant" />
-                  <span>Maks. {MAX_SIZE_MB}MB</span>
-                </div>
+                <div style={{ fontSize: 40, marginBottom: 12 }}>☁️</div>
+                <p style={{ fontWeight: 600, color: "#1a1c1a", marginBottom: 4 }}>Fotoğrafını Sürükle</p>
+                <p style={{ fontSize: 13, color: "#4d4635" }}>veya tıkla, galerinden seç • JPG, PNG, WEBP • Maks. 5MB</p>
                 <input
                   ref={fileInputRef}
                   type="file"
-                  accept={ACCEPTED_TYPES.join(",")}
-                  className="hidden"
-                  onChange={(e) => { if (e.target.files?.[0]) handleFile(e.target.files[0]); }}
+                  accept="image/jpeg,image/png,image/webp"
+                  style={{ display: "none" }}
+                  onChange={(e) => { if (e.target.files?.[0]) handleFileChange(e.target.files[0]); }}
                 />
               </div>
             )}
-            {fileError && (
-              <div className="flex items-center gap-2 mt-3 text-error text-sm">
-                <span className="material-symbols-outlined text-sm" style={{ fontVariationSettings: "'FILL' 1" }}>error</span>
-                {fileError}
-              </div>
-            )}
-          </SectionCard>
+          </div>
 
-          {/* 2 — Pet Türü */}
-          <SectionCard icon="pets" title="Evcil Hayvan Türü">
-            <div className="grid grid-cols-4 gap-2">
-              {PET_TYPES.map((t) => (
+          {/* Tür seçimi */}
+          <div style={cardStyle}>
+            <p style={{ ...labelStyle, fontSize: 15, marginBottom: 16 }}>🐾 Evcil Hayvan Türü</p>
+            <div style={{ display: "grid", gridTemplateColumns: "repeat(4, 1fr)", gap: 10 }}>
+              {SPECIES.map((s) => (
                 <button
-                  key={t.id}
+                  key={s.id}
                   type="button"
-                  onClick={() => { setPetType(t.id); setBreed(""); }}
-                  className={`flex flex-col items-center gap-1.5 rounded-2xl p-3 text-xs font-semibold transition-all border-2 ${
-                    petType === t.id
-                      ? "border-primary bg-primary-fixed/40 text-primary"
-                      : "border-outline-variant/20 bg-surface-container-low text-on-surface-variant hover:border-primary/40 hover:bg-primary-fixed/20"
-                  }`}
+                  onClick={() => { setSelectedSpecies(s.id); setSelectedBreed(""); }}
+                  style={{
+                    display: "flex", flexDirection: "column", alignItems: "center", gap: 6,
+                    padding: "12px 8px", borderRadius: 12, cursor: "pointer",
+                    border: selectedSpecies === s.id ? "3px solid #775a19" : "2px solid #e2d9c8",
+                    backgroundColor: selectedSpecies === s.id ? "#ffdea5" : "#ffffff",
+                    fontSize: 12, fontWeight: 600, color: selectedSpecies === s.id ? PRIMARY : "#4d4635",
+                    transition: "all 0.15s",
+                  }}
                 >
-                  <span className="text-2xl">{t.emoji}</span>
-                  {t.label}
+                  <span style={{ fontSize: 24 }}>{s.emoji}</span>
+                  {s.label}
                 </button>
               ))}
             </div>
-          </SectionCard>
+          </div>
 
-          {/* 2 — Cins */}
-          {petType && (
-            <SectionCard icon="category" title="Cins">
-              <div className="relative">
-                <select
-                  value={breed}
-                  onChange={(e) => setBreed(e.target.value)}
-                  required
-                  className="w-full appearance-none rounded-xl border border-outline-variant/40 px-4 py-3 pr-10 bg-surface-container-low text-on-surface focus:outline-none focus:ring-2 focus:ring-primary/40 focus:border-primary transition-colors"
-                >
-                  <option value="">Cins seçin...</option>
-                  {BREEDS[petType].map((b) => (
-                    <option key={b} value={b}>{b}</option>
-                  ))}
-                </select>
-                <span className="material-symbols-outlined absolute right-3 top-1/2 -translate-y-1/2 text-on-surface-variant pointer-events-none">expand_more</span>
-              </div>
-            </SectionCard>
+          {/* Cins dropdown */}
+          {selectedSpecies && (
+            <div style={cardStyle}>
+              <label style={labelStyle}>Cins</label>
+              <select
+                value={selectedBreed}
+                onChange={(e) => setSelectedBreed(e.target.value)}
+                style={{ ...inputStyle, appearance: "none" as const }}
+              >
+                <option value="">Cins seçin...</option>
+                {BREEDS[selectedSpecies]?.map((b) => (
+                  <option key={b} value={b}>{b}</option>
+                ))}
+              </select>
+            </div>
           )}
 
-          {/* 3 — Temel Bilgiler */}
-          <SectionCard icon="info" title="Temel Bilgiler">
-            <div className="space-y-4">
-              <FieldInput id="petName" label="Petinin Adı" icon="badge" value={petName} onChange={(e) => setPetName(e.target.value)} placeholder="ör. Pamuk" required />
-              <FieldInput id="age" label="Yaşı" icon="cake" type="number" min="0" max="30" value={age} onChange={(e) => setAge(e.target.value)} placeholder="ör. 2" required />
+          {/* Pet adı */}
+          <div style={cardStyle}>
+            <label style={labelStyle}>Petinin Adı</label>
+            <input
+              type="text"
+              value={petName}
+              onChange={(e) => setPetName(e.target.value)}
+              placeholder="ör. Pamuk"
+              required
+              style={inputStyle}
+            />
+          </div>
 
-              {/* Cinsiyet */}
-              <div>
-                <p className="text-sm font-semibold text-on-surface-variant mb-3">Cinsiyet</p>
-                <div className="grid grid-cols-2 gap-3">
-                  {[
-                    { value: "Erkek", icon: "male" },
-                    { value: "Dişi",  icon: "female" },
-                  ].map((g) => (
-                    <button
-                      key={g.value}
-                      type="button"
-                      onClick={() => setGender(g.value)}
-                      className={`flex items-center justify-center gap-2 rounded-xl py-3 text-sm font-semibold border-2 transition-all ${
-                        gender === g.value
-                          ? "border-primary bg-primary-fixed/40 text-primary"
-                          : "border-outline-variant/20 text-on-surface-variant hover:border-primary/40 hover:bg-primary-fixed/20"
-                      }`}
-                    >
-                      <span className="material-symbols-outlined text-xl">{g.icon}</span>
-                      {g.value}
-                    </button>
-                  ))}
-                </div>
-              </div>
+          {/* Cinsiyet */}
+          <div style={cardStyle}>
+            <p style={{ ...labelStyle, marginBottom: 16 }}>Cinsiyet</p>
+            <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 12 }}>
+              {["Erkek", "Dişi"].map((g) => (
+                <button
+                  key={g}
+                  type="button"
+                  onClick={() => setSelectedGender(g)}
+                  style={{
+                    padding: "16px", borderRadius: 12, cursor: "pointer",
+                    fontWeight: 700, fontSize: 15, border: "none",
+                    background: selectedGender === g ? GOLD : "#ffffff",
+                    color: selectedGender === g ? "#ffffff" : "#4d4635",
+                    boxShadow: selectedGender === g
+                      ? "0 4px 16px rgba(119,90,25,0.25)"
+                      : "0 1px 4px rgba(0,0,0,0.08)",
+                    transition: "all 0.15s",
+                  }}
+                >
+                  {g === "Erkek" ? "♂ Erkek" : "♀ Dişi"}
+                </button>
+              ))}
             </div>
-          </SectionCard>
+          </div>
 
-          {/* 4 — İletişim */}
-          <SectionCard icon="phone" title="İletişim">
-            <FieldInput id="phone" label="Telefon Numarası" icon="phone" type="tel" value={phone} onChange={(e) => setPhone(e.target.value)} placeholder="05XX XXX XX XX" required />
-          </SectionCard>
+          {/* Yaş */}
+          <div style={cardStyle}>
+            <label style={labelStyle}>Yaşı</label>
+            <input
+              type="number"
+              value={petAge}
+              onChange={(e) => setPetAge(e.target.value)}
+              placeholder="ör. 2"
+              min="0" max="30"
+              required
+              style={inputStyle}
+            />
+          </div>
 
-          {/* 5 — Açıklama */}
-          <SectionCard icon="edit_note" title="Kısa Açıklama">
-            <div>
-              <label htmlFor="bio" className="text-sm font-semibold text-on-surface-variant block mb-2">
-                Petinden bahset <span className="font-normal text-on-surface-variant/60">(isteğe bağlı)</span>
-              </label>
-              <textarea
-                id="bio"
-                value={bio}
-                onChange={(e) => { setBio(e.target.value); if (bioError) setBioError(null); }}
-                onBlur={handleBioBlur}
-                placeholder="En sevdiği oyuncak, alışkanlıkları, komik anıları..."
-                rows={3}
-                className={`w-full rounded-xl border px-4 py-3 bg-surface-container-low text-on-surface focus:outline-none focus:ring-2 transition-colors resize-none ${
-                  bioError
-                    ? "border-error focus:ring-error/40"
-                    : "border-outline-variant/40 focus:ring-primary/40 focus:border-primary"
-                }`}
-              />
-              {bioError && (
-                <div className="flex items-center gap-2 mt-2 text-error text-sm">
-                  <span className="material-symbols-outlined text-sm" style={{ fontVariationSettings: "'FILL' 1" }}>error</span>
-                  {bioError}
-                </div>
-              )}
-            </div>
-          </SectionCard>
+          {/* Telefon */}
+          <div style={cardStyle}>
+            <label style={labelStyle}>Telefon Numarası</label>
+            <input
+              type="tel"
+              value={phone}
+              onChange={(e) => setPhone(e.target.value)}
+              placeholder="05XX XXX XX XX"
+              required
+              style={inputStyle}
+            />
+          </div>
 
-          {/* Genel hata */}
-          {submitError && (
-            <div className="flex items-start gap-3 p-4 bg-error-container text-on-error-container rounded-2xl text-sm">
-              <span className="material-symbols-outlined flex-shrink-0" style={{ fontVariationSettings: "'FILL' 1" }}>error</span>
-              <span>{submitError}</span>
+          {/* Bio */}
+          <div style={cardStyle}>
+            <label style={labelStyle}>
+              Kısa Bilgi <span style={{ fontWeight: 400, color: "#a89a7a" }}>(isteğe bağlı)</span>
+            </label>
+            <textarea
+              value={bio}
+              onChange={(e) => setBio(e.target.value)}
+              placeholder="En sevdiği oyuncak, alışkanlıkları..."
+              rows={3}
+              style={{ ...inputStyle, resize: "vertical" as const, lineHeight: 1.6 }}
+            />
+          </div>
+
+          {/* Hata */}
+          {error && (
+            <div style={{
+              backgroundColor: "#fff0f0", border: "1px solid #f5c6c6",
+              borderRadius: 12, padding: "12px 16px",
+              color: "#c0392b", fontSize: 14, marginBottom: 16,
+            }}>
+              {error}
             </div>
           )}
 
           {/* Submit */}
           <button
             type="submit"
-            disabled={!isValid || isSubmitting}
-            className="w-full gala-gradient-gold text-on-primary rounded-full py-5 font-bold text-lg editorial-shadow active:scale-95 transition-all disabled:opacity-40 disabled:cursor-not-allowed disabled:active:scale-100 flex items-center justify-center gap-2"
+            disabled={loading}
+            style={{
+              width: "100%", padding: "20px",
+              background: loading ? "#c8b98a" : GOLD,
+              color: "#ffffff", border: "none",
+              borderRadius: 9999, fontWeight: "bold",
+              fontSize: 18, cursor: loading ? "not-allowed" : "pointer",
+              boxShadow: "0 8px 24px rgba(119,90,25,0.25)",
+              transition: "all 0.15s",
+            }}
           >
-            {isSubmitting ? (
-              <>
-                <span className="material-symbols-outlined animate-spin">progress_activity</span>
-                Yükleniyor...
-              </>
-            ) : (
-              <>
-                <span>Yarışmaya Katıl</span>
-                <span className="material-symbols-outlined">arrow_forward</span>
-              </>
-            )}
+            {loading ? "Yükleniyor..." : "Yarışmaya Katıl →"}
           </button>
 
-          <p className="text-center text-xs text-on-surface-variant pb-4">
-            Devam ederek{" "}
-            <span className="underline cursor-pointer hover:text-primary transition-colors">Kullanım Koşulları</span>&apos;nı kabul etmiş olursunuz.
+          <p style={{ textAlign: "center", fontSize: 12, color: "#a89a7a", marginTop: 16 }}>
+            Devam ederek Kullanım Koşulları&apos;nı kabul etmiş olursunuz.
           </p>
 
         </form>
