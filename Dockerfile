@@ -5,7 +5,6 @@ COPY package.json package-lock.json ./
 RUN npm ci --include=dev
 COPY . .
 RUN npx prisma generate
-ENV DATABASE_URL="postgresql://placeholder:placeholder@placeholder:5432/placeholder"
 RUN npm run build
 RUN cp -r .next/static .next/standalone/.next/static
 RUN cp -r public .next/standalone/public
