@@ -411,16 +411,19 @@ export default function OnboardPage() {
           {/* ── Telefon ── */}
           <div style={sectionStyle}>
             <label style={labelStyle}>Telefon Numarası</label>
-            <div style={{ position: "relative", display: "flex", alignItems: "center" }}>
+            <div style={{
+              display: "flex", alignItems: "center",
+              border: "1.5px solid #e8dfd0", borderRadius: 12,
+              backgroundColor: "#f5f0e8", overflow: "hidden",
+            }}>
               <div style={{
-                position: "absolute", left: 0,
-                display: "flex", alignItems: "center",
-                height: "100%", paddingLeft: 14, gap: 6,
-                pointerEvents: "none", zIndex: 1,
+                display: "flex", alignItems: "center", gap: 6,
+                padding: "0 12px", height: 48, flexShrink: 0,
+                borderRight: "1.5px solid #e8dfd0",
+                backgroundColor: "#eee6d8",
               }}>
                 <span className="material-symbols-outlined" style={{ color: "#c8a96a", fontSize: 18 }}>phone</span>
                 <span style={{ fontWeight: 700, color: PRIMARY, fontSize: 15 }}>05</span>
-                <span style={{ color: "#c8b58a", fontSize: 14 }}>|</span>
               </div>
               <input
                 type="tel"
@@ -430,9 +433,14 @@ export default function OnboardPage() {
                   const val = e.target.value.replace(/\D/g, "").slice(0, 9);
                   setPhone(val);
                 }}
-                placeholder="5XX XXX XX XX"
+                placeholder=""
                 required
-                style={{ ...inputStyle, paddingLeft: 72 }}
+                style={{
+                  flex: 1, border: "none", outline: "none",
+                  backgroundColor: "transparent",
+                  padding: "0 14px", fontSize: 15,
+                  fontFamily: FONT, color: "#1a1209", height: 48,
+                }}
               />
             </div>
           </div>
