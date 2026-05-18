@@ -75,7 +75,6 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
                   display: "flex",
                   alignItems: "center",
                   gap: 12,
-                  width: "100%",
                   padding: "11px 24px",
                   background: isActive
                     ? "linear-gradient(135deg,#775a19 0%,#d4ad65 100%)"
