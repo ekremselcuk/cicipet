@@ -6,13 +6,13 @@ import { useSession, signOut } from "next-auth/react";
 import Image from "next/image";
 
 const SPECIES = [
-  { id: "kedi",      label: "Kedi",      icon: "pets",         fill: false },
-  { id: "köpek",    label: "Köpek",     icon: "pets",         fill: true  },
-  { id: "kuş",      label: "Kuş",       icon: "cruelty_free", fill: false },
-  { id: "tavşan",   label: "Tavşan",    icon: "cabin",        fill: false },
-  { id: "hamster",  label: "Hamster",   icon: "mouse",        fill: false },
-  { id: "balık",    label: "Balık",     icon: "phishing",     fill: false },
-  { id: "sürüngen", label: "Sürüngen",  icon: "bug_report",   fill: false },
+  { id: "kedi",      label: "Kedi",      icon: "cruelty_free",         fill: false },
+  { id: "köpek",    label: "Köpek",     icon: "pets",                 fill: true  },
+  { id: "kuş",      label: "Kuş",       icon: "egg",                  fill: false },
+  { id: "tavşan",   label: "Tavşan",    icon: "nature",               fill: false },
+  { id: "hamster",  label: "Hamster",   icon: "pest_control_rodent",  fill: false },
+  { id: "balık",    label: "Balık",     icon: "set_meal",             fill: false },
+  { id: "sürüngen", label: "Sürüngen",  icon: "bug_report",           fill: false },
   { id: "diğer",    label: "Diğer",     icon: "more_horiz",   fill: false },
 ];
 
@@ -497,7 +497,7 @@ export default function OnboardPage() {
             ) : (
               <>
                 <span className="material-symbols-outlined" style={{ fontSize: 20, fontVariationSettings: "'FILL' 1" }}>auto_awesome</span>
-                Gala&apos;ya Gönder
+                Yarışmaya Katıl 🏆
               </>
             )}
           </button>

@@ -1,11 +1,26 @@
-// Türkçe küfür listesi
+// Türkçe küfür / hakaret listesi
 const TR_PROFANITY = [
-  "amk", "amına", "amcık", "bok", "boktan", "orospu", "orospuçocuğu",
-  "sik", "sikeyim", "sikerim", "sikiş", "sikişmek", "yarrak", "yarrağı",
-  "göt", "götlek", "götveren", "taşak", "taşşak", "ibne", "ibnelik",
-  "piç", "piçlik", "kahpe", "kahpenin", "sürtük", "fahişe", "kancık",
-  "pezevenk", "oynama", "sıktır", "hassiktir", "çük", "götü", "lavuk",
-  "oğlancı", "dölsüz", "ananı", "babanı", "sikim",
+  "amk", "amına", "amcık", "amını", "amınakoyim", "amınakoyayım",
+  "bok", "boktan", "boklu", "boklaşmak",
+  "orospu", "orospuçocuğu", "orospuçocukları",
+  "sik", "sikeyim", "sikerim", "sikiş", "sikişmek", "siktirgit", "siktir",
+  "sikimin", "sikici",
+  "yarrak", "yarrağı", "yarrağına",
+  "göt", "götlek", "götveren", "götü", "göte",
+  "taşak", "taşşak",
+  "ibne", "ibnelik", "ibneler",
+  "piç", "piçlik", "piçin",
+  "kahpe", "kahpenin", "kahpeler",
+  "sürtük", "fahişe", "kancık",
+  "pezevenk", "pezevenklik",
+  "hassiktir", "hassikter",
+  "çük", "lavuk",
+  "oğlancı", "dölsüz",
+  "ananı", "anani", "babanı", "babani",
+  "sikim", "sikimde",
+  "oç", "oc", "orosbuçocuğu",
+  "gerizekalı", "geri zekalı", "aptal", "salak", "gerizekalı",
+  "mal", "dangalak", "ahmak", "eşek",
 ];
 
 // İngilizce küfür listesi
@@ -40,3 +55,6 @@ export function containsProfanity(text: string): boolean {
     normalized.includes(normalize(word))
   );
 }
+
+// Alias — onboard ve API route'larında kullanılır
+export const checkText = containsProfanity;
