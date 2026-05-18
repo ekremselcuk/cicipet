@@ -298,6 +298,37 @@ export default function LandingPage() {
         </div>
       </main>
 
+      {/* ── Footer ── */}
+      <footer style={{
+        textAlign: "center", padding: "2rem 1.5rem 3rem",
+        borderTop: `1px solid ${C.outlineVariant}`,
+        backgroundColor: C.surfaceContainerLow,
+      }}>
+        <div style={{ display: "flex", justifyContent: "center", flexWrap: "wrap", gap: "0.25rem 1rem", marginBottom: "1rem" }}>
+          {[
+            { label: "Kullanım Koşulları", href: "/legal/kullanim-kosullari" },
+            { label: "Gizlilik Politikası", href: "/legal/gizlilik-politikasi" },
+            { label: "KVKK",               href: "/legal/kvkk" },
+            { label: "SSS",                href: "/legal/sss" },
+          ].map((link, i, arr) => (
+            <span key={link.href} style={{ display: "flex", alignItems: "center", gap: "1rem" }}>
+              <a
+                href={link.href}
+                style={{ fontSize: "0.8rem", color: C.primary, textDecoration: "none", fontWeight: 500 }}
+              >
+                {link.label}
+              </a>
+              {i < arr.length - 1 && (
+                <span style={{ color: C.outlineVariant, fontSize: "0.75rem" }}>|</span>
+              )}
+            </span>
+          ))}
+        </div>
+        <p style={{ fontSize: "0.75rem", color: C.onSurfaceVariant, margin: 0 }}>
+          © 2025 CiciPet — Tüm hakları saklıdır.
+        </p>
+      </footer>
+
     </div>
   );
 }

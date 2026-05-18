@@ -46,6 +46,9 @@ export default function OnboardPage() {
   const [petName,  setPetName]  = useState("");
   const [petAge,   setPetAge]   = useState("");
   const [phone,    setPhone]    = useState("");
+  const [acceptTerms, setAcceptTerms] = useState(false);
+  const [acceptRiza,  setAcceptRiza]  = useState(false);
+  const [acceptKvkk,  setAcceptKvkk]  = useState(false);
   const [bio,      setBio]      = useState("");
   const [photo,    setPhoto]    = useState<File | null>(null);
   const [photoPreview, setPhotoPreview] = useState("");
@@ -84,7 +87,7 @@ export default function OnboardPage() {
       body.append("petType", selectedSpecies);
       body.append("breed",   selectedBreed);
       body.append("petName", petName);
-      body.append("phone",   phone);
+      body.append("phone",   "05" + phone);
       body.append("age",     petAge);
       body.append("gender",  selectedGender);
       body.append("bio",     bio);
@@ -408,18 +411,28 @@ export default function OnboardPage() {
           {/* ── Telefon ── */}
           <div style={sectionStyle}>
             <label style={labelStyle}>Telefon Numarası</label>
-            <div style={{ position: "relative" }}>
-              <span className="material-symbols-outlined" style={{
-                position: "absolute", left: 14, top: "50%", transform: "translateY(-50%)",
-                color: "#c8a96a", fontSize: 18, pointerEvents: "none",
-              }}>phone</span>
+            <div style={{ position: "relative", display: "flex", alignItems: "center" }}>
+              <div style={{
+                position: "absolute", left: 0,
+                display: "flex", alignItems: "center",
+                height: "100%", paddingLeft: 14, gap: 6,
+                pointerEvents: "none", zIndex: 1,
+              }}>
+                <span className="material-symbols-outlined" style={{ color: "#c8a96a", fontSize: 18 }}>phone</span>
+                <span style={{ fontWeight: 700, color: PRIMARY, fontSize: 15 }}>05</span>
+                <span style={{ color: "#c8b58a", fontSize: 14 }}>|</span>
+              </div>
               <input
                 type="tel"
+                inputMode="numeric"
                 value={phone}
-                onChange={(e) => setPhone(e.target.value)}
-                placeholder="05XX XXX XX XX"
+                onChange={(e) => {
+                  const val = e.target.value.replace(/\D/g, "").slice(0, 9);
+                  setPhone(val);
+                }}
+                placeholder="5XX XXX XX XX"
                 required
-                style={{ ...inputStyle, paddingLeft: 42 }}
+                style={{ ...inputStyle, paddingLeft: 72 }}
               />
             </div>
           </div>
@@ -452,6 +465,60 @@ export default function OnboardPage() {
             </div>
           </div>
 
+          {/* ── Sözleşmeler ── */}
+          <div style={{ ...sectionStyle, display: "flex", flexDirection: "column", gap: 12 }}>
+            {[
+              {
+                state: acceptTerms, setter: setAcceptTerms,
+                label: "Kullanım Koşulları ve Gizlilik Politikası'nı okudum, kabul ediyorum",
+                links: [
+                  { text: "Kullanım Koşulları", href: "/legal/kullanim-kosullari" },
+                  { text: "Gizlilik Politikası", href: "/legal/gizlilik-politikasi" },
+                ],
+              },
+              {
+                state: acceptRiza, setter: setAcceptRiza,
+                label: "Açık Rıza Metni'ni okudum, onaylıyorum",
+                links: [{ text: "Açık Rıza Metni", href: "/legal/acik-riza" }],
+              },
+              {
+                state: acceptKvkk, setter: setAcceptKvkk,
+                label: "KVKK Aydınlatma Metni'ni okudum, anladım",
+                links: [{ text: "KVKK Aydınlatma Metni", href: "/legal/kvkk" }],
+              },
+            ].map((item) => (
+              <label key={item.href ?? item.label} style={{
+                display: "flex", alignItems: "flex-start", gap: 12,
+                cursor: "pointer",
+              }}>
+                <div
+                  onClick={() => item.setter(!item.state)}
+                  style={{
+                    flexShrink: 0, width: 20, height: 20, marginTop: 1,
+                    borderRadius: 6, border: item.state ? "none" : "2px solid #c8b58a",
+                    background: item.state ? GOLD : "#ffffff",
+                    display: "flex", alignItems: "center", justifyContent: "center",
+                    cursor: "pointer", transition: "all 0.15s",
+                    boxShadow: item.state ? "0 2px 8px rgba(119,90,25,0.25)" : "none",
+                  }}
+                >
+                  {item.state && <span className="material-symbols-outlined" style={{ fontSize: 14, color: "#fff", fontVariationSettings: "'FILL' 1" }}>check</span>}
+                </div>
+                <span style={{ fontSize: 13, color: "#5c4a2a", lineHeight: 1.5 }}>
+                  {item.label.split(/(\w[\w\s]+(?:Politikası|Koşulları|Metni))/g).map((part, i) => {
+                    const link = item.links.find((l) => l.text === part);
+                    return link ? (
+                      <a key={i} href={link.href} target="_blank" rel="noopener noreferrer"
+                        style={{ color: PRIMARY, fontWeight: 700, textDecoration: "underline" }}
+                        onClick={(e) => e.stopPropagation()}
+                      >{part}</a>
+                    ) : part;
+                  })}
+                </span>
+              </label>
+            ))}
+          </div>
+
           {/* ── Hata ── */}
           {error && (
             <div style={{
@@ -477,14 +544,14 @@ export default function OnboardPage() {
         <div style={{ maxWidth: 560, margin: "0 auto" }}>
           <button
             onClick={handleSubmit}
-            disabled={loading}
+            disabled={loading || !acceptTerms || !acceptRiza || !acceptKvkk}
             style={{
               width: "100%", padding: "18px 24px",
-              background: loading ? "#c8b98a" : GOLD,
+              background: (loading || !acceptTerms || !acceptRiza || !acceptKvkk) ? "#d8cbb8" : GOLD,
               color: "#ffffff", border: "none",
               borderRadius: 9999, fontWeight: 700,
-              fontSize: 17, cursor: loading ? "not-allowed" : "pointer",
-              boxShadow: "0 8px 32px rgba(119,90,25,0.3)",
+              fontSize: 17, cursor: (loading || !acceptTerms || !acceptRiza || !acceptKvkk) ? "not-allowed" : "pointer",
+              boxShadow: (acceptTerms && acceptRiza && acceptKvkk) ? "0 8px 32px rgba(119,90,25,0.3)" : "none",
               display: "flex", alignItems: "center", justifyContent: "center", gap: 10,
               fontFamily: FONT, transition: "all 0.15s",
             }}
