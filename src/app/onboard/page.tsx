@@ -209,7 +209,77 @@ export default function OnboardPage() {
 
         <form onSubmit={handleSubmit} className="space-y-6">
 
-          {/* 1 — Pet Türü */}
+          {/* 1 — Fotoğraf */}
+          <SectionCard icon="photo_camera" title="Fotoğraf Yükle">
+            {preview ? (
+              <div className="relative">
+                {/* Önizleme */}
+                <div className="relative aspect-square max-h-72 overflow-hidden rounded-xl bg-surface-container">
+                  {/* eslint-disable-next-line @next/next/no-img-element */}
+                  <img src={preview} alt="Önizleme" className="w-full h-full object-cover" />
+                  <div className="absolute inset-0 bg-gradient-to-t from-black/30 to-transparent" />
+                  <div className="absolute bottom-3 left-3 right-3 flex items-center justify-between">
+                    <span className="text-white text-sm font-semibold bg-black/40 backdrop-blur-sm px-3 py-1 rounded-full">
+                      {file?.name}
+                    </span>
+                    <button
+                      type="button"
+                      onClick={() => { setFile(null); setPreview(null); setFileError(null); }}
+                      className="bg-black/50 backdrop-blur-sm text-white rounded-full p-1.5 hover:bg-black/70 transition-colors"
+                    >
+                      <span className="material-symbols-outlined text-lg">close</span>
+                    </button>
+                  </div>
+                </div>
+                <div className="flex items-center gap-2 mt-3 text-sm text-on-surface-variant">
+                  <span className="material-symbols-outlined text-base text-primary" style={{ fontVariationSettings: "'FILL' 1" }}>check_circle</span>
+                  Fotoğraf hazır
+                </div>
+              </div>
+            ) : (
+              <div
+                onDrop={handleDrop}
+                onDragOver={handleDragOver}
+                onDragLeave={() => setDragActive(false)}
+                onClick={() => fileInputRef.current?.click()}
+                className={`relative flex flex-col items-center justify-center gap-4 rounded-2xl border-2 border-dashed p-10 cursor-pointer transition-all ${
+                  dragActive
+                    ? "border-primary bg-primary-fixed/20 scale-[1.01]"
+                    : "border-outline-variant/40 hover:border-primary/60 hover:bg-primary-fixed/10"
+                }`}
+              >
+                <div className="w-16 h-16 bg-primary-fixed rounded-full flex items-center justify-center">
+                  <span className="material-symbols-outlined text-on-primary-fixed text-3xl" style={{ fontVariationSettings: "'FILL' 1" }}>upload</span>
+                </div>
+                <div className="text-center">
+                  <p className="font-headline text-lg italic text-on-surface mb-1">Fotoğrafını Sürükle</p>
+                  <p className="text-on-surface-variant text-sm">veya tıkla, galerinden seç</p>
+                </div>
+                <div className="flex items-center gap-4 text-xs text-on-surface-variant">
+                  <span className="flex items-center gap-1">
+                    <span className="material-symbols-outlined text-sm">image</span>JPG, PNG, WEBP
+                  </span>
+                  <span className="w-1 h-1 rounded-full bg-outline-variant" />
+                  <span>Maks. {MAX_SIZE_MB}MB</span>
+                </div>
+                <input
+                  ref={fileInputRef}
+                  type="file"
+                  accept={ACCEPTED_TYPES.join(",")}
+                  className="hidden"
+                  onChange={(e) => { if (e.target.files?.[0]) handleFile(e.target.files[0]); }}
+                />
+              </div>
+            )}
+            {fileError && (
+              <div className="flex items-center gap-2 mt-3 text-error text-sm">
+                <span className="material-symbols-outlined text-sm" style={{ fontVariationSettings: "'FILL' 1" }}>error</span>
+                {fileError}
+              </div>
+            )}
+          </SectionCard>
+
+          {/* 2 — Pet Türü */}
           <SectionCard icon="pets" title="Evcil Hayvan Türü">
             <div className="grid grid-cols-4 gap-2">
               {PET_TYPES.map((t) => (
@@ -314,76 +384,6 @@ export default function OnboardPage() {
                 </div>
               )}
             </div>
-          </SectionCard>
-
-          {/* 6 — Fotoğraf */}
-          <SectionCard icon="photo_camera" title="Fotoğraf Yükle">
-            {preview ? (
-              <div className="relative">
-                {/* Önizleme */}
-                <div className="relative aspect-square max-h-72 overflow-hidden rounded-xl bg-surface-container">
-                  {/* eslint-disable-next-line @next/next/no-img-element */}
-                  <img src={preview} alt="Önizleme" className="w-full h-full object-cover" />
-                  <div className="absolute inset-0 bg-gradient-to-t from-black/30 to-transparent" />
-                  <div className="absolute bottom-3 left-3 right-3 flex items-center justify-between">
-                    <span className="text-white text-sm font-semibold bg-black/40 backdrop-blur-sm px-3 py-1 rounded-full">
-                      {file?.name}
-                    </span>
-                    <button
-                      type="button"
-                      onClick={() => { setFile(null); setPreview(null); setFileError(null); }}
-                      className="bg-black/50 backdrop-blur-sm text-white rounded-full p-1.5 hover:bg-black/70 transition-colors"
-                    >
-                      <span className="material-symbols-outlined text-lg">close</span>
-                    </button>
-                  </div>
-                </div>
-                <div className="flex items-center gap-2 mt-3 text-sm text-on-surface-variant">
-                  <span className="material-symbols-outlined text-base text-primary" style={{ fontVariationSettings: "'FILL' 1" }}>check_circle</span>
-                  Fotoğraf hazır
-                </div>
-              </div>
-            ) : (
-              <div
-                onDrop={handleDrop}
-                onDragOver={handleDragOver}
-                onDragLeave={() => setDragActive(false)}
-                onClick={() => fileInputRef.current?.click()}
-                className={`relative flex flex-col items-center justify-center gap-4 rounded-2xl border-2 border-dashed p-10 cursor-pointer transition-all ${
-                  dragActive
-                    ? "border-primary bg-primary-fixed/20 scale-[1.01]"
-                    : "border-outline-variant/40 hover:border-primary/60 hover:bg-primary-fixed/10"
-                }`}
-              >
-                <div className="w-16 h-16 bg-primary-fixed rounded-full flex items-center justify-center">
-                  <span className="material-symbols-outlined text-on-primary-fixed text-3xl" style={{ fontVariationSettings: "'FILL' 1" }}>upload</span>
-                </div>
-                <div className="text-center">
-                  <p className="font-headline text-lg italic text-on-surface mb-1">Fotoğrafını Sürükle</p>
-                  <p className="text-on-surface-variant text-sm">veya tıkla, galerinden seç</p>
-                </div>
-                <div className="flex items-center gap-4 text-xs text-on-surface-variant">
-                  <span className="flex items-center gap-1">
-                    <span className="material-symbols-outlined text-sm">image</span>JPG, PNG, WEBP
-                  </span>
-                  <span className="w-1 h-1 rounded-full bg-outline-variant" />
-                  <span>Maks. {MAX_SIZE_MB}MB</span>
-                </div>
-                <input
-                  ref={fileInputRef}
-                  type="file"
-                  accept={ACCEPTED_TYPES.join(",")}
-                  className="hidden"
-                  onChange={(e) => { if (e.target.files?.[0]) handleFile(e.target.files[0]); }}
-                />
-              </div>
-            )}
-            {fileError && (
-              <div className="flex items-center gap-2 mt-3 text-error text-sm">
-                <span className="material-symbols-outlined text-sm" style={{ fontVariationSettings: "'FILL' 1" }}>error</span>
-                {fileError}
-              </div>
-            )}
           </SectionCard>
 
           {/* Genel hata */}
