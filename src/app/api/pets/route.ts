@@ -8,8 +8,12 @@ export async function POST(request: Request) {
   console.log("[pets/route] POST isteği alındı")
   try {
     console.log("[pets/route] Token kontrol ediliyor...")
-    const token = await getToken({ req: request as any, secret: process.env.NEXTAUTH_SECRET })
-    console.log("[pets/route] Token:", token ? `email=${token.email}` : "YOK")
+    const token = await getToken({
+      req: request as any,
+      secret: process.env.NEXTAUTH_SECRET,
+      cookieName: process.env.NODE_ENV === "production" ? "__Secure-next-auth.session-token" : "next-auth.session-token"
+    })
+    console.log("[pets/route] token:", token?.email)
     if (!token?.email) {
       return Response.json({ error: 'Lütfen giriş yapın.' }, { status: 401 })
     }
