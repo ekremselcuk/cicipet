@@ -2,7 +2,6 @@ export const dynamic = 'force-dynamic'
 
 import { checkText } from '@/lib/textModeration'
 import prisma from '@/lib/prisma'
-import { getToken } from 'next-auth/jwt'
 
 export async function POST(request: Request) {
   console.log("[pets/route] POST isteği alındı")
@@ -24,27 +23,12 @@ export async function POST(request: Request) {
     if (checkText(petName)) return Response.json({ error: 'Pet adında uygunsuz içerik tespit edildi.' }, { status: 400 })
     if (bio && checkText(bio)) return Response.json({ error: 'Açıklamada uygunsuz içerik tespit edildi.' }, { status: 400 })
 
-    console.log("[pets/route] Token kontrol ediliyor...")
-    const token = await getToken({
-      req: request as any,
-      secret: process.env.NEXTAUTH_SECRET,
-    }) || await getToken({
-      req: request as any,
-      secret: process.env.NEXTAUTH_SECRET,
-      cookieName: "__Secure-next-auth.session-token",
-    }) || await getToken({
-      req: request as any,
-      secret: process.env.NEXTAUTH_SECRET,
-      cookieName: "next-auth.session-token",
-    })
-    console.log("[pets/route] token:", token?.email)
-
-    if (!token?.email) {
-      return Response.json({ error: "Lütfen giriş yapın." }, { status: 401 })
-    }
+    const email = request.headers.get("x-user-email")
+    console.log("[pets/route] x-user-email header:", email)
+    if (!email) return Response.json({ error: "Lütfen giriş yapın." }, { status: 401 })
 
     console.log("[pets/route] Kullanıcı veritabanında aranıyor...")
-    const user = await prisma.user.findFirst({ where: { email: token.email as string } })
+    const user = await prisma.user.findFirst({ where: { email } })
     console.log("[pets/route] Kullanıcı:", user ? `id=${user.id}` : "BULUNAMADI")
     if (!user) return Response.json({ error: "Kullanıcı bulunamadı." }, { status: 401 })
 

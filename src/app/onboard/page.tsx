@@ -94,8 +94,12 @@ export default function OnboardPage() {
       body.append("gender",  selectedGender);
       body.append("bio",     bio);
       body.append("photo",   photo);
-      console.log("[onboard] fetch başlıyor")
-      const res  = await fetch("/api/pets", { method: "POST", body });
+      console.log("[onboard] fetch başlıyor, email:", session?.user?.email)
+      const res  = await fetch("/api/pets", {
+        method: "POST",
+        headers: { "x-user-email": session?.user?.email || "" },
+        body,
+      });
       console.log("[onboard] fetch bitti, status:", res.status);
       const data = await res.json();
       console.log("[onboard] Response data:", data);
