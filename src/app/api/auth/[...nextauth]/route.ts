@@ -12,7 +12,7 @@ const handler = NextAuth({
     }),
   ],
   callbacks: {
-    session({ session, user }) {
+    session({ session, user }: { session: any; user: any }) {
       if (session.user) {
         session.user.id = user.id
       }
