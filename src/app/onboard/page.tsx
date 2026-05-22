@@ -77,12 +77,14 @@ export default function OnboardPage() {
 
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
+    console.log("[onboard] handleSubmit başladı");
     if (!photo)           { setError("Lütfen bir fotoğraf yükleyin."); return; }
     if (!selectedSpecies) { setError("Lütfen hayvan türü seçin."); return; }
     if (!selectedGender)  { setError("Lütfen cinsiyet seçin."); return; }
     setLoading(true);
     setError("");
     try {
+      console.log("[onboard] FormData hazırlanıyor:", { selectedSpecies, selectedBreed, petName, petAge, selectedGender });
       const body = new FormData();
       body.append("petType", selectedSpecies);
       body.append("breed",   selectedBreed);
@@ -92,11 +94,21 @@ export default function OnboardPage() {
       body.append("gender",  selectedGender);
       body.append("bio",     bio);
       body.append("photo",   photo);
+      console.log("[onboard] /api/pets isteği gönderiliyor...");
       const res  = await fetch("/api/pets", { method: "POST", body });
+      console.log("[onboard] Response status:", res.status);
       const data = await res.json();
-      if (!res.ok) { setError(data.error ?? "Bir hata oluştu."); return; }
+      console.log("[onboard] Response data:", data);
+      if (!res.ok) {
+        const errMsg = data.error ?? "Bir hata oluştu.";
+        console.error("[onboard] API hatası:", errMsg);
+        setError(errMsg);
+        return;
+      }
+      console.log("[onboard] Başarılı, /welcome'a yönlendiriliyor");
       router.push("/welcome");
-    } catch {
+    } catch (err) {
+      console.error("[onboard] Bağlantı hatası:", err);
       setError("Bağlantı hatası. Lütfen tekrar deneyin.");
     } finally {
       setLoading(false);
