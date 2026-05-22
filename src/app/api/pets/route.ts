@@ -36,7 +36,7 @@ export async function POST(request: Request) {
     // Text moderation
     if (checkText(petName)) return Response.json({ error: 'Pet adında uygunsuz içerik tespit edildi.' }, { status: 400 })
     if (bio && checkText(bio)) return Response.json({ error: 'Açıklamada uygunsuz içerik tespit edildi.' }, { status: 400 })
-    if (!photo) return Response.json({ error: 'Lütfen bir fotoğraf yükleyin.' }, { status: 400 })
+    // if (!photo) return Response.json({ error: 'Lütfen bir fotoğraf yükleyin.' }, { status: 400 }) // geçici devre dışı
 
     // Cloudinary upload DEVRE DIŞI — fotoğrafsız devam et
     console.log("[pets/route] Cloudinary atlanıyor (geçici devre dışı)")

@@ -78,7 +78,7 @@ export default function OnboardPage() {
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
     console.log("[onboard] handleSubmit başladı");
-    if (!photo)           { setError("Lütfen bir fotoğraf yükleyin."); return; }
+    // if (!photo)           { setError("Lütfen bir fotoğraf yükleyin."); return; } // geçici devre dışı
     if (!selectedSpecies) { setError("Lütfen hayvan türü seçin."); return; }
     if (!selectedGender)  { setError("Lütfen cinsiyet seçin."); return; }
     setLoading(true);
