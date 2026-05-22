@@ -1,7 +1,7 @@
-import NextAuth from "next-auth"
+import NextAuth, { type NextAuthOptions } from "next-auth"
 import GoogleProvider from "next-auth/providers/google"
 
-const handler = NextAuth({
+const authOptions: NextAuthOptions = {
   providers: [
     GoogleProvider({
       clientId: process.env.GOOGLE_CLIENT_ID!,
@@ -9,7 +9,7 @@ const handler = NextAuth({
     }),
   ],
   callbacks: {
-    async signIn({ user, account, profile }) {
+    async signIn({ user, account }: { user: any; account: any }) {
       try {
         const { prisma } = await import("@/lib/prisma")
         const existing = await prisma.user.findFirst({
@@ -31,7 +31,7 @@ const handler = NextAuth({
         return true
       }
     },
-    async session({ session, token }) {
+    async session({ session, token }: { session: any; token: any }) {
       if (session.user?.email) {
         try {
           const { prisma } = await import("@/lib/prisma")
@@ -39,7 +39,7 @@ const handler = NextAuth({
             where: { email: session.user.email }
           })
           if (dbUser) {
-            (session.user as any).id = dbUser.id
+            session.user.id = dbUser.id
           }
         } catch (e) {
           console.error("session error:", e)
@@ -47,13 +47,14 @@ const handler = NextAuth({
       }
       return session
     },
-    async jwt({ token, user }) {
+    async jwt({ token }: { token: any }) {
       return token
     }
   },
   session: { strategy: "jwt" },
   pages: { signIn: "/" },
   secret: process.env.NEXTAUTH_SECRET,
-} as any)
+}
 
+const handler = NextAuth(authOptions)
 export { handler as GET, handler as POST }
