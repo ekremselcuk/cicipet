@@ -1,7 +1,10 @@
-import NextAuth, { type NextAuthOptions } from "next-auth"
+import NextAuth from "next-auth"
 import GoogleProvider from "next-auth/providers/google"
+import { PrismaAdapter } from "@next-auth/prisma-adapter"
+import { prisma } from "@/lib/prisma"
 
-const authOptions: NextAuthOptions = {
+export const authOptions = {
+  adapter: PrismaAdapter(prisma),
   providers: [
     GoogleProvider({
       clientId: process.env.GOOGLE_CLIENT_ID!,
@@ -9,49 +12,11 @@ const authOptions: NextAuthOptions = {
     }),
   ],
   callbacks: {
-    async signIn({ user, account }: { user: any; account: any }) {
-      try {
-        const { prisma } = await import("@/lib/prisma")
-        const existing = await prisma.user.findFirst({
-          where: { email: user.email! }
-        })
-        if (!existing) {
-          await prisma.user.create({
-            data: {
-              email: user.email!,
-              name: user.name || "",
-              avatarUrl: user.image || null,
-              googleId: account?.providerAccountId || "",
-            }
-          })
-        }
-        return true
-      } catch (e) {
-        console.error("signIn error:", e)
-        return true
-      }
-    },
-    async session({ session, token }: { session: any; token: any }) {
-      if (session.user?.email) {
-        try {
-          const { prisma } = await import("@/lib/prisma")
-          const dbUser = await prisma.user.findFirst({
-            where: { email: session.user.email }
-          })
-          if (dbUser) {
-            session.user.id = dbUser.id
-          }
-        } catch (e) {
-          console.error("session error:", e)
-        }
-      }
+    session({ session, user }: any) {
+      if (session.user) session.user.id = user.id
       return session
     },
-    async jwt({ token }: { token: any }) {
-      return token
-    }
   },
-  session: { strategy: "jwt" },
   pages: { signIn: "/" },
   secret: process.env.NEXTAUTH_SECRET,
 }
