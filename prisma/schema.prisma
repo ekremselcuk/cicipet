@@ -77,7 +77,7 @@ enum ModerationAction {
 model User {
   id            String   @id @default(cuid())
   email         String   @unique
-  username      String   @unique
+  username      String   @default("") @unique
   name          String?
   avatarUrl     String?
   bio           String?
