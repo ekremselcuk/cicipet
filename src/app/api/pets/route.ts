@@ -3,7 +3,7 @@ export const dynamic = 'force-dynamic'
 import { moderateImage } from '@/lib/imageModeration'
 import { checkText } from '@/lib/textModeration'
 import prisma from '@/lib/prisma'
-import { getServerSession } from 'next-auth'
+import { getToken } from 'next-auth/jwt'
 
 // Cloudinary upload via REST API (no SDK needed for server-side)
 async function uploadToCloudinary(base64: string, mimeType: string): Promise<string> {
@@ -19,14 +19,20 @@ async function uploadToCloudinary(base64: string, mimeType: string): Promise<str
   formData.append('folder', 'cicipet/pets')
 
   const res = await fetch(`https://api.cloudinary.com/v1_1/${cloudName}/image/upload`, { method: 'POST', body: formData })
-  if (!res.ok) throw new Error('Cloudinary yükleme hatası')
+  if (!res.ok) throw new Error(`Cloudinary yükleme hatası: ${res.status}`)
   const data = await res.json()
   return data.secure_url as string
 }
 
 export async function POST(request: Request) {
   try {
-    const session = await getServerSession({ providers: [], session: { strategy: "jwt" }, secret: process.env.NEXTAUTH_SECRET } as any) as any
+    const token = await getToken({ req: request as any, secret: process.env.NEXTAUTH_SECRET })
+    if (!token?.email) {
+      return Response.json({ error: 'Lütfen giriş yapın.' }, { status: 401 })
+    }
+    const user = await prisma.user.findFirst({ where: { email: token.email as string } })
+    if (!user) return Response.json({ error: 'Kullanıcı bulunamadı.' }, { status: 401 })
+
     const formData = await request.formData()
 
     const petName = (formData.get('petName') as string) ?? ''
@@ -50,13 +56,12 @@ export async function POST(request: Request) {
     if (!modResult.safe) return Response.json({ error: modResult.reason ?? 'Uygunsuz görsel içeriği.' }, { status: 400 })
     if (!modResult.hasPet) return Response.json({ error: modResult.reason ?? 'Fotoğrafta evcil hayvan tespit edilemedi.' }, { status: 400 })
 
-    // Cloudinary upload
+    // Cloudinary upload — hata olursa fotoğrafsız devam et
     let photoUrl = ''
     try {
       photoUrl = await uploadToCloudinary(base64, photo.type)
     } catch (err) {
       console.error('[pets/route] Cloudinary hatası:', err)
-      // Cloudinary olmadan devam et
     }
 
     // Species mapping
@@ -66,17 +71,8 @@ export async function POST(request: Request) {
     }
     const genderMap: Record<string, string> = { Erkek: 'MALE', Dişi: 'FEMALE' }
 
-    // Find or create user
-    let ownerId: string
-    if (session?.user?.email) {
-      const user = await prisma.user.findFirst({ where: { email: session.user.email } })
-      if (!user) return Response.json({ error: 'Kullanıcı bulunamadı. Lütfen giriş yapın.' }, { status: 401 })
-      ownerId = user.id
-      // Update phone if provided
-      if (phone) await prisma.user.update({ where: { id: ownerId }, data: { phone } })
-    } else {
-      return Response.json({ error: 'Lütfen giriş yapın.' }, { status: 401 })
-    }
+    const ownerId = user.id
+    if (phone) await prisma.user.update({ where: { id: ownerId }, data: { phone } })
 
     // Create pet
     const petSpecies = speciesMap[petType] ?? 'OTHER'
