@@ -25,6 +25,7 @@ async function uploadToCloudinary(base64: string, mimeType: string): Promise<str
 }
 
 export async function POST(request: Request) {
+  console.log("[pets/route] POST isteği alındı")
   try {
     const token = await getToken({ req: request as any, secret: process.env.NEXTAUTH_SECRET })
     if (!token?.email) {
