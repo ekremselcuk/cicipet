@@ -4,7 +4,6 @@ import { moderateImage } from '@/lib/imageModeration'
 import { checkText } from '@/lib/textModeration'
 import prisma from '@/lib/prisma'
 import { getServerSession } from 'next-auth'
-import { authOptions } from '@/auth'
 
 // Cloudinary upload via REST API (no SDK needed for server-side)
 async function uploadToCloudinary(base64: string, mimeType: string): Promise<string> {
@@ -27,7 +26,7 @@ async function uploadToCloudinary(base64: string, mimeType: string): Promise<str
 
 export async function POST(request: Request) {
   try {
-    const session = await getServerSession(authOptions)
+    const session = await getServerSession({ providers: [], session: { strategy: "jwt" }, secret: process.env.NEXTAUTH_SECRET } as any)
     const formData = await request.formData()
 
     const petName = (formData.get('petName') as string) ?? ''
