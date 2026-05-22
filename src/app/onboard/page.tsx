@@ -45,7 +45,7 @@ export default function OnboardPage() {
   const [selectedGender,  setSelectedGender]  = useState("");
   const [petName,  setPetName]  = useState("");
   const [petAge,   setPetAge]   = useState("");
-  const [phone,    setPhone]    = useState("");
+  const [phone,    setPhone]    = useState("05");
   const [acceptTerms, setAcceptTerms] = useState(false);
   const [acceptRiza,  setAcceptRiza]  = useState(false);
   const [acceptKvkk,  setAcceptKvkk]  = useState(false);
@@ -87,7 +87,7 @@ export default function OnboardPage() {
       body.append("petType", selectedSpecies);
       body.append("breed",   selectedBreed);
       body.append("petName", petName);
-      body.append("phone",   "05" + phone);
+      body.append("phone",   phone);
       body.append("age",     petAge);
       body.append("gender",  selectedGender);
       body.append("bio",     bio);
@@ -411,36 +411,38 @@ export default function OnboardPage() {
           {/* ── Telefon ── */}
           <div style={sectionStyle}>
             <label style={labelStyle}>Telefon Numarası</label>
-            <div style={{
-              display: "flex", alignItems: "center",
-              border: "1.5px solid #e8dfd0", borderRadius: 12,
-              backgroundColor: "#f5f0e8", overflow: "hidden",
-            }}>
-              <div style={{
-                display: "flex", alignItems: "center", gap: 6,
-                padding: "0 12px", height: 48, flexShrink: 0,
-                borderRight: "1.5px solid #e8dfd0",
-                backgroundColor: "#eee6d8",
-              }}>
-                <span className="material-symbols-outlined" style={{ color: "#c8a96a", fontSize: 18 }}>phone</span>
-                <span style={{ fontWeight: 700, color: PRIMARY, fontSize: 15 }}>05</span>
-              </div>
+            <div style={{ position: "relative" }}>
+              <span className="material-symbols-outlined" style={{
+                position: "absolute", left: 14, top: "50%", transform: "translateY(-50%)",
+                color: "#c8a96a", fontSize: 18, pointerEvents: "none",
+              }}>phone</span>
               <input
                 type="tel"
                 inputMode="numeric"
                 value={phone}
                 onChange={(e) => {
-                  const val = e.target.value.replace(/\D/g, "").slice(0, 9);
-                  setPhone(val);
+                  // Sadece rakam al
+                  const digits = e.target.value.replace(/\D/g, "");
+                  // İlk 2 rakam daima "05"
+                  const enforced = "05" + digits.slice(2, 11);
+                  // Format: 05XX XXX XX XX
+                  const d = enforced.replace(/\D/g, "");
+                  let formatted = d;
+                  if (d.length > 4)  formatted = d.slice(0, 4) + " " + d.slice(4);
+                  if (d.length > 7)  formatted = d.slice(0, 4) + " " + d.slice(4, 7) + " " + d.slice(7);
+                  if (d.length > 9)  formatted = d.slice(0, 4) + " " + d.slice(4, 7) + " " + d.slice(7, 9) + " " + d.slice(9, 11);
+                  setPhone(formatted);
                 }}
-                placeholder=""
+                onKeyDown={(e) => {
+                  // "05" prefix'ini silmeyi engelle
+                  const pos = (e.target as HTMLInputElement).selectionStart ?? 0;
+                  if ((e.key === "Backspace" || e.key === "Delete") && pos <= 2) {
+                    e.preventDefault();
+                  }
+                }}
+                maxLength={14}
                 required
-                style={{
-                  flex: 1, border: "none", outline: "none",
-                  backgroundColor: "transparent",
-                  padding: "0 14px", fontSize: 15,
-                  fontFamily: FONT, color: "#1a1209", height: 48,
-                }}
+                style={{ ...inputStyle, paddingLeft: 42 }}
               />
             </div>
           </div>

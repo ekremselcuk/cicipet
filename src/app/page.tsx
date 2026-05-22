@@ -36,7 +36,7 @@ const FONT_BODY     = '"Plus Jakarta Sans", sans-serif';
 function JoinButton({ label }: { label: string }) {
   return (
     <button
-      onClick={() => signIn("google", { callbackUrl: "/onboard" })}
+      onClick={() => signIn("google", { callbackUrl: "/onboard", prompt: "select_account" })}
       style={{ background: "linear-gradient(135deg, #775a19 0%, #d4ad65 100%)", color: "#ffffff", padding: "20px 40px", borderRadius: "9999px", fontWeight: "bold", fontSize: "18px", border: "none", cursor: "pointer", boxShadow: "0 40px 80px -20px rgba(119, 90, 25, 0.15)" }}
     >
       {label}
