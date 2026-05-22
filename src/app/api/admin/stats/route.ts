@@ -1,5 +1,23 @@
 export const dynamic = "force-dynamic"
-export async function GET() { return Response.json({ data: [] }) }
-export async function POST() { return Response.json({ success: true }) }
-export async function PATCH() { return Response.json({ success: true }) }
-export async function DELETE() { return Response.json({ success: true }) }
+import { NextResponse } from "next/server"
+import prisma from "@/lib/prisma"
+
+export async function GET() {
+  try {
+    const todayStart = new Date(); todayStart.setHours(0,0,0,0)
+    const [totalUsers, totalPets, pendingModeration, totalListings, activeContests, todayRegistrations, recentUsers, recentPets] = await Promise.all([
+      prisma.user.count(),
+      prisma.pet.count(),
+      prisma.pet.count({ where: { isActive: false } }),
+      prisma.listing.count({ where: { status: "ACTIVE" } }),
+      prisma.contest.count({ where: { status: "ACTIVE" } }),
+      prisma.user.count({ where: { createdAt: { gte: todayStart } } }),
+      prisma.user.findMany({ orderBy: { createdAt: "desc" }, take: 10, select: { id:true, name:true, email:true, createdAt:true, city:true, role:true } }),
+      prisma.pet.findMany({ orderBy: { createdAt: "desc" }, take: 10, include: { owner: { select: { name:true } } } }),
+    ])
+    return NextResponse.json({ totalUsers, totalPets, pendingModeration, totalListings, activeContests, todayRegistrations, recentUsers, recentPets })
+  } catch (e) {
+    console.error(e)
+    return NextResponse.json({ error: "Internal server error" }, { status: 500 })
+  }
+}

@@ -9,21 +9,21 @@ interface Stats {
   totalUsers: number;
   totalPets: number;
   pendingModeration: number;
-  activeListings: number;
+  totalListings: number;
   activeContests: number;
   todayRegistrations: number;
-  recentUsers: { id: string; name: string | null; email: string; createdAt: string; city: string | null }[];
+  recentUsers: { id: string; name: string | null; email: string; createdAt: string; city: string | null; role: string }[];
   recentPets: { id: string; name: string; species: string; createdAt: string; owner: { name: string | null } }[];
 }
 
 const statCards = [
-  { key: "totalUsers", emoji: "👥", label: "Toplam Kullanıcı" },
-  { key: "totalPets", emoji: "🐾", label: "Toplam Pet" },
-  { key: "pendingModeration", emoji: "🛡️", label: "Bekleyen Moderasyon" },
-  { key: "activeListings", emoji: "📋", label: "Aktif İlan" },
-  { key: "activeContests", emoji: "🏆", label: "Aktif Yarışma" },
-  { key: "todayRegistrations", emoji: "📅", label: "Bugün Kayıt" },
-] as const;
+  { key: "totalUsers" as const, emoji: "👥", label: "Toplam Kullanıcı" },
+  { key: "totalPets" as const, emoji: "🐾", label: "Toplam Pet" },
+  { key: "pendingModeration" as const, emoji: "🛡️", label: "Bekleyen Moderasyon" },
+  { key: "totalListings" as const, emoji: "📋", label: "Aktif İlan" },
+  { key: "activeContests" as const, emoji: "🏆", label: "Aktif Yarışma" },
+  { key: "todayRegistrations" as const, emoji: "📅", label: "Bugün Kayıt" },
+];
 
 export default function DashboardPage() {
   const router = useRouter();
@@ -57,7 +57,7 @@ export default function DashboardPage() {
   return (
     <AdminLayout>
       <div>
-        <h1 style={{ fontSize: 24, fontWeight: 700, color: "#1a1a2e", marginBottom: 24, marginTop: 0 }}>
+        <h1 style={{ fontSize: 24, fontWeight: 700, color: "#1a1a2e", marginBottom: 24, marginTop: 0, fontFamily: '"Plus Jakarta Sans", system-ui, sans-serif' }}>
           Dashboard
         </h1>
 
@@ -65,7 +65,7 @@ export default function DashboardPage() {
         <div
           style={{
             display: "grid",
-            gridTemplateColumns: "repeat(3, 1fr)",
+            gridTemplateColumns: "repeat(auto-fit, minmax(200px, 1fr))",
             gap: 16,
             marginBottom: 32,
           }}
@@ -81,8 +81,8 @@ export default function DashboardPage() {
               }}
             >
               <div style={{ fontSize: 28, marginBottom: 8 }}>{emoji}</div>
-              <div style={{ fontSize: 13, color: "#888", marginBottom: 4 }}>{label}</div>
-              <div style={{ fontSize: 32, fontWeight: 700, color: "#1a1a2e" }}>
+              <div style={{ fontSize: 13, color: "#888", marginBottom: 4, fontFamily: '"Plus Jakarta Sans", system-ui, sans-serif' }}>{label}</div>
+              <div style={{ fontSize: 32, fontWeight: 700, color: "#775a19", fontFamily: '"Plus Jakarta Sans", system-ui, sans-serif' }}>
                 {stats ? (stats[key] ?? 0) : "—"}
               </div>
             </div>
@@ -100,7 +100,7 @@ export default function DashboardPage() {
               boxShadow: "0 1px 4px rgba(0,0,0,0.06)",
             }}
           >
-            <h2 style={{ fontSize: 16, fontWeight: 600, color: "#1a1a2e", marginTop: 0, marginBottom: 16 }}>
+            <h2 style={{ fontSize: 16, fontWeight: 600, color: "#1a1a2e", marginTop: 0, marginBottom: 16, fontFamily: '"Plus Jakarta Sans", system-ui, sans-serif' }}>
               Son Kullanıcılar
             </h2>
             {stats?.recentUsers?.length ? (
@@ -118,7 +118,7 @@ export default function DashboardPage() {
                   >
                     <div>
                       <div style={{ fontWeight: 500, color: "#333" }}>{u.name || u.email}</div>
-                      <div style={{ color: "#999", fontSize: 11 }}>{u.city || "—"}</div>
+                      <div style={{ color: "#999", fontSize: 11 }}>{u.city || "—"} · {u.role}</div>
                     </div>
                     <div style={{ color: "#aaa", fontSize: 11 }}>
                       {new Date(u.createdAt).toLocaleDateString("tr-TR")}
@@ -140,7 +140,7 @@ export default function DashboardPage() {
               boxShadow: "0 1px 4px rgba(0,0,0,0.06)",
             }}
           >
-            <h2 style={{ fontSize: 16, fontWeight: 600, color: "#1a1a2e", marginTop: 0, marginBottom: 16 }}>
+            <h2 style={{ fontSize: 16, fontWeight: 600, color: "#1a1a2e", marginTop: 0, marginBottom: 16, fontFamily: '"Plus Jakarta Sans", system-ui, sans-serif' }}>
               Son Petler
             </h2>
             {stats?.recentPets?.length ? (

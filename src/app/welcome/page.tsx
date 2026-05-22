@@ -1,86 +1,164 @@
 "use client";
 
-import { useEffect, useRef } from "react";
+import { useEffect } from "react";
 import Link from "next/link";
 
-const COLORS = ["#f59e0b", "#ef4444", "#10b981", "#3b82f6", "#8b5cf6", "#ec4899", "#f97316"];
-
 export default function WelcomePage() {
-  const containerRef = useRef<HTMLDivElement>(null);
-
   useEffect(() => {
-    const container = containerRef.current;
-    if (!container) return;
+    // Inject keyframe animation
+    const styleId = "cicipet-confetti-style";
+    if (!document.getElementById(styleId)) {
+      const style = document.createElement("style");
+      style.id = styleId;
+      style.textContent = `
+        @keyframes cicipet-fall {
+          0% { transform: translateY(0) rotate(0deg); opacity: 1; }
+          100% { transform: translateY(110vh) rotate(720deg); opacity: 0; }
+        }
+      `;
+      document.head.appendChild(style);
+    }
+
+    const colors = [
+      "#775a19", "#d4ad65", "#ef4444", "#10b981",
+      "#3b82f6", "#8b5cf6", "#ec4899", "#f97316", "#facc15",
+    ];
 
     const pieces: HTMLElement[] = [];
-
-    for (let i = 0; i < 90; i++) {
+    for (let i = 0; i < 80; i++) {
       const el = document.createElement("div");
       const size = 6 + Math.random() * 8;
-      el.style.cssText = `
-        position: fixed;
-        top: -20px;
-        left: ${Math.random() * 100}vw;
-        width: ${size}px;
-        height: ${size}px;
-        background: ${COLORS[Math.floor(Math.random() * COLORS.length)]};
-        border-radius: ${Math.random() > 0.5 ? "50%" : "2px"};
-        pointer-events: none;
-        animation: cicipet-fall ${2 + Math.random() * 3}s ${Math.random() * 2}s linear forwards;
-        z-index: 50;
-      `;
+      const color = colors[Math.floor(Math.random() * colors.length)];
+      const left = Math.random() * 100;
+      const duration = 2 + Math.random() * 3;
+      const delay = Math.random() * 2;
+      const isCircle = Math.random() > 0.5;
+
+      el.style.cssText = [
+        "position:fixed",
+        "top:-20px",
+        `left:${left}vw`,
+        `width:${size}px`,
+        `height:${size}px`,
+        `background:${color}`,
+        `border-radius:${isCircle ? "50%" : "2px"}`,
+        "pointer-events:none",
+        `animation:cicipet-fall ${duration}s ${delay}s linear forwards`,
+        "z-index:9999",
+      ].join(";");
+
       document.body.appendChild(el);
       pieces.push(el);
     }
 
-    return () => pieces.forEach((el) => el.remove());
+    return () => {
+      pieces.forEach((el) => el.remove());
+      const s = document.getElementById(styleId);
+      if (s) s.remove();
+    };
   }, []);
 
   return (
-    <>
-      <style>{`
-        @keyframes cicipet-fall {
-          to {
-            transform: translateY(110vh) rotate(720deg);
-            opacity: 0;
-          }
-        }
-      `}</style>
-
-      <main
-        ref={containerRef}
-        className="min-h-screen bg-gradient-to-br from-orange-50 to-pink-50 flex items-center justify-center px-4"
+    <main
+      style={{
+        minHeight: "100vh",
+        backgroundColor: "#faf9f6",
+        fontFamily: '"Plus Jakarta Sans", system-ui, sans-serif',
+        display: "flex",
+        alignItems: "center",
+        justifyContent: "center",
+        padding: "16px",
+      }}
+    >
+      {/* Center card */}
+      <div
+        style={{
+          backgroundColor: "#fff",
+          borderRadius: 24,
+          padding: 40,
+          boxShadow: "0 8px 40px rgba(0,0,0,0.12)",
+          maxWidth: 440,
+          width: "100%",
+          textAlign: "center",
+        }}
       >
-        <div className="text-center max-w-md">
-          <div className="text-7xl mb-6 animate-bounce">🎉</div>
-
-          <div className="bg-white rounded-3xl shadow-lg p-10">
-            <h1 className="text-3xl font-black text-gray-900 mb-3">
-              Tebrikler!
-            </h1>
-            <p className="text-lg text-orange-500 font-bold mb-6">
-              Petiniz yarışmaya kaydedildi 🐾
-            </p>
-            <p className="text-gray-500 leading-relaxed mb-8">
-              Harika! En kısa sürede sizinle iletişime geçeceğiz.
-              Sonuçları e-posta ve SMS ile bildirilecek.
-            </p>
-
-            <div className="flex flex-col gap-3">
-              <Link
-                href="/"
-                className="block rounded-full bg-orange-500 text-white font-bold py-3 px-6 hover:bg-orange-600 transition-colors"
-              >
-                Ana Sayfaya Dön
-              </Link>
-            </div>
-          </div>
-
-          <p className="text-xs text-gray-400 mt-6">
-            Sorularınız için: destek@cicipet.com
-          </p>
+        {/* Checkmark circle */}
+        <div
+          style={{
+            width: 80,
+            height: 80,
+            borderRadius: "50%",
+            background: "linear-gradient(135deg,#775a19 0%,#d4ad65 100%)",
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "center",
+            margin: "0 auto 24px",
+          }}
+        >
+          <span style={{ color: "#fff", fontSize: 36, lineHeight: 1 }}>✓</span>
         </div>
-      </main>
-    </>
+
+        {/* Headline */}
+        <h1
+          style={{
+            fontFamily: '"Noto Serif", Georgia, serif',
+            fontStyle: "italic",
+            fontSize: 32,
+            fontWeight: 700,
+            color: "#1a1a1a",
+            margin: "0 0 12px",
+          }}
+        >
+          Tebrikler! 🎉
+        </h1>
+
+        {/* Subheading */}
+        <p
+          style={{
+            fontSize: 18,
+            fontWeight: 600,
+            background: "linear-gradient(135deg,#775a19 0%,#d4ad65 100%)",
+            WebkitBackgroundClip: "text",
+            WebkitTextFillColor: "transparent",
+            backgroundClip: "text",
+            margin: "0 0 20px",
+          }}
+        >
+          Petiniz Gala&apos;ya Kaydedildi!
+        </p>
+
+        {/* Description */}
+        <p
+          style={{
+            fontSize: 15,
+            color: "#666",
+            lineHeight: 1.7,
+            margin: "0 0 32px",
+          }}
+        >
+          Harika! Moderasyon sonrası yarışmaya dahil edilecek.
+          Sonuçları e-posta ve SMS ile bildireceğiz.
+        </p>
+
+        {/* Button */}
+        <Link
+          href="/"
+          style={{
+            display: "inline-block",
+            background: "linear-gradient(135deg,#775a19 0%,#d4ad65 100%)",
+            color: "#fff",
+            fontFamily: '"Plus Jakarta Sans", system-ui, sans-serif',
+            fontWeight: 700,
+            fontSize: 16,
+            borderRadius: 9999,
+            padding: "16px 32px",
+            textDecoration: "none",
+            boxShadow: "0 4px 16px rgba(119,90,25,0.35)",
+          }}
+        >
+          Ana Sayfaya Dön
+        </Link>
+      </div>
+    </main>
   );
 }

@@ -32,13 +32,7 @@ export default function UsersPage() {
   const [search, setSearch] = useState("");
   const [roleFilter, setRoleFilter] = useState("");
   const [statusFilter, setStatusFilter] = useState("");
-  const [sortBy, setSortBy] = useState("createdAt");
-  const [sortDir, setSortDir] = useState("desc");
-  const [selected, setSelected] = useState<string[]>([]);
   const [loading, setLoading] = useState(true);
-  const [showModal, setShowModal] = useState<null | "view" | "edit">(null);
-  const [selectedUser, setSelectedUser] = useState<User | null>(null);
-  const [editForm, setEditForm] = useState({ name: "", city: "", role: "" });
 
   const totalPages = Math.ceil(total / limit);
 
@@ -48,8 +42,6 @@ export default function UsersPage() {
       search,
       role: roleFilter,
       status: statusFilter,
-      sortBy,
-      sortDir,
       page: String(page),
       limit: String(limit),
     });
@@ -61,7 +53,7 @@ export default function UsersPage() {
         setLoading(false);
       })
       .catch(() => setLoading(false));
-  }, [search, roleFilter, statusFilter, sortBy, sortDir, page, limit]);
+  }, [search, roleFilter, statusFilter, page, limit]);
 
   useEffect(() => {
     if (!checkAdminAuth()) {
@@ -92,69 +84,11 @@ export default function UsersPage() {
     fetch(`/api/admin/users?id=${userId}`, { method: "DELETE" }).then(() => fetchUsers());
   }
 
-  function handleEdit() {
-    if (!selectedUser) return;
-    fetch("/api/admin/users", {
-      method: "PATCH",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ action: "edit", userId: selectedUser.id, ...editForm }),
-    }).then(() => {
-      setShowModal(null);
-      fetchUsers();
-    });
-  }
-
-  function openEdit(user: User) {
-    setSelectedUser(user);
-    setEditForm({ name: user.name || "", city: user.city || "", role: user.role });
-    setShowModal("edit");
-  }
-
-  function openView(user: User) {
-    setSelectedUser(user);
-    setShowModal("view");
-  }
-
-  function toggleSelect(id: string) {
-    setSelected((prev) => (prev.includes(id) ? prev.filter((x) => x !== id) : [...prev, id]));
-  }
-
-  function toggleSelectAll() {
-    if (selected.length === users.length) {
-      setSelected([]);
-    } else {
-      setSelected(users.map((u) => u.id));
-    }
-  }
-
-  function bulkBan() {
-    Promise.all(
-      selected.map((id) =>
-        fetch("/api/admin/users", {
-          method: "PATCH",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ action: "ban", userId: id }),
-        })
-      )
-    ).then(() => {
-      setSelected([]);
-      fetchUsers();
-    });
-  }
-
-  function bulkDelete() {
-    if (!confirm(`${selected.length} kullanıcıyı silmek istediğinizden emin misiniz?`)) return;
-    Promise.all(selected.map((id) => fetch(`/api/admin/users?id=${id}`, { method: "DELETE" }))).then(
-      () => {
-        setSelected([]);
-        fetchUsers();
-      }
-    );
-  }
+  const font = '"Plus Jakarta Sans", system-ui, sans-serif';
 
   return (
     <AdminLayout>
-      <div>
+      <div style={{ fontFamily: font }}>
         <h1 style={{ fontSize: 24, fontWeight: 700, color: "#1a1a2e", marginBottom: 20, marginTop: 0 }}>
           Kullanıcılar
         </h1>
@@ -177,12 +111,12 @@ export default function UsersPage() {
             placeholder="Ara (ad, email...)"
             value={search}
             onChange={(e) => { setSearch(e.target.value); setPage(1); }}
-            style={{ padding: "7px 12px", border: "1px solid #ddd", borderRadius: 6, fontSize: 13, width: 200 }}
+            style={{ padding: "7px 12px", border: "1px solid #ddd", borderRadius: 6, fontSize: 13, width: 200, fontFamily: font }}
           />
           <select
             value={roleFilter}
             onChange={(e) => { setRoleFilter(e.target.value); setPage(1); }}
-            style={{ padding: "7px 10px", border: "1px solid #ddd", borderRadius: 6, fontSize: 13 }}
+            style={{ padding: "7px 10px", border: "1px solid #ddd", borderRadius: 6, fontSize: 13, fontFamily: font }}
           >
             <option value="">Tüm Roller</option>
             <option value="USER">USER</option>
@@ -192,56 +126,22 @@ export default function UsersPage() {
           <select
             value={statusFilter}
             onChange={(e) => { setStatusFilter(e.target.value); setPage(1); }}
-            style={{ padding: "7px 10px", border: "1px solid #ddd", borderRadius: 6, fontSize: 13 }}
+            style={{ padding: "7px 10px", border: "1px solid #ddd", borderRadius: 6, fontSize: 13, fontFamily: font }}
           >
             <option value="">Tüm Durumlar</option>
             <option value="active">Aktif</option>
             <option value="banned">Banlı</option>
           </select>
           <select
-            value={sortBy}
-            onChange={(e) => setSortBy(e.target.value)}
-            style={{ padding: "7px 10px", border: "1px solid #ddd", borderRadius: 6, fontSize: 13 }}
-          >
-            <option value="createdAt">Kayıt Tarihi</option>
-            <option value="name">Ad</option>
-            <option value="email">Email</option>
-          </select>
-          <select
-            value={sortDir}
-            onChange={(e) => setSortDir(e.target.value)}
-            style={{ padding: "7px 10px", border: "1px solid #ddd", borderRadius: 6, fontSize: 13 }}
-          >
-            <option value="desc">Azalan</option>
-            <option value="asc">Artan</option>
-          </select>
-          <select
             value={limit}
             onChange={(e) => { setLimit(Number(e.target.value)); setPage(1); }}
-            style={{ padding: "7px 10px", border: "1px solid #ddd", borderRadius: 6, fontSize: 13 }}
+            style={{ padding: "7px 10px", border: "1px solid #ddd", borderRadius: 6, fontSize: 13, fontFamily: font }}
           >
             <option value={10}>10</option>
             <option value={25}>25</option>
             <option value={50}>50</option>
             <option value={100}>100</option>
           </select>
-
-          {selected.length > 0 && (
-            <>
-              <button
-                onClick={bulkBan}
-                style={{ padding: "7px 14px", background: "#ff6b35", border: "none", borderRadius: 6, color: "#fff", fontSize: 12, cursor: "pointer" }}
-              >
-                Toplu Ban ({selected.length})
-              </button>
-              <button
-                onClick={bulkDelete}
-                style={{ padding: "7px 14px", background: "#cc0000", border: "none", borderRadius: 6, color: "#fff", fontSize: 12, cursor: "pointer" }}
-              >
-                Toplu Sil ({selected.length})
-              </button>
-            </>
-          )}
         </div>
 
         {/* Table */}
@@ -259,16 +159,7 @@ export default function UsersPage() {
             <table style={{ width: "100%", borderCollapse: "collapse", fontSize: 13 }}>
               <thead>
                 <tr style={{ backgroundColor: "#f8f7f5", borderBottom: "1px solid #eee" }}>
-                  <th style={{ padding: "10px 12px", textAlign: "left", width: 32 }}>
-                    <input
-                      type="checkbox"
-                      checked={selected.length === users.length && users.length > 0}
-                      onChange={toggleSelectAll}
-                    />
-                  </th>
-                  <th style={{ padding: "10px 12px", textAlign: "left" }}>Avatar</th>
-                  <th style={{ padding: "10px 12px", textAlign: "left" }}>Ad</th>
-                  <th style={{ padding: "10px 12px", textAlign: "left" }}>Email</th>
+                  <th style={{ padding: "10px 12px", textAlign: "left" }}>Ad / Email</th>
                   <th style={{ padding: "10px 12px", textAlign: "left" }}>Şehir</th>
                   <th style={{ padding: "10px 12px", textAlign: "left" }}>Rol</th>
                   <th style={{ padding: "10px 12px", textAlign: "left" }}>Durum</th>
@@ -282,38 +173,9 @@ export default function UsersPage() {
                   return (
                     <tr key={user.id} style={{ borderBottom: "1px solid #f0ede8" }}>
                       <td style={{ padding: "8px 12px" }}>
-                        <input
-                          type="checkbox"
-                          checked={selected.includes(user.id)}
-                          onChange={() => toggleSelect(user.id)}
-                        />
+                        <div style={{ fontWeight: 500, color: "#333" }}>{user.name || "—"}</div>
+                        <div style={{ color: "#999", fontSize: 11 }}>{user.email}</div>
                       </td>
-                      <td style={{ padding: "8px 12px" }}>
-                        {user.avatarUrl ? (
-                          <img
-                            src={user.avatarUrl}
-                            alt=""
-                            style={{ width: 32, height: 32, borderRadius: "50%", objectFit: "cover" }}
-                          />
-                        ) : (
-                          <div
-                            style={{
-                              width: 32,
-                              height: 32,
-                              borderRadius: "50%",
-                              backgroundColor: "#e0d5c0",
-                              display: "flex",
-                              alignItems: "center",
-                              justifyContent: "center",
-                              fontSize: 14,
-                            }}
-                          >
-                            👤
-                          </div>
-                        )}
-                      </td>
-                      <td style={{ padding: "8px 12px", fontWeight: 500 }}>{user.name || "—"}</td>
-                      <td style={{ padding: "8px 12px", color: "#555" }}>{user.email}</td>
                       <td style={{ padding: "8px 12px", color: "#777" }}>{user.city || "—"}</td>
                       <td style={{ padding: "8px 12px" }}>
                         <span
@@ -349,18 +211,11 @@ export default function UsersPage() {
                       <td style={{ padding: "8px 12px" }}>
                         <div style={{ display: "flex", gap: 4 }}>
                           <button
-                            onClick={() => openView(user)}
-                            title="Görüntüle"
-                            style={{ padding: "3px 7px", border: "1px solid #ddd", borderRadius: 4, background: "#fff", cursor: "pointer", fontSize: 12 }}
-                          >
-                            👁️
-                          </button>
-                          <button
-                            onClick={() => openEdit(user)}
+                            onClick={() => alert("Düzenleme paneli yakında!")}
                             title="Düzenle"
                             style={{ padding: "3px 7px", border: "1px solid #ddd", borderRadius: 4, background: "#fff", cursor: "pointer", fontSize: 12 }}
                           >
-                            ✏️
+                            ✏️ Düzenle
                           </button>
                           {user.isActive ? (
                             <button
@@ -368,7 +223,7 @@ export default function UsersPage() {
                               title="Ban"
                               style={{ padding: "3px 7px", border: "1px solid #ffcccc", borderRadius: 4, background: "#fff5f5", cursor: "pointer", fontSize: 12 }}
                             >
-                              🚫
+                              🚫 Ban
                             </button>
                           ) : (
                             <button
@@ -376,7 +231,7 @@ export default function UsersPage() {
                               title="Unban"
                               style={{ padding: "3px 7px", border: "1px solid #ccffdd", borderRadius: 4, background: "#f5fff8", cursor: "pointer", fontSize: 12 }}
                             >
-                              ✅
+                              ✅ Unban
                             </button>
                           )}
                           <button
@@ -384,7 +239,7 @@ export default function UsersPage() {
                             title="Sil"
                             style={{ padding: "3px 7px", border: "1px solid #ffcccc", borderRadius: 4, background: "#fff5f5", cursor: "pointer", fontSize: 12 }}
                           >
-                            🗑️
+                            🗑️ Sil
                           </button>
                         </div>
                       </td>
@@ -421,6 +276,7 @@ export default function UsersPage() {
                 background: "#fff",
                 cursor: page <= 1 ? "not-allowed" : "pointer",
                 opacity: page <= 1 ? 0.5 : 1,
+                fontFamily: font,
               }}
             >
               ← Önceki
@@ -435,6 +291,7 @@ export default function UsersPage() {
                 background: "#fff",
                 cursor: page >= totalPages ? "not-allowed" : "pointer",
                 opacity: page >= totalPages ? 0.5 : 1,
+                fontFamily: font,
               }}
             >
               Sonraki →
@@ -442,109 +299,6 @@ export default function UsersPage() {
           </div>
         </div>
       </div>
-
-      {/* View Modal */}
-      {showModal === "view" && selectedUser && (
-        <div
-          style={{
-            position: "fixed",
-            inset: 0,
-            background: "rgba(0,0,0,0.5)",
-            display: "flex",
-            alignItems: "center",
-            justifyContent: "center",
-            zIndex: 1000,
-          }}
-          onClick={() => setShowModal(null)}
-        >
-          <div
-            style={{ background: "#fff", borderRadius: 12, padding: 32, width: 420, maxWidth: "90%" }}
-            onClick={(e) => e.stopPropagation()}
-          >
-            <h3 style={{ marginTop: 0, marginBottom: 20, fontSize: 18 }}>Kullanıcı Detayı</h3>
-            <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 12, fontSize: 14 }}>
-              <div><span style={{ color: "#888" }}>Ad:</span> <strong>{selectedUser.name || "—"}</strong></div>
-              <div><span style={{ color: "#888" }}>Email:</span> <strong>{selectedUser.email}</strong></div>
-              <div><span style={{ color: "#888" }}>Kullanıcı Adı:</span> <strong>{selectedUser.username || "—"}</strong></div>
-              <div><span style={{ color: "#888" }}>Şehir:</span> <strong>{selectedUser.city || "—"}</strong></div>
-              <div><span style={{ color: "#888" }}>Rol:</span> <strong>{selectedUser.role}</strong></div>
-              <div><span style={{ color: "#888" }}>Durum:</span> <strong>{selectedUser.isActive ? "Aktif" : "Banlı"}</strong></div>
-              <div><span style={{ color: "#888" }}>Kayıt:</span> <strong>{new Date(selectedUser.createdAt).toLocaleDateString("tr-TR")}</strong></div>
-            </div>
-            <button
-              onClick={() => setShowModal(null)}
-              style={{ marginTop: 24, padding: "8px 20px", border: "1px solid #ddd", borderRadius: 6, cursor: "pointer", background: "#fff" }}
-            >
-              Kapat
-            </button>
-          </div>
-        </div>
-      )}
-
-      {/* Edit Modal */}
-      {showModal === "edit" && selectedUser && (
-        <div
-          style={{
-            position: "fixed",
-            inset: 0,
-            background: "rgba(0,0,0,0.5)",
-            display: "flex",
-            alignItems: "center",
-            justifyContent: "center",
-            zIndex: 1000,
-          }}
-          onClick={() => setShowModal(null)}
-        >
-          <div
-            style={{ background: "#fff", borderRadius: 12, padding: 32, width: 400, maxWidth: "90%" }}
-            onClick={(e) => e.stopPropagation()}
-          >
-            <h3 style={{ marginTop: 0, marginBottom: 20, fontSize: 18 }}>Kullanıcıyı Düzenle</h3>
-            <div style={{ marginBottom: 14 }}>
-              <label style={{ display: "block", fontSize: 13, color: "#555", marginBottom: 4 }}>Ad</label>
-              <input
-                value={editForm.name}
-                onChange={(e) => setEditForm((f) => ({ ...f, name: e.target.value }))}
-                style={{ width: "100%", padding: "8px 10px", border: "1px solid #ddd", borderRadius: 6, fontSize: 13, boxSizing: "border-box" }}
-              />
-            </div>
-            <div style={{ marginBottom: 14 }}>
-              <label style={{ display: "block", fontSize: 13, color: "#555", marginBottom: 4 }}>Şehir</label>
-              <input
-                value={editForm.city}
-                onChange={(e) => setEditForm((f) => ({ ...f, city: e.target.value }))}
-                style={{ width: "100%", padding: "8px 10px", border: "1px solid #ddd", borderRadius: 6, fontSize: 13, boxSizing: "border-box" }}
-              />
-            </div>
-            <div style={{ marginBottom: 20 }}>
-              <label style={{ display: "block", fontSize: 13, color: "#555", marginBottom: 4 }}>Rol</label>
-              <select
-                value={editForm.role}
-                onChange={(e) => setEditForm((f) => ({ ...f, role: e.target.value }))}
-                style={{ width: "100%", padding: "8px 10px", border: "1px solid #ddd", borderRadius: 6, fontSize: 13 }}
-              >
-                <option value="USER">USER</option>
-                <option value="MODERATOR">MODERATOR</option>
-                <option value="ADMIN">ADMIN</option>
-              </select>
-            </div>
-            <div style={{ display: "flex", gap: 10 }}>
-              <button
-                onClick={handleEdit}
-                style={{ padding: "8px 20px", background: "linear-gradient(135deg,#775a19 0%,#d4ad65 100%)", border: "none", borderRadius: 6, color: "#fff", cursor: "pointer", fontSize: 13 }}
-              >
-                Kaydet
-              </button>
-              <button
-                onClick={() => setShowModal(null)}
-                style={{ padding: "8px 20px", border: "1px solid #ddd", borderRadius: 6, cursor: "pointer", background: "#fff", fontSize: 13 }}
-              >
-                İptal
-              </button>
-            </div>
-          </div>
-        </div>
-      )}
     </AdminLayout>
   );
 }

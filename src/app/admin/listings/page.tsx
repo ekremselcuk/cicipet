@@ -38,6 +38,8 @@ const statusBadgeColor: Record<string, { bg: string; color: string }> = {
   EXPIRED: { bg: "#ffe0e0", color: "#cc0000" },
 };
 
+const font = '"Plus Jakarta Sans", system-ui, sans-serif';
+
 export default function ListingsPage() {
   const router = useRouter();
   const [listings, setListings] = useState<Listing[]>([]);
@@ -48,8 +50,6 @@ export default function ListingsPage() {
   const [typeFilter, setTypeFilter] = useState("");
   const [statusFilter, setStatusFilter] = useState("");
   const [loading, setLoading] = useState(true);
-  const [showModal, setShowModal] = useState<null | "view">(null);
-  const [selectedListing, setSelectedListing] = useState<Listing | null>(null);
 
   const totalPages = Math.ceil(total / limit);
 
@@ -88,14 +88,6 @@ export default function ListingsPage() {
     }).then(() => fetchListings());
   }
 
-  function handleResolve(listingId: string) {
-    fetch("/api/admin/listings", {
-      method: "PATCH",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ action: "resolve", listingId }),
-    }).then(() => fetchListings());
-  }
-
   function handleDelete(listingId: string) {
     if (!confirm("Bu ilanı silmek istediğinizden emin misiniz?")) return;
     fetch(`/api/admin/listings?id=${listingId}`, { method: "DELETE" }).then(() => fetchListings());
@@ -103,7 +95,7 @@ export default function ListingsPage() {
 
   return (
     <AdminLayout>
-      <div>
+      <div style={{ fontFamily: font }}>
         <h1 style={{ fontSize: 24, fontWeight: 700, color: "#1a1a2e", marginBottom: 20, marginTop: 0 }}>
           İlanlar
         </h1>
@@ -123,15 +115,15 @@ export default function ListingsPage() {
           }}
         >
           <input
-            placeholder="Ara (başlık, şehir...)"
+            placeholder="Ara (başlık, açıklama...)"
             value={search}
             onChange={(e) => { setSearch(e.target.value); setPage(1); }}
-            style={{ padding: "7px 12px", border: "1px solid #ddd", borderRadius: 6, fontSize: 13, width: 200 }}
+            style={{ padding: "7px 12px", border: "1px solid #ddd", borderRadius: 6, fontSize: 13, width: 200, fontFamily: font }}
           />
           <select
             value={typeFilter}
             onChange={(e) => { setTypeFilter(e.target.value); setPage(1); }}
-            style={{ padding: "7px 10px", border: "1px solid #ddd", borderRadius: 6, fontSize: 13 }}
+            style={{ padding: "7px 10px", border: "1px solid #ddd", borderRadius: 6, fontSize: 13, fontFamily: font }}
           >
             <option value="">Tüm Tipler</option>
             {Object.entries(typeMap).map(([k, v]) => (
@@ -141,7 +133,7 @@ export default function ListingsPage() {
           <select
             value={statusFilter}
             onChange={(e) => { setStatusFilter(e.target.value); setPage(1); }}
-            style={{ padding: "7px 10px", border: "1px solid #ddd", borderRadius: 6, fontSize: 13 }}
+            style={{ padding: "7px 10px", border: "1px solid #ddd", borderRadius: 6, fontSize: 13, fontFamily: font }}
           >
             <option value="">Tüm Durumlar</option>
             <option value="ACTIVE">Aktif</option>
@@ -151,7 +143,7 @@ export default function ListingsPage() {
           <select
             value={limit}
             onChange={(e) => { setLimit(Number(e.target.value)); setPage(1); }}
-            style={{ padding: "7px 10px", border: "1px solid #ddd", borderRadius: 6, fontSize: 13 }}
+            style={{ padding: "7px 10px", border: "1px solid #ddd", borderRadius: 6, fontSize: 13, fontFamily: font }}
           >
             <option value={10}>10</option>
             <option value={25}>25</option>
@@ -212,32 +204,18 @@ export default function ListingsPage() {
                       <td style={{ padding: "8px 12px" }}>
                         <div style={{ display: "flex", gap: 4 }}>
                           <button
-                            onClick={() => { setSelectedListing(listing); setShowModal("view"); }}
-                            title="Görüntüle"
-                            style={{ padding: "3px 7px", border: "1px solid #ddd", borderRadius: 4, background: "#fff", cursor: "pointer", fontSize: 12 }}
-                          >
-                            👁️
-                          </button>
-                          <button
                             onClick={() => handleClose(listing.id)}
-                            title="Pasif Yap"
+                            title="Kapat"
                             style={{ padding: "3px 7px", border: "1px solid #ddd", borderRadius: 4, background: "#fff", cursor: "pointer", fontSize: 12 }}
                           >
-                            🔒
-                          </button>
-                          <button
-                            onClick={() => handleResolve(listing.id)}
-                            title="Çözüldü"
-                            style={{ padding: "3px 7px", border: "1px solid #ccffdd", borderRadius: 4, background: "#f5fff8", cursor: "pointer", fontSize: 12 }}
-                          >
-                            ✅
+                            🔒 Kapat
                           </button>
                           <button
                             onClick={() => handleDelete(listing.id)}
                             title="Sil"
                             style={{ padding: "3px 7px", border: "1px solid #ffcccc", borderRadius: 4, background: "#fff5f5", cursor: "pointer", fontSize: 12 }}
                           >
-                            🗑️
+                            🗑️ Sil
                           </button>
                         </div>
                       </td>
@@ -256,50 +234,20 @@ export default function ListingsPage() {
             <button
               onClick={() => setPage((p) => Math.max(1, p - 1))}
               disabled={page <= 1}
-              style={{ padding: "6px 14px", border: "1px solid #ddd", borderRadius: 6, background: "#fff", cursor: page <= 1 ? "not-allowed" : "pointer", opacity: page <= 1 ? 0.5 : 1 }}
+              style={{ padding: "6px 14px", border: "1px solid #ddd", borderRadius: 6, background: "#fff", cursor: page <= 1 ? "not-allowed" : "pointer", opacity: page <= 1 ? 0.5 : 1, fontFamily: font }}
             >
               ← Önceki
             </button>
             <button
               onClick={() => setPage((p) => Math.min(totalPages, p + 1))}
               disabled={page >= totalPages}
-              style={{ padding: "6px 14px", border: "1px solid #ddd", borderRadius: 6, background: "#fff", cursor: page >= totalPages ? "not-allowed" : "pointer", opacity: page >= totalPages ? 0.5 : 1 }}
+              style={{ padding: "6px 14px", border: "1px solid #ddd", borderRadius: 6, background: "#fff", cursor: page >= totalPages ? "not-allowed" : "pointer", opacity: page >= totalPages ? 0.5 : 1, fontFamily: font }}
             >
               Sonraki →
             </button>
           </div>
         </div>
       </div>
-
-      {/* View Modal */}
-      {showModal === "view" && selectedListing && (
-        <div
-          style={{ position: "fixed", inset: 0, background: "rgba(0,0,0,0.5)", display: "flex", alignItems: "center", justifyContent: "center", zIndex: 1000 }}
-          onClick={() => setShowModal(null)}
-        >
-          <div
-            style={{ background: "#fff", borderRadius: 12, padding: 32, width: 440, maxWidth: "90%" }}
-            onClick={(e) => e.stopPropagation()}
-          >
-            <h3 style={{ marginTop: 0, marginBottom: 20 }}>İlan Detayı</h3>
-            <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 12, fontSize: 14 }}>
-              <div style={{ gridColumn: "1 / -1" }}><span style={{ color: "#888" }}>Başlık:</span> <strong>{selectedListing.title}</strong></div>
-              <div><span style={{ color: "#888" }}>Tip:</span> <strong>{typeMap[selectedListing.type] || selectedListing.type}</strong></div>
-              <div><span style={{ color: "#888" }}>Durum:</span> <strong>{selectedListing.status}</strong></div>
-              <div><span style={{ color: "#888" }}>Sahibi:</span> <strong>{selectedListing.user?.name || "—"}</strong></div>
-              <div><span style={{ color: "#888" }}>Şehir:</span> <strong>{selectedListing.city || "—"}</strong></div>
-              <div><span style={{ color: "#888" }}>Fiyat:</span> <strong>{selectedListing.price != null ? `${selectedListing.price} ₺` : "—"}</strong></div>
-              <div><span style={{ color: "#888" }}>Tarih:</span> <strong>{new Date(selectedListing.createdAt).toLocaleDateString("tr-TR")}</strong></div>
-            </div>
-            <button
-              onClick={() => setShowModal(null)}
-              style={{ marginTop: 24, padding: "8px 20px", border: "1px solid #ddd", borderRadius: 6, cursor: "pointer", background: "#fff" }}
-            >
-              Kapat
-            </button>
-          </div>
-        </div>
-      )}
     </AdminLayout>
   );
 }

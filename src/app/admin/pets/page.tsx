@@ -30,11 +30,7 @@ const speciesMap: Record<string, string> = {
   OTHER: "Diğer",
 };
 
-const genderMap: Record<string, string> = {
-  MALE: "Erkek",
-  FEMALE: "Dişi",
-  UNKNOWN: "Bilinmiyor",
-};
+const font = '"Plus Jakarta Sans", system-ui, sans-serif';
 
 export default function PetsPage() {
   const router = useRouter();
@@ -44,14 +40,8 @@ export default function PetsPage() {
   const [limit, setLimit] = useState(25);
   const [search, setSearch] = useState("");
   const [speciesFilter, setSpeciesFilter] = useState("");
-  const [genderFilter, setGenderFilter] = useState("");
   const [statusFilter, setStatusFilter] = useState("");
-  const [sortBy, setSortBy] = useState("createdAt");
-  const [sortDir, setSortDir] = useState("desc");
   const [loading, setLoading] = useState(true);
-  const [showModal, setShowModal] = useState<null | "view" | "edit">(null);
-  const [selectedPet, setSelectedPet] = useState<Pet | null>(null);
-  const [editForm, setEditForm] = useState({ name: "", breed: "", city: "" });
 
   const totalPages = Math.ceil(total / limit);
 
@@ -60,10 +50,7 @@ export default function PetsPage() {
     const params = new URLSearchParams({
       search,
       species: speciesFilter,
-      gender: genderFilter,
       status: statusFilter,
-      sortBy,
-      sortDir,
       page: String(page),
       limit: String(limit),
     });
@@ -75,7 +62,7 @@ export default function PetsPage() {
         setLoading(false);
       })
       .catch(() => setLoading(false));
-  }, [search, speciesFilter, genderFilter, statusFilter, sortBy, sortDir, page, limit]);
+  }, [search, speciesFilter, statusFilter, page, limit]);
 
   useEffect(() => {
     if (!checkAdminAuth()) {
@@ -106,27 +93,9 @@ export default function PetsPage() {
     fetch(`/api/admin/pets?id=${petId}`, { method: "DELETE" }).then(() => fetchPets());
   }
 
-  function handleEdit() {
-    if (!selectedPet) return;
-    fetch("/api/admin/pets", {
-      method: "PATCH",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ action: "edit", petId: selectedPet.id, ...editForm }),
-    }).then(() => {
-      setShowModal(null);
-      fetchPets();
-    });
-  }
-
-  function openEdit(pet: Pet) {
-    setSelectedPet(pet);
-    setEditForm({ name: pet.name, breed: pet.breed || "", city: pet.city || "" });
-    setShowModal("edit");
-  }
-
   return (
     <AdminLayout>
-      <div>
+      <div style={{ fontFamily: font }}>
         <h1 style={{ fontSize: 24, fontWeight: 700, color: "#1a1a2e", marginBottom: 20, marginTop: 0 }}>
           Petler
         </h1>
@@ -146,52 +115,38 @@ export default function PetsPage() {
           }}
         >
           <input
-            placeholder="Ara (pet adı, cins...)"
+            placeholder="Ara (pet adı, sahip...)"
             value={search}
             onChange={(e) => { setSearch(e.target.value); setPage(1); }}
-            style={{ padding: "7px 12px", border: "1px solid #ddd", borderRadius: 6, fontSize: 13, width: 180 }}
+            style={{ padding: "7px 12px", border: "1px solid #ddd", borderRadius: 6, fontSize: 13, width: 180, fontFamily: font }}
           />
           <select
             value={speciesFilter}
             onChange={(e) => { setSpeciesFilter(e.target.value); setPage(1); }}
-            style={{ padding: "7px 10px", border: "1px solid #ddd", borderRadius: 6, fontSize: 13 }}
+            style={{ padding: "7px 10px", border: "1px solid #ddd", borderRadius: 6, fontSize: 13, fontFamily: font }}
           >
-            <option value="">Tüm Türler</option>
-            {Object.entries(speciesMap).map(([k, v]) => (
-              <option key={k} value={k}>{v}</option>
-            ))}
-          </select>
-          <select
-            value={genderFilter}
-            onChange={(e) => { setGenderFilter(e.target.value); setPage(1); }}
-            style={{ padding: "7px 10px", border: "1px solid #ddd", borderRadius: 6, fontSize: 13 }}
-          >
-            <option value="">Tüm Cinsiyetler</option>
-            {Object.entries(genderMap).map(([k, v]) => (
-              <option key={k} value={k}>{v}</option>
-            ))}
+            <option value="">Tümü</option>
+            <option value="CAT">Kedi</option>
+            <option value="DOG">Köpek</option>
+            <option value="BIRD">Kuş</option>
+            <option value="RABBIT">Tavşan</option>
+            <option value="FISH">Balık</option>
+            <option value="REPTILE">Sürüngen</option>
+            <option value="OTHER">Diğer</option>
           </select>
           <select
             value={statusFilter}
             onChange={(e) => { setStatusFilter(e.target.value); setPage(1); }}
-            style={{ padding: "7px 10px", border: "1px solid #ddd", borderRadius: 6, fontSize: 13 }}
+            style={{ padding: "7px 10px", border: "1px solid #ddd", borderRadius: 6, fontSize: 13, fontFamily: font }}
           >
             <option value="">Tüm Durumlar</option>
             <option value="active">Aktif</option>
             <option value="inactive">Pasif</option>
           </select>
           <select
-            value={sortDir}
-            onChange={(e) => setSortDir(e.target.value)}
-            style={{ padding: "7px 10px", border: "1px solid #ddd", borderRadius: 6, fontSize: 13 }}
-          >
-            <option value="desc">En Yeni</option>
-            <option value="asc">En Eski</option>
-          </select>
-          <select
             value={limit}
             onChange={(e) => { setLimit(Number(e.target.value)); setPage(1); }}
-            style={{ padding: "7px 10px", border: "1px solid #ddd", borderRadius: 6, fontSize: 13 }}
+            style={{ padding: "7px 10px", border: "1px solid #ddd", borderRadius: 6, fontSize: 13, fontFamily: font }}
           >
             <option value={10}>10</option>
             <option value={25}>25</option>
@@ -219,7 +174,6 @@ export default function PetsPage() {
                   <th style={{ padding: "10px 12px", textAlign: "left" }}>Pet Adı</th>
                   <th style={{ padding: "10px 12px", textAlign: "left" }}>Tür</th>
                   <th style={{ padding: "10px 12px", textAlign: "left" }}>Cins</th>
-                  <th style={{ padding: "10px 12px", textAlign: "left" }}>Cinsiyet</th>
                   <th style={{ padding: "10px 12px", textAlign: "left" }}>Sahibi</th>
                   <th style={{ padding: "10px 12px", textAlign: "left" }}>Şehir</th>
                   <th style={{ padding: "10px 12px", textAlign: "left" }}>Durum</th>
@@ -259,7 +213,6 @@ export default function PetsPage() {
                       <td style={{ padding: "8px 12px", fontWeight: 500 }}>{pet.name}</td>
                       <td style={{ padding: "8px 12px" }}>{speciesMap[pet.species] || pet.species}</td>
                       <td style={{ padding: "8px 12px", color: "#777" }}>{pet.breed || "—"}</td>
-                      <td style={{ padding: "8px 12px" }}>{genderMap[pet.gender] || pet.gender}</td>
                       <td style={{ padding: "8px 12px", color: "#555" }}>{pet.owner?.name || "—"}</td>
                       <td style={{ padding: "8px 12px", color: "#777" }}>{pet.city || "—"}</td>
                       <td style={{ padding: "8px 12px" }}>
@@ -282,39 +235,25 @@ export default function PetsPage() {
                       <td style={{ padding: "8px 12px" }}>
                         <div style={{ display: "flex", gap: 4 }}>
                           <button
-                            onClick={() => { setSelectedPet(pet); setShowModal("view"); }}
-                            title="Görüntüle"
-                            style={{ padding: "3px 7px", border: "1px solid #ddd", borderRadius: 4, background: "#fff", cursor: "pointer", fontSize: 12 }}
-                          >
-                            👁️
-                          </button>
-                          <button
-                            onClick={() => openEdit(pet)}
-                            title="Düzenle"
-                            style={{ padding: "3px 7px", border: "1px solid #ddd", borderRadius: 4, background: "#fff", cursor: "pointer", fontSize: 12 }}
-                          >
-                            ✏️
-                          </button>
-                          <button
                             onClick={() => handleApprove(pet.id)}
                             title="Onayla"
                             style={{ padding: "3px 7px", border: "1px solid #ccffdd", borderRadius: 4, background: "#f5fff8", cursor: "pointer", fontSize: 12 }}
                           >
-                            ✅
+                            ✅ Onayla
                           </button>
                           <button
                             onClick={() => handleReject(pet.id)}
                             title="Reddet"
                             style={{ padding: "3px 7px", border: "1px solid #ffcccc", borderRadius: 4, background: "#fff5f5", cursor: "pointer", fontSize: 12 }}
                           >
-                            ❌
+                            ❌ Reddet
                           </button>
                           <button
                             onClick={() => handleDelete(pet.id)}
                             title="Sil"
                             style={{ padding: "3px 7px", border: "1px solid #ffcccc", borderRadius: 4, background: "#fff5f5", cursor: "pointer", fontSize: 12 }}
                           >
-                            🗑️
+                            🗑️ Sil
                           </button>
                         </div>
                       </td>
@@ -335,104 +274,20 @@ export default function PetsPage() {
             <button
               onClick={() => setPage((p) => Math.max(1, p - 1))}
               disabled={page <= 1}
-              style={{ padding: "6px 14px", border: "1px solid #ddd", borderRadius: 6, background: "#fff", cursor: page <= 1 ? "not-allowed" : "pointer", opacity: page <= 1 ? 0.5 : 1 }}
+              style={{ padding: "6px 14px", border: "1px solid #ddd", borderRadius: 6, background: "#fff", cursor: page <= 1 ? "not-allowed" : "pointer", opacity: page <= 1 ? 0.5 : 1, fontFamily: font }}
             >
               ← Önceki
             </button>
             <button
               onClick={() => setPage((p) => Math.min(totalPages, p + 1))}
               disabled={page >= totalPages}
-              style={{ padding: "6px 14px", border: "1px solid #ddd", borderRadius: 6, background: "#fff", cursor: page >= totalPages ? "not-allowed" : "pointer", opacity: page >= totalPages ? 0.5 : 1 }}
+              style={{ padding: "6px 14px", border: "1px solid #ddd", borderRadius: 6, background: "#fff", cursor: page >= totalPages ? "not-allowed" : "pointer", opacity: page >= totalPages ? 0.5 : 1, fontFamily: font }}
             >
               Sonraki →
             </button>
           </div>
         </div>
       </div>
-
-      {/* View Modal */}
-      {showModal === "view" && selectedPet && (
-        <div
-          style={{ position: "fixed", inset: 0, background: "rgba(0,0,0,0.5)", display: "flex", alignItems: "center", justifyContent: "center", zIndex: 1000 }}
-          onClick={() => setShowModal(null)}
-        >
-          <div
-            style={{ background: "#fff", borderRadius: 12, padding: 32, width: 440, maxWidth: "90%" }}
-            onClick={(e) => e.stopPropagation()}
-          >
-            <h3 style={{ marginTop: 0, marginBottom: 20 }}>Pet Detayı</h3>
-            <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 12, fontSize: 14 }}>
-              <div><span style={{ color: "#888" }}>Ad:</span> <strong>{selectedPet.name}</strong></div>
-              <div><span style={{ color: "#888" }}>Tür:</span> <strong>{speciesMap[selectedPet.species] || selectedPet.species}</strong></div>
-              <div><span style={{ color: "#888" }}>Cins:</span> <strong>{selectedPet.breed || "—"}</strong></div>
-              <div><span style={{ color: "#888" }}>Cinsiyet:</span> <strong>{genderMap[selectedPet.gender] || selectedPet.gender}</strong></div>
-              <div><span style={{ color: "#888" }}>Şehir:</span> <strong>{selectedPet.city || "—"}</strong></div>
-              <div><span style={{ color: "#888" }}>Aşılı:</span> <strong>{selectedPet.isVaccinated ? "Evet" : "Hayır"}</strong></div>
-              <div><span style={{ color: "#888" }}>Kısırlaştırılmış:</span> <strong>{selectedPet.isNeutered ? "Evet" : "Hayır"}</strong></div>
-              <div><span style={{ color: "#888" }}>Sahibi:</span> <strong>{selectedPet.owner?.name || "—"}</strong></div>
-            </div>
-            <button
-              onClick={() => setShowModal(null)}
-              style={{ marginTop: 24, padding: "8px 20px", border: "1px solid #ddd", borderRadius: 6, cursor: "pointer", background: "#fff" }}
-            >
-              Kapat
-            </button>
-          </div>
-        </div>
-      )}
-
-      {/* Edit Modal */}
-      {showModal === "edit" && selectedPet && (
-        <div
-          style={{ position: "fixed", inset: 0, background: "rgba(0,0,0,0.5)", display: "flex", alignItems: "center", justifyContent: "center", zIndex: 1000 }}
-          onClick={() => setShowModal(null)}
-        >
-          <div
-            style={{ background: "#fff", borderRadius: 12, padding: 32, width: 400, maxWidth: "90%" }}
-            onClick={(e) => e.stopPropagation()}
-          >
-            <h3 style={{ marginTop: 0, marginBottom: 20 }}>Peti Düzenle</h3>
-            <div style={{ marginBottom: 14 }}>
-              <label style={{ display: "block", fontSize: 13, color: "#555", marginBottom: 4 }}>Ad</label>
-              <input
-                value={editForm.name}
-                onChange={(e) => setEditForm((f) => ({ ...f, name: e.target.value }))}
-                style={{ width: "100%", padding: "8px 10px", border: "1px solid #ddd", borderRadius: 6, fontSize: 13, boxSizing: "border-box" }}
-              />
-            </div>
-            <div style={{ marginBottom: 14 }}>
-              <label style={{ display: "block", fontSize: 13, color: "#555", marginBottom: 4 }}>Cins</label>
-              <input
-                value={editForm.breed}
-                onChange={(e) => setEditForm((f) => ({ ...f, breed: e.target.value }))}
-                style={{ width: "100%", padding: "8px 10px", border: "1px solid #ddd", borderRadius: 6, fontSize: 13, boxSizing: "border-box" }}
-              />
-            </div>
-            <div style={{ marginBottom: 20 }}>
-              <label style={{ display: "block", fontSize: 13, color: "#555", marginBottom: 4 }}>Şehir</label>
-              <input
-                value={editForm.city}
-                onChange={(e) => setEditForm((f) => ({ ...f, city: e.target.value }))}
-                style={{ width: "100%", padding: "8px 10px", border: "1px solid #ddd", borderRadius: 6, fontSize: 13, boxSizing: "border-box" }}
-              />
-            </div>
-            <div style={{ display: "flex", gap: 10 }}>
-              <button
-                onClick={handleEdit}
-                style={{ padding: "8px 20px", background: "linear-gradient(135deg,#775a19 0%,#d4ad65 100%)", border: "none", borderRadius: 6, color: "#fff", cursor: "pointer", fontSize: 13 }}
-              >
-                Kaydet
-              </button>
-              <button
-                onClick={() => setShowModal(null)}
-                style={{ padding: "8px 20px", border: "1px solid #ddd", borderRadius: 6, cursor: "pointer", background: "#fff", fontSize: 13 }}
-              >
-                İptal
-              </button>
-            </div>
-          </div>
-        </div>
-      )}
     </AdminLayout>
   );
 }
